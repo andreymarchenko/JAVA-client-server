@@ -1,41 +1,54 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package javaapplication1;
 
 import java.io.*;
 import java.net.*;
 
-public class client {
-public static void main(String[] args) throws IOException {
+public class server {
+    public static void main(String[] args) throws IOException {
+    System.out.println("Welcome to Server side");
+    BufferedReader in = null;
+    PrintWriter    out= null;
 
-    System.out.println("Welcome to Client side");
+    ServerSocket servers = null;
+    Socket       fromclient = null;
 
-    Socket fromserver = null;
-
-    if (args.length==0) {
-      System.out.println("use: client hostname");
+    // create server socket
+    try {
+      servers = new ServerSocket(4445);
+    } catch (IOException e) {
+      System.out.println("Couldn't listen to port 4444");
       System.exit(-1);
     }
 
-    System.out.println("Connecting to... "+args[0]);
-
-    fromserver = new Socket(args[0],4445);
-    BufferedReader in  = new BufferedReader(new InputStreamReader(fromserver.getInputStream()));
-    PrintWriter    out = new PrintWriter(fromserver.getOutputStream(),true); 
-    BufferedReader inu = new BufferedReader(new InputStreamReader(System.in));
-
-    String fuser,fserver;
-
-    while ((fuser = inu.readLine())!=null) {
-      out.println(fuser);
-      fserver = in.readLine();
-      System.out.println(fserver);
-      if (fuser.equalsIgnoreCase("close")) break;
-      if (fuser.equalsIgnoreCase("exit")) break;
+    try {
+      System.out.print("Waiting for a client...");
+      fromclient= servers.accept();
+      System.out.println("Client connected");
+    } catch (IOException e) {
+      System.out.println("Can't accept");
+      System.exit(-1);
     }
 
+    in  = new BufferedReader(new 
+     InputStreamReader(fromclient.getInputStream()));
+    out = new PrintWriter(fromclient.getOutputStream(),true);
+    String input,output;
+
+    System.out.println("Wait for messages");
+    while ((input = in.readLine()) != null) {
+     if (input.equalsIgnoreCase("exit")) break;
+     out.println("S ::: "+input);
+     System.out.println(input);
+    }
     out.close();
     in.close();
-    inu.close();
-    fromserver.close();
+    fromclient.close();
+    servers.close();
   }
 }
-
