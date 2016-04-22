@@ -7,11 +7,18 @@ package client;
 
 /**
  *
- * @author Олег
+ * @author Игорь
  */
 
 import java.io.*;
 import java.net.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import client.ClientThread;
+import client.ServerThread;
+
 
 public class client extends javax.swing.JFrame {
 
@@ -31,20 +38,35 @@ public class client extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        jFrame1 = new javax.swing.JFrame();
+        SendFile = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        ReadRezultOfExecution = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
+        ConnectToServer = new javax.swing.JButton();
+        DisconnectFromServer = new javax.swing.JButton();
+        Registration = new javax.swing.JButton();
+
+        javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
+        jFrame1.getContentPane().setLayout(jFrame1Layout);
+        jFrame1Layout.setHorizontalGroup(
+            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jFrame1Layout.setVerticalGroup(
+            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Send .class file");
+        SendFile.setText("Send .class file");
 
         jLabel1.setText("Path to .class file:");
         jLabel1.setToolTipText("");
@@ -54,7 +76,7 @@ public class client extends javax.swing.JFrame {
 
         jLabel4.setText("Status");
 
-        jButton2.setText("Read the .txt file with rezult of execution:");
+        ReadRezultOfExecution.setText("Read the .txt file with rezult of execution:");
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -64,6 +86,28 @@ public class client extends javax.swing.JFrame {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Low", "Medium", "High" }));
 
+        ConnectToServer.setText("Connect to Server");
+        ConnectToServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ConnectToServerActionPerformed(evt);
+            }
+        });
+
+        DisconnectFromServer.setText("Disconnect from Server");
+        DisconnectFromServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DisconnectFromServerActionPerformed(evt);
+            }
+        });
+
+        Registration.setText("Registration");
+        Registration.setToolTipText("");
+        Registration.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RegistrationActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -71,35 +115,50 @@ public class client extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(88, 88, 88)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(30, 30, 30)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))
+                                .addGap(30, 30, 30)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(126, 126, 126)
+                                .addComponent(DisconnectFromServer))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(ReadRezultOfExecution)
+                                .addGap(66, 66, 66)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(162, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(SendFile)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addGap(66, 66, 66)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(202, Short.MAX_VALUE))
+                            .addComponent(Registration)
+                            .addComponent(ConnectToServer))
+                        .addGap(194, 194, 194))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(71, 71, 71)
-                .addComponent(jButton1)
-                .addGap(41, 41, 41)
+                .addGap(28, 28, 28)
+                .addComponent(Registration)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(SendFile)
+                    .addComponent(ConnectToServer))
+                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DisconnectFromServer))
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -110,7 +169,7 @@ public class client extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(88, 88, 88)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -121,10 +180,51 @@ public class client extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+            Socket cs;
+            int port = 4445;
+            InetAddress ip = null;
+            String path_to_file = null;
+            
+    private void ConnectToServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerActionPerformed
+        // TODO add your handling code here:
+        
+        /*Connect to Server*/
+        try {
+            ip = InetAddress.getLocalHost();
+        }
+        catch(IOException ex) {
+            Logger.getLogger(client.class.getName()).log(Level.SEVERE, "getLocalHost fail", ex);
+        }
+        
+        try {
+            cs = new Socket(ip, port);
+        }
+        catch(IOException ex) {
+            Logger.getLogger(client.class.getName()).log(Level.SEVERE, "Error in create socket", ex);
+        }
+        
+        ClientThread ct = new ClientThread(cs, path_to_file);
+    }//GEN-LAST:event_ConnectToServerActionPerformed
+
+    private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
+        // TODO add your handling code here:
+        
+        /*Disonnect from Server*/
+        
+    }//GEN-LAST:event_DisconnectFromServerActionPerformed
+
+    private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
+        // TODO add your handling code here:
+        
+        /*In this section need create new form*/
+    }//GEN-LAST:event_RegistrationActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) throws IOException{
+
+    
+    public static void main(String args[]) throws IOException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -154,6 +254,7 @@ public class client extends javax.swing.JFrame {
                 new client().setVisible(true);
             }
         });
+        
         /*
             System.out.println("Welcome to Client side");
 
@@ -189,9 +290,13 @@ public class client extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton ConnectToServer;
+    private javax.swing.JButton DisconnectFromServer;
+    private javax.swing.JButton ReadRezultOfExecution;
+    private javax.swing.JButton Registration;
+    private javax.swing.JButton SendFile;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

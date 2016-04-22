@@ -12,6 +12,8 @@ package server;
 
 import java.io.*;
 import java.net.*;
+import server.ClientThread;
+import server.ServerThread;
 
 public class server extends javax.swing.JFrame {
 
@@ -31,17 +33,27 @@ public class server extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        StartServer = new javax.swing.JButton();
+        StopServer = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Start");
+        StartServer.setText("Start");
+        StartServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StartServerActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Stop");
+        StopServer.setText("Stop");
+        StopServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StopServerActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Processed");
 
@@ -56,13 +68,11 @@ public class server extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton2))
+                            .addComponent(StopServer)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 570, Short.MAX_VALUE)
-                                .addComponent(jButton1)))
+                                .addComponent(StartServer)))
                         .addGap(107, 107, 107))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -79,15 +89,32 @@ public class server extends javax.swing.JFrame {
                     .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(StartServer)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48)
-                .addComponent(jButton2)
+                .addComponent(StopServer)
                 .addGap(72, 72, 72))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    ServerThread st = null;
+    private void StartServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartServerActionPerformed
+        // TODO add your handling code here:
+        if(st == null) {
+            st = new ServerThread();
+            st.StartServer();
+        }
+    }//GEN-LAST:event_StartServerActionPerformed
+
+    private void StopServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServerActionPerformed
+        // TODO add your handling code here:
+        if(st != null) {
+            st.StopServer();
+            st = null;
+        }
+    }//GEN-LAST:event_StopServerActionPerformed
 
     /**
      * @param args the command line arguments
@@ -122,51 +149,13 @@ public class server extends javax.swing.JFrame {
                 new server().setVisible(true);
             }
         });
-        
-    System.out.println("Welcome to Server side");
-    BufferedReader in = null;
-    PrintWriter    out= null;
-
-    ServerSocket servers = null;
-    Socket       fromclient = null;
-
-    // create server socket
-    try {
-      servers = new ServerSocket(4445);
-    } catch (IOException e) {
-      System.out.println("Couldn't listen to port 4444");
-      System.exit(-1);
     }
 
-    try {
-      System.out.print("Waiting for a client...");
-      fromclient= servers.accept();
-      System.out.println("Client connected");
-    } catch (IOException e) {
-      System.out.println("Can't accept");
-      System.exit(-1);
-    }
 
-    in  = new BufferedReader(new 
-     InputStreamReader(fromclient.getInputStream()));
-    out = new PrintWriter(fromclient.getOutputStream(),true);
-    String input,output;
-
-    System.out.println("Wait for messages");
-    while ((input = in.readLine()) != null) {
-     if (input.equalsIgnoreCase("exit")) break;
-     out.println("S ::: "+input);
-     System.out.println(input);
-    }
-    out.close();
-    in.close();
-    fromclient.close();
-    servers.close();
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton StartServer;
+    private javax.swing.JButton StopServer;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JProgressBar jProgressBar1;
