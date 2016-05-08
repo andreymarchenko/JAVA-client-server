@@ -32,7 +32,6 @@ public class ServerThread extends Thread {
     boolean IsStopped = false;
     InputStream sis;
     OutputStream sos;
-    /*CHANGE_ME Queue jobs*/
     
     public ServerThread(JTextArea _Logs) {
         Logs = _Logs;
@@ -93,26 +92,6 @@ public class ServerThread extends Thread {
         IsStopped = false;
         AddToLog("Server was started!");
         start(); // Call the run method of client
-    }
-    
-    void CreateQueueOfJobs() {  // Хотя бы FIFO сделать
-        
-    }
-    
-    void AddJobToQueue(/*CHANGE_ME*/) {
-        
-    } 
-    
-    void SuspendCurrentJob(/*CHANGE_ME. TARGET_CURRENT_EXECUTE_BINARIES (HEAD OF QUEUE)*/) {
-        
-    }
-    
-    void RunCurrentJob(/*CHANGE_ME. TARGET_CURRENT_EXECUTE_BINARIES (HEAD OF QUEUE)*/) {
-        
-    }
-    
-    void SendRezultOfJobToClient(UUID uuid_client) {
-        
     }
     
 }
