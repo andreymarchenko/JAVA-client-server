@@ -17,12 +17,14 @@ import java.util.logging.Logger;
 import java.util.UUID;
 import java.io.InputStream;
 import java.io.OutputStream;
+import javax.swing.JTextArea;
 
 /**
  *
  * @author Игорь
  */
 public class ServerThread extends Thread {
+    JTextArea Logs = null;
     ServerSocket server_socket;  // for establishing connection with clients
     Socket socket_client;
     int port = 4445;
@@ -32,7 +34,9 @@ public class ServerThread extends Thread {
     OutputStream sos;
     /*CHANGE_ME Queue jobs*/
     
-    public ServerThread() {
+    public ServerThread(JTextArea _Logs) {
+        Logs = _Logs;
+        
         try {
             ip = InetAddress.getLocalHost();
         }
@@ -41,19 +45,28 @@ public class ServerThread extends Thread {
         }
         
         try {
-            server_socket = new ServerSocket(port, 0, ip);
+            server_socket = new ServerSocket(port,5, ip);
         }
         catch(IOException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in create server_socket", ex);
         }
         
+        AddToLog("Creating of server thread complete!");
+    }
+    
+    public void AddToLog(String info) {
+        String curr_info = Logs.getText();
+        curr_info += info + "\n";
+        Logs.setText(curr_info);
     }
     
     @Override
     public void run() {
         while(!IsStopped) {
             try {
+                AddToLog("Waiting of client...");
                 socket_client = server_socket.accept();
+                AddToLog("Connection with client complete!");
             }
             catch(IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
@@ -72,12 +85,14 @@ public class ServerThread extends Thread {
     
     synchronized void StopServer() {
         IsStopped = true;
+        AddToLog("Server was stopped!");
         stop();
     }
     
     synchronized void StartServer() {
         IsStopped = false;
-        start();
+        AddToLog("Server was started!");
+        start(); // Call the run method of client
     }
     
     void CreateQueueOfJobs() {  // Хотя бы FIFO сделать

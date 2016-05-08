@@ -7,8 +7,13 @@ package client;
 
 /**
  *
- * @author Игорь
+ * @author Олег
  */
-public class ServerThread {
+public class RecvThread extends Thread{
+    
+        @Override 
+        public void run() {
+        
+        }
     
 }
