@@ -12,7 +12,6 @@ package server;
 
 import java.io.*;
 import java.net.*;
-import server.ClientThread;
 import server.ServerThread;
 
 public class server extends javax.swing.JFrame {

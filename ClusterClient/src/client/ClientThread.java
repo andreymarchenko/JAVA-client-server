@@ -28,26 +28,13 @@ public class ClientThread extends Thread {
         InputStream cis;   // for reading bytes in stream from client_socket
         OutputStream cos;  // for writing bytes to stream
         DataInputStream ctis;  // this using when server send the rezult of execution .class file which was sending by client
-        String path_to_java_byte_code;
         
         public ClientThread(Socket _client_socket, String _path_to_java_byte_code, JTextArea _Logs) {
             Logs = _Logs;
             uuid_client = UUID.randomUUID();
             this.client_socket = _client_socket;
-            path_to_java_byte_code = _path_to_java_byte_code;
             
-            
-           /* try {
-            cis = client_socket.getInputStream();
-            cos = client_socket.getOutputStream();
-            
-            ctis = new DataInputStream(cis);
-            }
-            catch (IOException ex) {
-                Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, "Error when write/read bytes", ex);  // This message will always be printed because this level is higher
-            }
-            */
-            AddToLog("Creating of client thread complete!");
+            AddToLog("Client thread connected to server!");
         }
         
         public void AddToLog(String info) {
