@@ -5,6 +5,7 @@
  */
 package client;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,15 +25,18 @@ import javax.swing.JTextArea;
 
 /*
    Format data for sending:
-   1.Header (46 bytes)
+   1.Header (46 - 80 bytes)
      1.1.Name of file (32 bytes)
-     1.2.Size of name file (4 bytes)
+     1.2.Size of name file (1-32 bytes)
      1.3.Size of file (4 bytes)
      1.4.Priority (6 bytes)
+     1.5.Size of priority (3-6 bytes)
    2.Data (> 0 bytes)
 */
 
 public class SendThread extends Thread {
+        final int CHUNK_BYTE_SIZE = 1024;
+    
         JTextArea Logs = null;
         OutputStream cos;  // for writing bytes to stream
         Socket cs;
@@ -76,46 +80,80 @@ public class SendThread extends Thread {
             
             if (file.exists()) {
                 char[] name;
-                int size;
+                char[] priority_file;
+                long size_file = file.length();
+                int size_name_of_file = file.getName().length();
+                int size_of_priority = priority.length();
                 
-                name = new char[32];
+                name = new char[size_name_of_file];
+                priority_file = new char[size_of_priority];
                 
                 name = file.getName().toCharArray();
-                System.out.print(name.length);
-
-                for(int i = 0; i < 12; i++) {
-                    System.out.print(name[i]);
+                priority_file = priority.toCharArray();
+                
+                // Initialization of general info complete. Now we are sending
+                // this info to server
+                
+                DataOutputStream dos = new DataOutputStream(cos);
+                
+                try {
+                    dos.writeLong(size_file);
+                    dos.write(size_name_of_file);
+                    dos.write(size_of_priority);
+                    dos.writeChars(name.toString());
+                    dos.writeChars(priority_file.toString());
+                    
+                } catch (IOException ex) {
+                    Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
-                // At the first step we read bytes of JavaByteCode file
-                int byte_in_file = -1;
-                char byte_as_symbol;
+                /* At the second step we read bytes of JavaByteCode file */
+                
+                byte[][] chunks_whole;
+                byte[] chunk_rem;
+                long num_of_chunks = size_file / CHUNK_BYTE_SIZE;
+                long remainder_chunk_size = size_file % CHUNK_BYTE_SIZE;
+                
+                chunk_rem = new byte[(int)remainder_chunk_size];
 
                 try {
                     cis = new FileInputStream(path_to_file);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in creating of InputStream", ex);
                 }
-
-                try {
-                    byte_in_file = cis.read();
-                    byte_as_symbol = (char) byte_in_file;
-                    cos.write(byte_as_symbol);
-                } catch (IOException ex) {
-                    Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in reading and writing byte", ex);
+                
+                // Send the chunks with CHUNK_BYTE_SIZE bytes
+                if (num_of_chunks != 0) {
+                    chunks_whole = new byte[(int) num_of_chunks][CHUNK_BYTE_SIZE];
+                    for (int i = 0; i < num_of_chunks; i++) {
+                        try {
+                            int bytes_read = cis.read(chunks_whole[i], 0, CHUNK_BYTE_SIZE);
+                            cos.write(chunks_whole[i], 0, bytes_read);
+                        } catch (IOException ex) {
+                            Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 }
-
-                while (byte_in_file != -1) {
-                    byte_as_symbol = (char) byte_in_file;
-
+                
+                // Send the chunk with remainder bytes
+                if (remainder_chunk_size != 0) {
+                    num_of_chunks++;
+                    
                     try {
-                        cos.write(byte_as_symbol);
-                        byte_in_file = cis.read();
+                        int bytes_read = cis.read(chunk_rem, 0, (int)remainder_chunk_size);
+                        cos.write(chunk_rem, 0, bytes_read);
                     } catch (IOException ex) {
                         Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    
                 }
-
+                
+                try {
+                    dos.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
                 AddToLog("SendThread: File has been successfully sent!");
             } else {
                 AddToLog("SendThread: File is not exist!");
@@ -124,6 +162,7 @@ public class SendThread extends Thread {
             try {
                 cis.close();
                 cos.close();
+                
             } catch (IOException ex) {
                 Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
             }
