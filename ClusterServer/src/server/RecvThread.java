@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
  */
 public class RecvThread extends Thread {
     
+        final int CHUNK_BYTE_SIZE = 1024;
         JTextArea Logs = null;
         Socket cs;
         InputStream cis;
