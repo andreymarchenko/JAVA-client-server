@@ -17,7 +17,8 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import client.ClientThread;
-
+import client.SendThread;
+import client.RecvThread;
 
 public class client extends javax.swing.JFrame {
 
@@ -69,6 +70,11 @@ public class client extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         SendFile.setText("Send .class file");
+        SendFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SendFileActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Path to .class file:");
         jLabel1.setToolTipText("");
@@ -92,6 +98,11 @@ public class client extends javax.swing.JFrame {
         jLabel2.setText("Priority of execution:");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Low", "Medium", "High" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         ConnectToServer.setText("Connect to Server");
         ConnectToServer.addActionListener(new java.awt.event.ActionListener() {
@@ -147,12 +158,9 @@ public class client extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(SendFile)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -211,27 +219,34 @@ public class client extends javax.swing.JFrame {
             InetAddress ip = null;
             String path_to_file = null;
             String log_client = null;
+            boolean IsConnect = false;
             
     private void ConnectToServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerActionPerformed
         // TODO add your handling code here:
         
         /*Connect to Server*/
-        try {
-            ip = InetAddress.getLocalHost();
+        if (!IsConnect) {
+            try {
+                ip = InetAddress.getLocalHost();
+            } catch (IOException ex) {
+                Logger.getLogger(client.class.getName()).log(Level.SEVERE, "getLocalHost fail", ex);
+            }
+
+            try {
+                cs = new Socket(ip, port);
+
+            } catch (IOException ex) {
+                Logger.getLogger(client.class.getName()).log(Level.SEVERE, "Error in create socket", ex);
+            }
+
+            ClientThread ct = new ClientThread(cs, jTextArea2);
+            IsConnect = true;
         }
-        catch(IOException ex) {
-            Logger.getLogger(client.class.getName()).log(Level.SEVERE, "getLocalHost fail", ex);
+        else {
+            String curr_info = jTextArea2.getText();
+            curr_info += "ClientMain: Connection with server already exist!" + "\n";
+            jTextArea2.setText(curr_info);
         }
-        
-        try {
-            cs = new Socket(ip, port);
-            
-        }
-        catch(IOException ex) {
-            Logger.getLogger(client.class.getName()).log(Level.SEVERE, "Error in create socket", ex);
-        }
-        
-        ClientThread ct = new ClientThread(cs, path_to_file, jTextArea2);
     }//GEN-LAST:event_ConnectToServerActionPerformed
 
     private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
@@ -250,6 +265,27 @@ public class client extends javax.swing.JFrame {
     private void ReadRezultOfExecutionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReadRezultOfExecutionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ReadRezultOfExecutionActionPerformed
+
+    private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
+        // TODO add your handling code here:
+        if (IsConnect) {
+            SendThread send_thread = new SendThread(cs, jTextArea2);
+            String priority = (String)jComboBox1.getSelectedItem();
+            
+            path_to_file = jTextField1.getText();
+            
+            send_thread.SendJavaByteFile(path_to_file, priority);
+            }
+         else {
+            String curr_info = jTextArea2.getText();
+            curr_info += "ClientMain: At the moment connection with server is not established!" + "\n";
+            jTextArea2.setText(curr_info);
+        }
+    }//GEN-LAST:event_SendFileActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments

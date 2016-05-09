@@ -3,7 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client;
+package server;
+
+import java.io.InputStream;
+import java.net.Socket;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -11,9 +15,13 @@ package client;
  */
 public class RecvThread extends Thread {
     
+        JTextArea Logs = null;
+        Socket cs;
+        InputStream cis;
+        
         @Override 
         public void run() {
+            
         
         }
-    
 }

@@ -50,7 +50,7 @@ public class ServerThread extends Thread {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in create server_socket", ex);
         }
         
-        AddToLog("Creating of server thread complete!");
+        AddToLog("ServerThread: Creating of server thread complete!");
     }
     
     public void AddToLog(String info) {
@@ -63,9 +63,9 @@ public class ServerThread extends Thread {
     public void run() {
         while(!IsStopped) {
             try {
-                AddToLog("Waiting of client...");
+                AddToLog("ServerThread: Waiting of client...");
                 socket_client = server_socket.accept();
-                AddToLog("Connection with client complete!");
+                AddToLog("ServerThread: Connection with client complete!");
             }
             catch(IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
@@ -84,13 +84,13 @@ public class ServerThread extends Thread {
     
     synchronized void StopServer() {
         IsStopped = true;
-        AddToLog("Server was stopped!");
+        AddToLog("ServerThread: Server was stopped!");
         stop();
     }
     
     synchronized void StartServer() {
         IsStopped = false;
-        AddToLog("Server was started!");
+        AddToLog("ServerThread: Server was started!");
         start(); // Call the run method of client
     }
     

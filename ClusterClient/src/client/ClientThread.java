@@ -25,16 +25,17 @@ public class ClientThread extends Thread {
         JTextArea Logs = null;
         Socket client_socket;
         UUID uuid_client;  // Unique id of client
-        InputStream cis;   // for reading bytes in stream from client_socket
-        OutputStream cos;  // for writing bytes to stream
-        DataInputStream ctis;  // this using when server send the rezult of execution .class file which was sending by client
         
-        public ClientThread(Socket _client_socket, String _path_to_java_byte_code, JTextArea _Logs) {
+        public ClientThread(Socket _client_socket, JTextArea _Logs) {
             Logs = _Logs;
             uuid_client = UUID.randomUUID();
             this.client_socket = _client_socket;
             
-            AddToLog("Client thread connected to server!");
+            if (client_socket != null) {
+                AddToLog("ClientThread: Client thread connected to server!");
+            } else {
+                AddToLog("ClientThread: Connection can't be established");
+            }
         }
         
         public void AddToLog(String info) {
@@ -50,17 +51,5 @@ public class ClientThread extends Thread {
         @Override // Annotation. Check exist of redefined method in parent class 'Thread'
         public void run() {  // Connect to server
         
-        }
-        
-        void SendJavaByteCodeToServer() {
-        
-        }
-        
-        void RecvTxtFileWithRezultsFromServer() {
-            
-        }
-        
-        void ReadTxtFile() throws IOException {
-            
         }
 }
