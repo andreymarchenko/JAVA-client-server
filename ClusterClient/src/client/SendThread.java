@@ -42,7 +42,7 @@ public class SendThread extends Thread {
         Socket cs;
         String path_to_file = null;
         String priority;
-        InputStream cis;
+        InputStream cis; // for file
     
         public SendThread(Socket _cs, JTextArea _Logs) {
             cs = _cs;
@@ -98,8 +98,8 @@ public class SendThread extends Thread {
                 
                 try {
                     dos.writeLong(size_file);
-                    dos.write(size_name_of_file);
-                    dos.write(size_of_priority);
+                    dos.writeInt(size_name_of_file);
+                    dos.writeInt(size_of_priority);
                     dos.writeChars(name.toString());
                     dos.writeChars(priority_file.toString());
                     
