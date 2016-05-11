@@ -25,12 +25,10 @@ import javax.swing.JTextArea;
 
 /*
    Format data for sending:
-   1.Header (46 - 80 bytes)
+   1.Header (42 bytes)
      1.1.Name of file (32 bytes)
-     1.2.Size of name file (1-32 bytes)
-     1.3.Size of file (4 bytes)
-     1.4.Priority (6 bytes)
-     1.5.Size of priority (3-6 bytes)
+     1.2.Size of file (4 bytes)
+     1.3.Priority (6 bytes)
    2.Data (> 0 bytes)
 */
 
@@ -68,43 +66,37 @@ public class SendThread extends Thread {
         public void SendJavaByteFile(String _path_to_file, String _priority) {
             path_to_file = _path_to_file;
             priority = _priority;
-            start();
+                        System.out.println("2");
+        start();
         }
         
         @Override
         public void run() {
-            
             // At the first step we will send the general info about file
             // such as: name, size, priority
             File file = new File(path_to_file);
-            
+                        System.out.println("3");
             if (file.exists()) {
-                char[] name;
-                char[] priority_file;
+                String name;
                 long size_file = file.length();
-                int size_name_of_file = file.getName().length();
-                int size_of_priority = priority.length();
                 
-                name = new char[size_name_of_file];
-                priority_file = new char[size_of_priority];
                 
-                name = file.getName().toCharArray();
-                priority_file = priority.toCharArray();
-                
+                name = file.getName();
+               
                 // Initialization of general info complete. Now we are sending
                 // this info to server
                 
                 DataOutputStream dos = new DataOutputStream(cos);
-                
+                            System.out.println("4");
                 try {
                     dos.writeLong(size_file);
-                    dos.writeInt(size_name_of_file);
-                    dos.writeInt(size_of_priority);
-                    dos.writeChars(name.toString());
-                    dos.writeChars(priority_file.toString());
+                    dos.writeUTF(name);
+                    dos.writeUTF(priority);
+                                System.out.println("5");
                     
                 } catch (IOException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
+                                System.out.println("6");
                 }
                 
                 /* At the second step we read bytes of JavaByteCode file */
@@ -118,8 +110,10 @@ public class SendThread extends Thread {
 
                 try {
                     cis = new FileInputStream(path_to_file);
+                                System.out.println("7");
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in creating of InputStream", ex);
+                                System.out.println("8");
                 }
                 
                 // Send the chunks with CHUNK_BYTE_SIZE bytes
@@ -134,6 +128,7 @@ public class SendThread extends Thread {
                         }
                     }
                 }
+                            System.out.println("9");
                 
                 // Send the chunk with remainder bytes
                 if (remainder_chunk_size != 0) {
@@ -147,25 +142,28 @@ public class SendThread extends Thread {
                     }
                     
                 }
-                
-                try {
+                            System.out.println("10");
+               /* try {
                     dos.close();
+                                System.out.println("11");
                 } catch (IOException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
+                                System.out.println("12");
                 }
-                
+                */
                 AddToLog("SendThread: File has been successfully sent!");
             } else {
                 AddToLog("SendThread: File is not exist!");
             }
             
-            try {
+           /* try {
                 cis.close();
                 cos.close();
-                
+                            System.out.println("13");
             } catch (IOException ex) {
                 Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
-            }
+                            System.out.println("14");
+            }*/
         
         }
     

@@ -27,16 +27,15 @@ public class ClientThread extends Thread {
         UUID uuid_client;  // Unique id of client
         
         public ClientThread(Socket _client_socket, JTextArea _Logs) {
-            Logs = _Logs;
+        Logs = _Logs;
+        if (_client_socket != null) {
             uuid_client = UUID.randomUUID();
             this.client_socket = _client_socket;
-            
-            if (client_socket != null) {
-                AddToLog("ClientThread: Client thread connected to server!");
-            } else {
-                AddToLog("ClientThread: Connection can't be established");
-            }
+            AddToLog("ClientThread: Client thread connected to server!");
+        } else {
+            AddToLog("ClientThread: Connection can't be established");
         }
+    }
         
         public void AddToLog(String info) {
             String curr_info = Logs.getText();
