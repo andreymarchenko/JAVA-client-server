@@ -220,6 +220,8 @@ public class client extends javax.swing.JFrame {
             String path_to_file = null;
             String log_client = null;
             boolean IsConnect = false;
+            SendThread send_thread = null;
+            ClientThread ct = null;
             
     private void ConnectToServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerActionPerformed
         // TODO add your handling code here:
@@ -239,8 +241,10 @@ public class client extends javax.swing.JFrame {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, "Error in create socket", ex);
             }
 
-            ClientThread ct = new ClientThread(cs, jTextArea2);
-            IsConnect = true;
+            ct = new ClientThread(cs, jTextArea2);
+            if(cs != null) {
+                 IsConnect = true;
+            }
         }
         else {
             String curr_info = jTextArea2.getText();
@@ -251,8 +255,16 @@ public class client extends javax.swing.JFrame {
 
     private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
         // TODO add your handling code here:
-        
-        /*Disonnect from Server*/
+
+        if (cs != null) {
+            ct.stop();
+            send_thread.stop();
+            IsConnect = false;
+        } else {
+            String curr_info = jTextArea2.getText();
+            curr_info += "ClientMain: Connection with server is not exist!" + "\n";
+            jTextArea2.setText(curr_info);
+        }
         
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
@@ -269,11 +281,12 @@ public class client extends javax.swing.JFrame {
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
         // TODO add your handling code here:
         if (IsConnect) {
-            SendThread send_thread = new SendThread(cs, jTextArea2);
+            send_thread = new SendThread(cs, jTextArea2);
             String priority = (String)jComboBox1.getSelectedItem();
             
             path_to_file = jTextField1.getText();
             
+            System.out.println("1");
             send_thread.SendJavaByteFile(path_to_file, priority);
             }
          else {
@@ -322,38 +335,6 @@ public class client extends javax.swing.JFrame {
                 new client().setVisible(true);
             }
         });
-        
-        /*
-            System.out.println("Welcome to Client side");
-
-    Socket fromserver = null;
-
-    if (args.length==0) {
-      System.out.println("use: client hostname");
-      System.exit(-1);
-    }
-
-    System.out.println("Connecting to... "+args[0]);
-
-    fromserver = new Socket(args[0],4445);
-    BufferedReader in  = new BufferedReader(new InputStreamReader(fromserver.getInputStream()));
-    PrintWriter    out = new PrintWriter(fromserver.getOutputStream(),true); 
-    BufferedReader inu = new BufferedReader(new InputStreamReader(System.in));
-
-    String fuser,fserver;
-
-    while ((fuser = inu.readLine())!=null) {
-      out.println(fuser);
-      fserver = in.readLine();
-      System.out.println(fserver);
-      if (fuser.equalsIgnoreCase("close")) break;
-      if (fuser.equalsIgnoreCase("exit")) break;
-    }
-
-    out.close();
-    in.close();
-    inu.close();
-    fromserver.close();*/
   }
 
 
