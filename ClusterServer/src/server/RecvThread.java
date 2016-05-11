@@ -57,7 +57,6 @@ public class RecvThread extends Thread {
     public void run() {
 
 while(true) {
-System.out.println("1");
         File file;
         long size_file = 0;
         String name = null;
@@ -73,7 +72,6 @@ System.out.println("1");
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("2");
             String path_to_file = RELATIVE_PATH_FOR_FILES + name;
             file = new File(path_to_file);
 
@@ -92,7 +90,6 @@ System.out.println("1");
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("3");
             // Recv the chunks with CHUNK_BYTE_SIZE bytes
             if (num_of_chunks != 0) {
                 chunks_whole = new byte[(int) num_of_chunks][CHUNK_BYTE_SIZE];
@@ -118,7 +115,6 @@ System.out.println("1");
                 }
 
             }
-            System.out.println("4");
            /* try {
                 sdis.close();
                 sos.close();
@@ -134,7 +130,6 @@ System.out.println("1");
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
             }*/
-            System.out.println("5");
         }
     }
 }

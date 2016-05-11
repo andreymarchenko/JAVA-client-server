@@ -34,7 +34,8 @@ import javax.swing.JTextArea;
 
 public class SendThread extends Thread {
         final int CHUNK_BYTE_SIZE = 1024;
-    
+        final String FORMAT_FILE = "class";
+        
         JTextArea Logs = null;
         OutputStream cos;  // for writing bytes to stream
         Socket cs;
@@ -62,11 +63,21 @@ public class SendThread extends Thread {
             curr_info += info + "\n";
             Logs.setText(curr_info);
         }
-                
+            
+    private static String getFileExtension(File file) {
+        String fileName = file.getName();
+        // если в имени файла есть точка и она не является первым символом в названии файла
+        if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) // то вырезаем все знаки после последней точки в названии файла, то есть ХХХХХ.txt -> txt
+        {
+            return fileName.substring(fileName.lastIndexOf(".") + 1);
+        } // в противном случае возвращаем заглушку, то есть расширение не найдено
+        else {
+            return "";
+        }
+    }
         public void SendJavaByteFile(String _path_to_file, String _priority) {
             path_to_file = _path_to_file;
             priority = _priority;
-                        System.out.println("2");
         start();
         }
         
@@ -75,8 +86,13 @@ public class SendThread extends Thread {
             // At the first step we will send the general info about file
             // such as: name, size, priority
             File file = new File(path_to_file);
-                        System.out.println("3");
-            if (file.exists()) {
+            String format = getFileExtension(file);
+            
+            System.out.println(format);
+            if(file.exists()) {
+                
+                
+            if (format.equalsIgnoreCase(FORMAT_FILE)) {
                 String name;
                 long size_file = file.length();
                 
@@ -87,16 +103,13 @@ public class SendThread extends Thread {
                 // this info to server
                 
                 DataOutputStream dos = new DataOutputStream(cos);
-                            System.out.println("4");
                 try {
                     dos.writeLong(size_file);
                     dos.writeUTF(name);
                     dos.writeUTF(priority);
-                                System.out.println("5");
                     
                 } catch (IOException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
-                                System.out.println("6");
                 }
                 
                 /* At the second step we read bytes of JavaByteCode file */
@@ -110,10 +123,8 @@ public class SendThread extends Thread {
 
                 try {
                     cis = new FileInputStream(path_to_file);
-                                System.out.println("7");
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in creating of InputStream", ex);
-                                System.out.println("8");
                 }
                 
                 // Send the chunks with CHUNK_BYTE_SIZE bytes
@@ -128,7 +139,6 @@ public class SendThread extends Thread {
                         }
                     }
                 }
-                            System.out.println("9");
                 
                 // Send the chunk with remainder bytes
                 if (remainder_chunk_size != 0) {
@@ -142,7 +152,6 @@ public class SendThread extends Thread {
                     }
                     
                 }
-                            System.out.println("10");
                /* try {
                     dos.close();
                                 System.out.println("11");
@@ -152,6 +161,10 @@ public class SendThread extends Thread {
                 }
                 */
                 AddToLog("SendThread: File has been successfully sent!");
+            } else {
+                AddToLog("SendThread: Format of file incorrect! Should be .class");
+            }
+            
             } else {
                 AddToLog("SendThread: File is not exist!");
             }
