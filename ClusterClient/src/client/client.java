@@ -286,7 +286,6 @@ public class client extends javax.swing.JFrame {
             
             path_to_file = jTextField1.getText();
             
-            System.out.println("1");
             send_thread.SendJavaByteFile(path_to_file, priority);
             }
          else {
