@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.swing.JTextArea;
+import server.RecvThread;
 
 /**
  *
@@ -71,13 +72,9 @@ public class ServerThread extends Thread {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
             }
             
-            try {
-                sis = socket_client.getInputStream();
-                sos = socket_client.getOutputStream();
-            }
-            catch(IOException ex) {
-                Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: error in getting input or output streams", ex);
-            }
+            // Пока что для одного клиента
+            RecvThread RT = new RecvThread(socket_client, Logs);
+            RT.start();
             
         }
     }
