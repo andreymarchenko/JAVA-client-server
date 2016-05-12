@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client;
+package server;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -21,25 +21,15 @@ import javax.swing.JTextArea;
  *
  * @author Игорь
  */
-/*
-   Format data for sending:
-   1.Header (42 bytes)
-     1.1.Name of file (32 bytes)
-     1.2.Size of file (4 bytes)
-     1.3.Priority (6 bytes)
-   2.Data (> 0 bytes)
- */
 public class SendThread extends Thread {
 
+    final String RELATIVE_PATH_FOR_RESULTS = "src/Results/";
     final int CHUNK_BYTE_SIZE = 1024;
-    final String FORMAT_FILE = "class";
-
     JTextArea Logs = null;
-    OutputStream cos;  // for writing bytes to stream
-    Socket cs;
+    Socket cs = null;
+    OutputStream sos = null;
     String path_to_file = null;
-    String priority;
-    InputStream cis; // for file
+    InputStream sis = null;
 
     public SendThread(Socket _cs, JTextArea _Logs) {
         cs = _cs;
@@ -48,7 +38,7 @@ public class SendThread extends Thread {
         if (cs != null) {
 
             try {
-                cos = cs.getOutputStream(); // Get the output stream. Now we may send the data to client
+                sos = cs.getOutputStream(); // Get the output stream. Now we may send the result to client
             } catch (IOException ex) {
                 Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error of getting output stream", ex);
             }
@@ -62,53 +52,35 @@ public class SendThread extends Thread {
         Logs.setText(curr_info);
     }
 
-    private static String getFileExtension(File file) {
-        String fileName = file.getName();
-        // если в имени файла есть точка и она не является первым символом в названии файла
-        if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) // то вырезаем все знаки после последней точки в названии файла, то есть ХХХХХ.txt -> txt
-        {
-            return fileName.substring(fileName.lastIndexOf(".") + 1);
-        } // в противном случае возвращаем заглушку, то есть расширение не найдено
-        else {
-            return "";
-        }
-    }
-
-    public void SendJavaByteFile(String _path_to_file, String _priority) {
+    public void SendResult(String _path_to_file) {
         path_to_file = _path_to_file;
-        priority = _priority;
         start();
     }
 
     @Override
     public void run() {
-        // At the first step we will send the general info about file
-        // such as: name, size, priority
-        File file = new File(path_to_file);
-        String format = getFileExtension(file);
 
-        System.out.println(format);
-        if (file.exists()) {
+        while (true) {
+            File file = new File(path_to_file);
 
-            if (format.equalsIgnoreCase(FORMAT_FILE)) {
+            if (file.exists()) {
+
                 String name;
                 long size_file = file.length();
 
                 name = file.getName();
 
                 // Initialization of general info complete. Now we are sending
-                // this info to server
-                DataOutputStream dos = new DataOutputStream(cos);
+                // this info to client
+                DataOutputStream sdos = new DataOutputStream(sos);
                 try {
-                    dos.writeLong(size_file);
-                    dos.writeUTF(name);
-                    dos.writeUTF(priority);
-
+                    sdos.writeLong(size_file);
+                    sdos.writeUTF(name);
                 } catch (IOException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                /* At the second step we read bytes of JavaByteCode file */
+                /* At the second step we read bytes of file with result */
                 byte[][] chunks_whole;
                 byte[] chunk_rem;
                 long num_of_chunks = size_file / CHUNK_BYTE_SIZE;
@@ -117,7 +89,7 @@ public class SendThread extends Thread {
                 chunk_rem = new byte[(int) remainder_chunk_size];
 
                 try {
-                    cis = new FileInputStream(path_to_file);
+                    sis = new FileInputStream(path_to_file);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in creating of InputStream", ex);
                 }
@@ -127,8 +99,8 @@ public class SendThread extends Thread {
                     chunks_whole = new byte[(int) num_of_chunks][CHUNK_BYTE_SIZE];
                     for (int i = 0; i < num_of_chunks; i++) {
                         try {
-                            int bytes_read = cis.read(chunks_whole[i], 0, CHUNK_BYTE_SIZE);
-                            cos.write(chunks_whole[i], 0, bytes_read);
+                            int bytes_read = sis.read(chunks_whole[i], 0, CHUNK_BYTE_SIZE);
+                            sos.write(chunks_whole[i], 0, bytes_read);
                         } catch (IOException ex) {
                             Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -140,8 +112,8 @@ public class SendThread extends Thread {
                     num_of_chunks++;
 
                     try {
-                        int bytes_read = cis.read(chunk_rem, 0, (int) remainder_chunk_size);
-                        cos.write(chunk_rem, 0, bytes_read);
+                        int bytes_read = sis.read(chunk_rem, 0, (int) remainder_chunk_size);
+                        sos.write(chunk_rem, 0, bytes_read);
                     } catch (IOException ex) {
                         Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -155,16 +127,15 @@ public class SendThread extends Thread {
                                 System.out.println("12");
                 }
                  */
-                AddToLog("SendThread: File has been successfully sent!");
+                AddToLog("SendThread: Result has been successfully sent!");
             } else {
-                AddToLog("SendThread: Format of file incorrect! Should be .class");
+                AddToLog("SendThread: File is not exist!");
             }
 
-        } else {
-            AddToLog("SendThread: File is not exist!");
         }
+    }
 
-        /* try {
+    /* try {
                 cis.close();
                 cos.close();
                             System.out.println("13");
@@ -172,6 +143,4 @@ public class SendThread extends Thread {
                 Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
                             System.out.println("14");
             }*/
-    }
-
 }

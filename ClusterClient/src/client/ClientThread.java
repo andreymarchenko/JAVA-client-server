@@ -20,13 +20,13 @@ import javax.swing.JTextArea;
  *
  * @author Игорь
  */
-
 public class ClientThread extends Thread {
-        JTextArea Logs = null;
-        Socket client_socket;
-        UUID uuid_client;  // Unique id of client
-        
-        public ClientThread(Socket _client_socket, JTextArea _Logs) {
+
+    JTextArea Logs = null;
+    Socket client_socket;
+    UUID uuid_client;  // Unique id of client
+
+    public ClientThread(Socket _client_socket, JTextArea _Logs) {
         Logs = _Logs;
         if (_client_socket != null) {
             uuid_client = UUID.randomUUID();
@@ -36,19 +36,19 @@ public class ClientThread extends Thread {
             AddToLog("ClientThread: Connection can't be established");
         }
     }
-        
-        public void AddToLog(String info) {
-            String curr_info = Logs.getText();
-            curr_info += info + "\n";
-            Logs.setText(curr_info);
-        }
-        
-        public UUID GetUUIDOfClient() {
-            return uuid_client;
-        }
-        
-        @Override // Annotation. Check exist of redefined method in parent class 'Thread'
-        public void run() {  // Connect to server
-        
-        }
+
+    public void AddToLog(String info) {
+        String curr_info = Logs.getText();
+        curr_info += info + "\n";
+        Logs.setText(curr_info);
+    }
+
+    public UUID GetUUIDOfClient() {
+        return uuid_client;
+    }
+
+    @Override // Annotation. Check exist of redefined method in parent class 'Thread'
+    public void run() {  // Connect to server
+
+    }
 }

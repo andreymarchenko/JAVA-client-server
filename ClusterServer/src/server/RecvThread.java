@@ -22,15 +22,15 @@ import javax.swing.JTextArea;
 
 /**
  *
- * @author Олег
+ * @author Игорь
  */
 public class RecvThread extends Thread {
-    
-        final String RELATIVE_PATH_FOR_FILES = "src/JavaByteFilesOnServer/"; 
-        final int CHUNK_BYTE_SIZE = 1024;
-        JTextArea Logs = null;
-        Socket cs = null;
-        InputStream sis = null;
+
+    final String RELATIVE_PATH_FOR_FILES = "src/JavaByteFilesOnServer/";
+    final int CHUNK_BYTE_SIZE = 1024;
+    JTextArea Logs = null;
+    Socket cs = null;
+    InputStream sis = null;
 
     public RecvThread(Socket _cs, JTextArea _Logs) {
         cs = _cs;
@@ -39,35 +39,35 @@ public class RecvThread extends Thread {
         if (cs != null) {
 
             try {
-                sis = cs.getInputStream(); // Get the output stream. Now we may send the data to client
+                sis = cs.getInputStream(); // Get the output stream. Now we may receive the data from client
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, "Error of getting intput stream", ex);
             }
 
         }
     }
-    
+
     public void AddToLog(String info) {
         String curr_info = Logs.getText();
         curr_info += info + "\n";
         Logs.setText(curr_info);
     }
-    
+
     @Override
     public void run() {
 
-while(true) {
-        File file;
-        long size_file = 0;
-        String name = null;
-        String priority_file;
+        while (true) {
+            File file;
+            long size_file = 0;
+            String name = null;
+            String priority_file;
 
-        DataInputStream sdis = new DataInputStream(sis);
+            DataInputStream sdis = new DataInputStream(sis);
 
-        // Reading bytes of data from client
-        try {
-            size_file = sdis.readLong();
-            name = sdis.readUTF();
+            // Reading bytes of data from client
+            try {
+                size_file = sdis.readLong();
+                name = sdis.readUTF();
                 priority_file = sdis.readUTF();
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -115,7 +115,7 @@ while(true) {
                 }
 
             }
-           /* try {
+            /* try {
                 sdis.close();
                 sos.close();
             } catch (IOException ex) {
@@ -124,7 +124,7 @@ while(true) {
 
             AddToLog("RecvThread: File has been successfully received!");
 
-           /*try {
+            /*try {
                 sis.close();
 
             } catch (IOException ex) {

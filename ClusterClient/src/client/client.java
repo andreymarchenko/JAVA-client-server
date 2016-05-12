@@ -9,7 +9,6 @@ package client;
  *
  * @author Игорь
  */
-
 import java.io.*;
 import java.net.*;
 import java.net.InetAddress;
@@ -214,18 +213,18 @@ public class client extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-            Socket cs;
-            int port = 4445;
-            InetAddress ip = null;
-            String path_to_file = null;
-            String log_client = null;
-            boolean IsConnect = false;
-            SendThread send_thread = null;
-            ClientThread ct = null;
-            
+    Socket cs;
+    int port = 4445;
+    InetAddress ip = null;
+    String path_to_file = null;
+    String log_client = null;
+    boolean IsConnect = false;
+    SendThread send_thread = null;
+    ClientThread ct = null;
+
     private void ConnectToServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerActionPerformed
         // TODO add your handling code here:
-        
+
         /*Connect to Server*/
         if (!IsConnect) {
             try {
@@ -242,11 +241,10 @@ public class client extends javax.swing.JFrame {
             }
 
             ct = new ClientThread(cs, jTextArea2);
-            if(cs != null) {
-                 IsConnect = true;
+            if (cs != null) {
+                IsConnect = true;
             }
-        }
-        else {
+        } else {
             String curr_info = jTextArea2.getText();
             curr_info += "ClientMain: Connection with server already exist!" + "\n";
             jTextArea2.setText(curr_info);
@@ -265,12 +263,12 @@ public class client extends javax.swing.JFrame {
             curr_info += "ClientMain: Connection with server is not exist!" + "\n";
             jTextArea2.setText(curr_info);
         }
-        
+
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
     private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
         // TODO add your handling code here:
-        
+
         /*In this section need create new form*/
     }//GEN-LAST:event_RegistrationActionPerformed
 
@@ -282,13 +280,12 @@ public class client extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (IsConnect) {
             send_thread = new SendThread(cs, jTextArea2);
-            String priority = (String)jComboBox1.getSelectedItem();
-            
+            String priority = (String) jComboBox1.getSelectedItem();
+
             path_to_file = jTextField1.getText();
-            
+
             send_thread.SendJavaByteFile(path_to_file, priority);
-            }
-         else {
+        } else {
             String curr_info = jTextArea2.getText();
             curr_info += "ClientMain: At the moment connection with server is not established!" + "\n";
             jTextArea2.setText(curr_info);
@@ -302,8 +299,6 @@ public class client extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-
-    
     public static void main(String args[]) throws IOException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -334,7 +329,7 @@ public class client extends javax.swing.JFrame {
                 new client().setVisible(true);
             }
         });
-  }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
