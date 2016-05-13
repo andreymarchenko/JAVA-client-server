@@ -46,13 +46,11 @@ public class SendThread extends Thread {
         Logs = _Logs;
 
         if (cs != null) {
-
             try {
                 cos = cs.getOutputStream(); // Get the output stream. Now we may send the data to client
             } catch (IOException ex) {
                 Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error of getting output stream", ex);
             }
-
         }
     }
 
@@ -87,9 +85,7 @@ public class SendThread extends Thread {
         File file = new File(path_to_file);
         String format = getFileExtension(file);
 
-        System.out.println(format);
         if (file.exists()) {
-
             if (format.equalsIgnoreCase(FORMAT_FILE)) {
                 String name;
                 long size_file = file.length();
@@ -103,7 +99,6 @@ public class SendThread extends Thread {
                     dos.writeLong(size_file);
                     dos.writeUTF(name);
                     dos.writeUTF(priority);
-
                 } catch (IOException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -138,14 +133,12 @@ public class SendThread extends Thread {
                 // Send the chunk with remainder bytes
                 if (remainder_chunk_size != 0) {
                     num_of_chunks++;
-
                     try {
                         int bytes_read = cis.read(chunk_rem, 0, (int) remainder_chunk_size);
                         cos.write(chunk_rem, 0, bytes_read);
                     } catch (IOException ex) {
                         Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
                 }
                 /* try {
                     dos.close();
