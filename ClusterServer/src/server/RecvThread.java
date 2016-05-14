@@ -31,6 +31,9 @@ public class RecvThread extends Thread {
     JTextArea Logs = null;
     Socket cs = null;
     InputStream sis = null;
+    
+    boolean IsRegistrated = false;
+    boolean IsAuthorized = false;
 
     public RecvThread(Socket _cs, JTextArea _Logs) {
         cs = _cs;
@@ -52,11 +55,19 @@ public class RecvThread extends Thread {
         curr_info += info + "\n";
         Logs.setText(curr_info);
     }
+    
+    public void Registration(String Login, String Password) {
+    }
 
-    @Override
-    public void run() {
+    public void Authorization(String Login, String Password) {
+        if (!IsAuthorized) {
 
-        while (true) {
+        }
+    }
+
+    public void Receive() {
+        if (IsAuthorized && IsRegistrated) {
+
             File file;
             long size_file = 0;
             String name = null;
@@ -131,5 +142,54 @@ public class RecvThread extends Thread {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
             }*/
         }
+
+    }
+    
+    public void WrongCommand() {
+        
+    }
+
+    /*
+       Commands from client:
+       
+       1. "R" - Registration
+       2. "A" - Authorization
+       3. "S" - Send
+     */
+    
+    public void HandlerOfClient() {
+        DataInputStream sdis = new DataInputStream(sis);
+        String login;
+        String password;
+        String command_from_client;
+
+        try {
+            command_from_client = sdis.readUTF();
+            if (command_from_client.equalsIgnoreCase("R")) {
+                login = sdis.readUTF();
+                password = sdis.readUTF();
+
+                Registration(login, password);
+            } else if (command_from_client.equalsIgnoreCase("A")) {
+                login = sdis.readUTF();
+                password = sdis.readUTF();
+
+                Authorization(login, password);
+            } else if (command_from_client.equalsIgnoreCase("S")) {
+                Receive();
+            } else {
+                WrongCommand();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void run() {
+
+        while (true) {
+            HandlerOfClient();
+
     }
 }

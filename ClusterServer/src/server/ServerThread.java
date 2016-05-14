@@ -72,9 +72,11 @@ public class ServerThread extends Thread {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
             }
             
-            // Пока что для одного клиента
             RecvThread RT = new RecvThread(socket_client, Logs);
             RT.start();
+            
+            /*SendThread ST = new SendThread(socket_client, Logs);
+            ST.SendResult(_path_to_file);*/
             
         }
     }
