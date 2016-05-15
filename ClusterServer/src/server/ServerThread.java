@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import java.util.UUID;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Hashtable;
 import javax.swing.JTextArea;
 import server.RecvThread;
 
@@ -33,6 +34,8 @@ public class ServerThread extends Thread {
     boolean IsStopped = false;
     InputStream sis;
     OutputStream sos;
+    Hashtable<String, Socket> allClient =
+             new Hashtable<String, Socket>(); // Login of client <-> SocketClient
     
     public ServerThread(JTextArea _Logs) {
         Logs = _Logs;
@@ -72,7 +75,7 @@ public class ServerThread extends Thread {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
             }
             
-            RecvThread RT = new RecvThread(socket_client, Logs);
+            RecvThread RT = new RecvThread(socket_client, Logs, allClient);
             RT.start();
             
             /*SendThread ST = new SendThread(socket_client, Logs);
@@ -94,62 +97,3 @@ public class ServerThread extends Thread {
     }
     
 }
-
-/*
-    System.out.println("Welcome to Server side");
-    BufferedReader in = null;
-    PrintWriter    out= null;
-
-    ServerSocket servers = null;
-    Socket       fromclient = null;
-
-    // create server socket
-    try {
-      servers = new ServerSocket(4445);
-    } catch (IOException e) {
-      System.out.println("Couldn't listen to port 4444");
-      System.exit(-1);
-    }
-
-    try {
-      System.out.print("Waiting for a client...");
-      fromclient= servers.accept();
-      System.out.println("Client connected");
-    } catch (IOException e) {
-      System.out.println("Can't accept");
-      System.exit(-1);
-    }
-
-    try {
-    in  = new BufferedReader(new 
-     InputStreamReader(fromclient.getInputStream()));
-    out = new PrintWriter(fromclient.getOutputStream(),true);
-
-    }
-    catch(IOException ex) {
-        
-    }
-    String input,output;
-    
-    System.out.println("Wait for messages");
-    try {
-    while ((input = in.readLine()) != null) {
-     if (input.equalsIgnoreCase("exit")) break;
-     out.println("S ::: "+input);
-     System.out.println(input);
-    }
-    }
-    catch(IOException ex) {
-        
-    }
-    
-    try {
-    out.close();
-    in.close();
-    fromclient.close();
-    servers.close();
-    }
-    catch(IOException ex) {
-        
-    }
-*/

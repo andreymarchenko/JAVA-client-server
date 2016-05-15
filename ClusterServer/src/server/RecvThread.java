@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
@@ -26,18 +27,22 @@ import javax.swing.JTextArea;
  */
 public class RecvThread extends Thread {
 
-    final String RELATIVE_PATH_FOR_FILES = "src/JavaByteFilesOnServer/";
+    final String RELATIVE_PATH_FOR__JAVA_BYTE_FILES = "src/Files/JavaByteFilesFromClient/";
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
     InputStream sis = null;
+    Hashtable<String, Socket> HT;
+    String Login = null;
+    String Password = null;
     
-    boolean IsRegistrated = false;
     boolean IsAuthorized = false;
+    boolean IsClientDisconnect = false;
 
-    public RecvThread(Socket _cs, JTextArea _Logs) {
+    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<String, Socket> _HT) {
         cs = _cs;
         Logs = _Logs;
+        HT = _HT;
 
         if (cs != null) {
 
@@ -50,23 +55,66 @@ public class RecvThread extends Thread {
         }
     }
 
+    public void SendReplyToClient(String reply) {
+        if(cs != null) {
+            try {
+                OutputStream sos = cs.getOutputStream();
+                DataOutputStream dsos = new DataOutputStream(sos);
+                
+                dsos.writeUTF(reply);
+            } catch (IOException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     public void AddToLog(String info) {
         String curr_info = Logs.getText();
         curr_info += info + "\n";
         Logs.setText(curr_info);
     }
-    
-    public void Registration(String Login, String Password) {
+
+    public void Registration(String _Login, String _Password) {
+        if (true) {
+            String reply = _Login + " was registrated!";
+            SendReplyToClient("RO");
+            AddToLog(reply);
+        } else {
+            String reply = _Login + " was not registrated!";
+            SendReplyToClient("RN"); // Пользователь с таким именем существует
+            AddToLog(reply);
+        }
+
+        IsClientDisconnect = true;
+        
+        try {
+            cs.close(); // Если пользователь авторизован, то Registration не будет вызвана, поэтому сокет не закроется
+        } catch (IOException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public void Authorization(String Login, String Password) {
+    public void Authorization(String _Login, String _Password) {
         if (!IsAuthorized) {
 
+            // ПРОВЕРЯЕМ_ЗАРЕГАН_ЛИ_ПОЛЗЬОВАТЕЛЬ
+            // IF_ZAREGAN: {
+            Login = _Login;
+            Password = _Password;
+            
+            HT.put(Login, cs);
+            
+            IsAuthorized = true;
+            // }
+            
+            SendReplyToClient("AO");
+        } else {
+            SendReplyToClient("AN");
         }
     }
 
     public void Receive() {
-        if (IsAuthorized && IsRegistrated) {
+        if (IsAuthorized) {
 
             File file;
             long size_file = 0;
@@ -83,7 +131,7 @@ public class RecvThread extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String path_to_file = RELATIVE_PATH_FOR_FILES + name;
+            String path_to_file = RELATIVE_PATH_FOR__JAVA_BYTE_FILES + name;
             file = new File(path_to_file);
 
             /* At the second step we read bytes of JavaByteCode file from client */
@@ -133,6 +181,7 @@ public class RecvThread extends Thread {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }*/
 
+            SendReplyToClient("SO");
             AddToLog("RecvThread: File has been successfully received!");
 
             /*try {
@@ -141,20 +190,51 @@ public class RecvThread extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
             }*/
+        } else {
+            SendReplyToClient("SN");
         }
 
     }
     
+    public void Disconnect() {
+        if(IsAuthorized) {
+            HT.remove(Login);
+            IsAuthorized = false;
+            
+            try {
+                cs.close();
+                SendReplyToClient("DO");
+            } catch (IOException ex) {
+                SendReplyToClient("DN");
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     public void WrongCommand() {
-        
+        SendReplyToClient("CN");
     }
 
     /*
-       Commands from client:
+       1. Commands from client:
        
-       1. "R" - Registration
-       2. "A" - Authorization
-       3. "S" - Send
+       1.1 "R" - Registration
+       1.2 "A" - Authorization
+       1.3 "S" - Send
+       1.4 "D" - Disconnect
+       1.5 "WRONG_COMMAND"
+    
+       2. Commands of server:
+       
+       2.1 "RO" - Registration is OK
+       2.2 "RN" - Registration is not OK
+       2.3 "AO" - Authorization is OK
+       2.4 "AN" - Authorization is not OK
+       2.5 "SO" - Receive file is OK
+       2.6 "SN" - Receive file is not OK
+       2.7 "DO" - Disconnect from server is OK
+       2.8 "DN" - Disconnect from server is not OK
+       2.9 "CN" - Wrong Command
      */
     
     public void HandlerOfClient() {
@@ -177,6 +257,8 @@ public class RecvThread extends Thread {
                 Authorization(login, password);
             } else if (command_from_client.equalsIgnoreCase("S")) {
                 Receive();
+            } else if (command_from_client.equalsIgnoreCase("D")) {
+                Disconnect();
             } else {
                 WrongCommand();
             }
@@ -190,6 +272,12 @@ public class RecvThread extends Thread {
 
         while (true) {
             HandlerOfClient();
+            
+            if(IsClientDisconnect) {
+                break;
 
+                
+            }
+        }
     }
 }
