@@ -75,7 +75,7 @@ public class RecvThread extends Thread {
     }
 
     public void Registration(String _Login, String _Password) {
-        if (true) {
+        if (true) { // Если пользователя нет в БД
             String reply = _Login + " was registrated!";
             SendReplyToClient("RO");
             AddToLog(reply);
