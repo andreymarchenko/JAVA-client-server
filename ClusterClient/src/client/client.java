@@ -46,7 +46,7 @@ public class client extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
-        ConnectToServer = new javax.swing.JButton();
+        javax.swing.JButton Authorization = new javax.swing.JButton();
         DisconnectFromServer = new javax.swing.JButton();
         Registration = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
@@ -100,11 +100,11 @@ public class client extends javax.swing.JFrame {
             }
         });
 
-        ConnectToServer.setLabel("Authorization");
-        ConnectToServer.setName(""); // NOI18N
-        ConnectToServer.addActionListener(new java.awt.event.ActionListener() {
+        Authorization.setLabel("Authorization");
+        Authorization.setName(""); // NOI18N
+        Authorization.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ConnectToServerActionPerformed(evt);
+                AuthorizationActionPerformed(evt);
             }
         });
 
@@ -163,7 +163,7 @@ public class client extends javax.swing.JFrame {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(DisconnectFromServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.PREFERRED_SIZE, 253, Short.MAX_VALUE)
-                                .addComponent(ConnectToServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(Authorization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -197,7 +197,7 @@ public class client extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(ConnectToServer, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Authorization, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(DisconnectFromServer, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -218,6 +218,7 @@ public class client extends javax.swing.JFrame {
     boolean IsRegFormAlreadyOpen = false;
     SendThread send_thread = null;
     RegistrationForm rform;
+    AuthorizationForm aform;
 
     public void AddToLog(String info) {
         String curr_info = jTextArea2.getText();
@@ -225,26 +226,9 @@ public class client extends javax.swing.JFrame {
         jTextArea2.setText(curr_info);
     }
 
-    private void ConnectToServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerActionPerformed
+    private void AuthorizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuthorizationActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ConnectToServerActionPerformed
-
-    private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
-        // TODO add your handling code here:
-
-        if (cs != null) {
-            send_thread.stop();
-            IsConnect = false;
-        } else {
-            AddToLog("ClientMain: Connection with server is not exist!");
-        }
-
-    }//GEN-LAST:event_DisconnectFromServerActionPerformed
-
-    private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
-        // TODO add your handling code here:
-        
-        if (!rform.isActive()) {
+        if (aform == null) {
             if (!IsConnect) {
                 try {
                     ip = InetAddress.getLocalHost();
@@ -266,10 +250,63 @@ public class client extends javax.swing.JFrame {
                 AddToLog("ClientMain: Connection with server already exist!");
             }
 
-            if (!IsRegistred) {
-                rform = new RegistrationForm(cs);
+            if (!IsAuthorized) {
+                aform = new AuthorizationForm();
+                aform.setVisible(true);
+                IsConnect = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true
+                IsAuthorized = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true
+                aform = null;
+            } else {
+                AddToLog("ClientMain: Client already registrated!");
+            }
+        } else {
+            AddToLog("ClientMain: RegistrationForm already open!");
+        }
+    }//GEN-LAST:event_AuthorizationActionPerformed
+
+    private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
+        // TODO add your handling code here:
+
+        if (cs != null) {
+            send_thread.stop();
+            IsConnect = false;
+        } else {
+            AddToLog("ClientMain: Connection with server is not exist!");
+        }
+
+    }//GEN-LAST:event_DisconnectFromServerActionPerformed
+
+    private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
+        // TODO add your handling code here:
+
+        if (rform == null) {
+            if (!IsConnect) {
+                try {
+                    ip = InetAddress.getLocalHost();
+                } catch (IOException ex) {
+                    Logger.getLogger(client.class.getName()).log(Level.SEVERE, "getLocalHost fail", ex);
+                }
+
+                try {
+                    cs = new Socket(ip, port);
+
+                } catch (IOException ex) {
+                    Logger.getLogger(client.class.getName()).log(Level.SEVERE, "Error in process of creating socket", ex);
+                }
+
+                if (cs != null) {
+                    IsConnect = true;
+                }
+            } else {
+                AddToLog("ClientMain: Connection with server already exist!");
+            }
+
+            if (!IsRegistred) { 
+                rform = new RegistrationForm();
                 rform.setVisible(true);
-                IsConnect = false;
+                IsConnect = false; // Нужно как-то определять, что мы зарегались. Если зарегались, то false
+                IsRegistred = true; // Нужно как-то определять, что мы зарегались. Если зарегались, то true
+                rform = null;
             } else {
                 AddToLog("ClientMain: Client already registrated!");
             }
@@ -285,15 +322,19 @@ public class client extends javax.swing.JFrame {
 
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
         // TODO add your handling code here:
-        if (IsConnect) {
-            send_thread = new SendThread(cs, jTextArea2);
-            String priority = (String) jComboBox1.getSelectedItem();
+        if (IsAuthorized) {
+            if (IsConnect) {
+                send_thread = new SendThread(cs, jTextArea2);
+                String priority = (String) jComboBox1.getSelectedItem();
 
-            path_to_file = jTextField1.getText();
+                path_to_file = jTextField1.getText();
 
-            send_thread.SendJavaByteFile(path_to_file, priority);
+                send_thread.SendJavaByteFile(path_to_file, priority);
+            } else {
+                AddToLog("ClientMain: At the moment connection with server is not established!");
+            }
         } else {
-            AddToLog("ClientMain: At the moment connection with server is not established!");
+            AddToLog("ClientMain: You are not authorized on server");
         }
     }//GEN-LAST:event_SendFileActionPerformed
 
@@ -338,7 +379,6 @@ public class client extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton ConnectToServer;
     private javax.swing.JButton DisconnectFromServer;
     private javax.swing.JButton ReadRezultOfExecution;
     private javax.swing.JButton Registration;
