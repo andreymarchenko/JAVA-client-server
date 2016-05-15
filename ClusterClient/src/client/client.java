@@ -252,6 +252,7 @@ public class client extends javax.swing.JFrame {
 
             if (!IsAuthorized) {
                 aform = new AuthorizationForm();
+                aform.setClientSocket(cs);
                 aform.setVisible(true);
                 IsConnect = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true
                 IsAuthorized = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true

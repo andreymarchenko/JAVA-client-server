@@ -76,11 +76,11 @@ public class RecvThread extends Thread {
 
     public void Registration(String _Login, String _Password) {
         if (true) { // Если пользователя нет в БД
-            String reply = _Login + " was registrated!";
+            String reply = "RecvThread:" + _Login + " was registrated!";
             SendReplyToClient("RO");
             AddToLog(reply);
         } else {
-            String reply = _Login + " was not registrated!";
+            String reply = "RecvThread:" + _Login + " was not registrated!";
             SendReplyToClient("RN"); // Пользователь с таким именем существует
             AddToLog(reply);
         }
@@ -101,14 +101,18 @@ public class RecvThread extends Thread {
             // IF_ZAREGAN: {
             Login = _Login;
             Password = _Password;
-            
+
             HT.put(Login, cs);
-            
+
             IsAuthorized = true;
             // }
-            
+
             SendReplyToClient("AO");
+            String reply = "RecvThread:" + Login + " is authorized";
+            AddToLog(reply);
         } else {
+            String reply = "RecvThread:" + "Authorization failed for " + Login;
+            AddToLog(reply);
             SendReplyToClient("AN");
         }
     }
