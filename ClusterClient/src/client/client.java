@@ -15,7 +15,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import client.ClientThread;
 import client.SendThread;
 import client.RecvThread;
 import client.RegistrationForm;
@@ -101,7 +100,7 @@ public class client extends javax.swing.JFrame {
             }
         });
 
-        ConnectToServer.setText("Connect to Server");
+        ConnectToServer.setLabel("Authorization");
         ConnectToServer.setName(""); // NOI18N
         ConnectToServer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -163,7 +162,7 @@ public class client extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(DisconnectFromServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                                .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.PREFERRED_SIZE, 253, Short.MAX_VALUE)
                                 .addComponent(ConnectToServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -214,57 +213,69 @@ public class client extends javax.swing.JFrame {
     String path_to_file = null;
     String log_client = null;
     boolean IsConnect = false;
+    boolean IsRegistred = false;
+    boolean IsAuthorized = false;
+    boolean IsRegFormAlreadyOpen = false;
     SendThread send_thread = null;
-    ClientThread ct = null;
+    RegistrationForm rform;
+
+    public void AddToLog(String info) {
+        String curr_info = jTextArea2.getText();
+        curr_info += info + "\n";
+        jTextArea2.setText(curr_info);
+    }
 
     private void ConnectToServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectToServerActionPerformed
         // TODO add your handling code here:
-
-        /*Connect to Server*/
-        if (!IsConnect) {
-            try {
-                ip = InetAddress.getLocalHost();
-            } catch (IOException ex) {
-                Logger.getLogger(client.class.getName()).log(Level.SEVERE, "getLocalHost fail", ex);
-            }
-
-            try {
-                cs = new Socket(ip, port);
-
-            } catch (IOException ex) {
-                Logger.getLogger(client.class.getName()).log(Level.SEVERE, "Error in process of creating socket", ex);
-            }
-
-            ct = new ClientThread(cs, jTextArea2);
-            if (cs != null) {
-                IsConnect = true;
-            }
-        } else {
-            String curr_info = jTextArea2.getText();
-            curr_info += "ClientMain: Connection with server already exist!" + "\n";
-            jTextArea2.setText(curr_info);
-        }
     }//GEN-LAST:event_ConnectToServerActionPerformed
 
     private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
         // TODO add your handling code here:
 
         if (cs != null) {
-            ct.stop();
             send_thread.stop();
             IsConnect = false;
         } else {
-            String curr_info = jTextArea2.getText();
-            curr_info += "ClientMain: Connection with server is not exist!" + "\n";
-            jTextArea2.setText(curr_info);
+            AddToLog("ClientMain: Connection with server is not exist!");
         }
 
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
     private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
         // TODO add your handling code here:
-        RegistrationForm myform =  new RegistrationForm();
-        myform.setVisible(true);
+        
+        if (!rform.isActive()) {
+            if (!IsConnect) {
+                try {
+                    ip = InetAddress.getLocalHost();
+                } catch (IOException ex) {
+                    Logger.getLogger(client.class.getName()).log(Level.SEVERE, "getLocalHost fail", ex);
+                }
+
+                try {
+                    cs = new Socket(ip, port);
+
+                } catch (IOException ex) {
+                    Logger.getLogger(client.class.getName()).log(Level.SEVERE, "Error in process of creating socket", ex);
+                }
+
+                if (cs != null) {
+                    IsConnect = true;
+                }
+            } else {
+                AddToLog("ClientMain: Connection with server already exist!");
+            }
+
+            if (!IsRegistred) {
+                rform = new RegistrationForm(cs);
+                rform.setVisible(true);
+                IsConnect = false;
+            } else {
+                AddToLog("ClientMain: Client already registrated!");
+            }
+        } else {
+            AddToLog("ClientMain: RegistrationForm already open!");
+        }
         /*In this section need create new form*/
     }//GEN-LAST:event_RegistrationActionPerformed
 
@@ -282,9 +293,7 @@ public class client extends javax.swing.JFrame {
 
             send_thread.SendJavaByteFile(path_to_file, priority);
         } else {
-            String curr_info = jTextArea2.getText();
-            curr_info += "ClientMain: At the moment connection with server is not established!" + "\n";
-            jTextArea2.setText(curr_info);
+            AddToLog("ClientMain: At the moment connection with server is not established!");
         }
     }//GEN-LAST:event_SendFileActionPerformed
 
