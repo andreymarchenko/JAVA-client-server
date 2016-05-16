@@ -212,11 +212,10 @@ public class client extends javax.swing.JFrame {
     InetAddress ip = null;
     String path_to_file = null;
     String log_client = null;
-    boolean IsConnect = false;
-    boolean IsRegistred = false;
     boolean IsAuthorized = false;
     boolean IsRegFormAlreadyOpen = false;
     SendThread send_thread = null;
+    RecvThread recv_thread = null;
     RegistrationForm rform;
     AuthorizationForm aform;
 
@@ -228,8 +227,7 @@ public class client extends javax.swing.JFrame {
 
     private void AuthorizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuthorizationActionPerformed
         // TODO add your handling code here:
-        if (aform == null) {
-            if (!IsConnect) {
+            if (!IsAuthorized) {
                 try {
                     ip = InetAddress.getLocalHost();
                 } catch (IOException ex) {
@@ -244,33 +242,49 @@ public class client extends javax.swing.JFrame {
                 }
 
                 if (cs != null) {
-                    IsConnect = true;
+                    aform = new AuthorizationForm();
+                    aform.setClientSocket(cs);
+                    aform.setVisible(true);
+                    IsAuthorized = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true
                 }
             } else {
-                AddToLog("ClientMain: Connection with server already exist!");
+                AddToLog("ClientMain: client already connected and authorized!");
             }
 
-            if (!IsAuthorized) {
-                aform = new AuthorizationForm();
-                aform.setClientSocket(cs);
-                aform.setVisible(true);
-                IsConnect = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true
-                IsAuthorized = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true
-                aform = null;
-            } else {
-                AddToLog("ClientMain: Client already registrated!");
-            }
-        } else {
-            AddToLog("ClientMain: RegistrationForm already open!");
-        }
     }//GEN-LAST:event_AuthorizationActionPerformed
 
     private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
         // TODO add your handling code here:
 
-        if (cs != null) {
-            send_thread.stop();
-            IsConnect = false;
+        if (IsAuthorized) {
+            try {
+                if (send_thread != null) {
+                    send_thread.stop();
+                }
+                
+                if (recv_thread != null) {
+                    recv_thread.stop();
+                }
+                
+                OutputStream cos = cs.getOutputStream();
+                DataOutputStream dcos = new DataOutputStream(cos);
+
+                dcos.writeUTF("D");
+
+                InputStream cis = cs.getInputStream();
+                DataInputStream dcis = new DataInputStream(cis);
+                String reply = dcis.readUTF();
+
+                if (reply.equalsIgnoreCase("DO")) {
+                    AddToLog("Disconnect is OK!");
+                } else {
+                    AddToLog("Disconnect is not OK!");
+                }
+
+                 //cs.close();
+            } catch (IOException ex) {
+                Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             AddToLog("ClientMain: Connection with server is not exist!");
         }
@@ -278,8 +292,10 @@ public class client extends javax.swing.JFrame {
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
     private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
-                rform = new RegistrationForm();
-                rform.setVisible(true);     
+        if (!IsAuthorized) {
+            rform = new RegistrationForm();
+            rform.setVisible(true);
+        }
     }//GEN-LAST:event_RegistrationActionPerformed
 
     private void ReadRezultOfExecutionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReadRezultOfExecutionActionPerformed
@@ -289,16 +305,12 @@ public class client extends javax.swing.JFrame {
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
         // TODO add your handling code here:
         if (IsAuthorized) {
-            if (IsConnect) {
-                send_thread = new SendThread(cs, jTextArea2);
-                String priority = (String) jComboBox1.getSelectedItem();
+            send_thread = new SendThread(cs, jTextArea2);
+            String priority = (String) jComboBox1.getSelectedItem();
 
-                path_to_file = jTextField1.getText();
+            path_to_file = jTextField1.getText();
 
-                send_thread.SendJavaByteFile(path_to_file, priority);
-            } else {
-                AddToLog("ClientMain: At the moment connection with server is not established!");
-            }
+            send_thread.SendJavaByteFile(path_to_file, priority);
         } else {
             AddToLog("ClientMain: You are not authorized on server");
         }

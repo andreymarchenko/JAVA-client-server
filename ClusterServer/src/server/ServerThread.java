@@ -31,11 +31,13 @@ public class ServerThread extends Thread {
     Socket socket_client;
     int port = 4445;
     InetAddress ip = null;
-    boolean IsStopped = false;
+    boolean IsStopped = true;
     InputStream sis;
     OutputStream sos;
     Hashtable<String, Socket> allClient =
              new Hashtable<String, Socket>(); // Login of client <-> SocketClient
+    
+    // PriorityBlockingQueue
     
     public ServerThread(JTextArea _Logs) {
         Logs = _Logs;
@@ -48,7 +50,7 @@ public class ServerThread extends Thread {
         }
         
         try {
-            server_socket = new ServerSocket(port,5, ip);
+            server_socket = new ServerSocket(port, 0, ip);
         }
         catch(IOException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in create server_socket", ex);
@@ -80,20 +82,26 @@ public class ServerThread extends Thread {
             
             /*SendThread ST = new SendThread(socket_client, Logs);
             ST.SendResult(_path_to_file);*/
-            
         }
     }
-    
+
     synchronized void StopServer() {
+
         IsStopped = true;
         AddToLog("ServerThread: Server was stopped!");
         stop();
+        
+        try {
+            server_socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
-    
+
     synchronized void StartServer() {
         IsStopped = false;
         AddToLog("ServerThread: Server was started!");
         start(); // Call the run method of client
     }
-    
 }

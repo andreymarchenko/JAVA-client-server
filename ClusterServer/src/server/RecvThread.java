@@ -27,7 +27,7 @@ import javax.swing.JTextArea;
  */
 public class RecvThread extends Thread {
 
-    final String RELATIVE_PATH_FOR__JAVA_BYTE_FILES = "src/Files/JavaByteFilesFromClient/";
+    final String RELATIVE_PATH_FOR_JAVA_BYTE_FILES = "src/Files/JavaByteFilesFromClient/";
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
@@ -135,7 +135,7 @@ public class RecvThread extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String path_to_file = RELATIVE_PATH_FOR__JAVA_BYTE_FILES + name;
+            String path_to_file = RELATIVE_PATH_FOR_JAVA_BYTE_FILES + name;
             file = new File(path_to_file);
 
             /* At the second step we read bytes of JavaByteCode file from client */
@@ -207,6 +207,7 @@ public class RecvThread extends Thread {
             
             try {
                 cs.close();
+                IsClientDisconnect = true;
                 SendReplyToClient("DO");
             } catch (IOException ex) {
                 SendReplyToClient("DN");

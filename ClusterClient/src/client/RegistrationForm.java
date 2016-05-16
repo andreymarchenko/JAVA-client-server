@@ -185,6 +185,7 @@ public class RegistrationForm extends javax.swing.JFrame {
 
     private void CloseHandler(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_CloseHandler
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_CloseHandler
 
     /**
