@@ -240,7 +240,6 @@ public class client extends javax.swing.JFrame {
             } else {
                 AddToLog("ClientMain: client already connected and authorized!");
             }
-
     }//GEN-LAST:event_AuthorizationActionPerformed
 
     private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
@@ -279,7 +278,6 @@ public class client extends javax.swing.JFrame {
         } else {
             AddToLog("ClientMain: Connection with server is not exist!");
         }
-
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
     private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed

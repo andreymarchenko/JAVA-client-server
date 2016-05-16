@@ -43,7 +43,8 @@ public class RecvThread extends Thread {
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;
-    ResultSet checkedpassword = null;
+    ResultSet checkedpair = null;
+    
     
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
@@ -154,51 +155,36 @@ public class RecvThread extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-         Connection c2 = null;        
+         Connection c = null;
          try {
-            c2 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
+            c = DriverManager.getConnection("jdbc:sqlite:BASE.db");
             System.out.println("Opened database successfully");
          }
          catch (SQLException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
         }        
         
-         PreparedStatement checkuser;
+         PreparedStatement checkpair;
          String str1 = "";
-        
-         try {
-            checkuser = c2.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
-            checkuser.setString(1, _Login);
-            checkedlogin = checkuser.executeQuery();
-            
-            while(checkedlogin.next()) {
-            str1 = checkedlogin.getString(1);
-            break;
-            }
-            
-            checkuser.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-         
-         PreparedStatement checkpassword;
          String str2 = "";
          
          try {
-            checkpassword = c2.prepareStatement("SELECT password FROM CLIENTS WHERE password = ?; ");
-            checkpassword.setString(1, _Login);
-            checkedpassword = checkpassword.executeQuery();
+            checkpair = c.prepareStatement("SELECT login,password FROM CLIENTS WHERE login = ?; ");
+            checkpair.setString(1, _Login);
+            checkedpair = checkpair.executeQuery();
             
-            while(checkedpassword.next()) {
-            str2 = checkedpassword.getString(1);
+            while(checkedpair.next()) {
+            str1 = checkedpair.getString(1);
+            str2 = checkedpair.getString(2);
             break;
             }
-            checkpassword.close();
+            
+            checkpair.close();
         } catch (SQLException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }        
+        }             
             
-         if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Login)) {
+         if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Password)) {
             Login = _Login;
             Password = _Password;
             HT.put(Login, cs);
