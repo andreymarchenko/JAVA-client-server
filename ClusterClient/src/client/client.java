@@ -65,7 +65,7 @@ public class client extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1000, 500));
+        setPreferredSize(new java.awt.Dimension(1000, 650));
 
         SendFile.setText("Send .class file");
         SendFile.addActionListener(new java.awt.event.ActionListener() {
@@ -147,7 +147,7 @@ public class client extends javax.swing.JFrame {
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(SendFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(Registration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGap(186, 186, 186))
+                                    .addGap(192, 192, 192))
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                     .addComponent(jLabel1)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -162,7 +162,7 @@ public class client extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(DisconnectFromServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.PREFERRED_SIZE, 253, Short.MAX_VALUE)
+                                .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
                                 .addComponent(Authorization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -278,43 +278,8 @@ public class client extends javax.swing.JFrame {
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
     private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
-        // TODO add your handling code here:
-
-        if (rform == null) {
-            if (!IsConnect) {
-                try {
-                    ip = InetAddress.getLocalHost();
-                } catch (IOException ex) {
-                    Logger.getLogger(client.class.getName()).log(Level.SEVERE, "getLocalHost fail", ex);
-                }
-
-                try {
-                    cs = new Socket(ip, port);
-
-                } catch (IOException ex) {
-                    Logger.getLogger(client.class.getName()).log(Level.SEVERE, "Error in process of creating socket", ex);
-                }
-
-                if (cs != null) {
-                    IsConnect = true;
-                }
-            } else {
-                AddToLog("ClientMain: Connection with server already exist!");
-            }
-
-            if (!IsRegistred) { 
                 rform = new RegistrationForm();
-                rform.setVisible(true);
-                IsConnect = false; // Нужно как-то определять, что мы зарегались. Если зарегались, то false
-                IsRegistred = true; // Нужно как-то определять, что мы зарегались. Если зарегались, то true
-                rform = null;
-            } else {
-                AddToLog("ClientMain: Client already registrated!");
-            }
-        } else {
-            AddToLog("ClientMain: RegistrationForm already open!");
-        }
-        /*In this section need create new form*/
+                rform.setVisible(true);     
     }//GEN-LAST:event_RegistrationActionPerformed
 
     private void ReadRezultOfExecutionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReadRezultOfExecutionActionPerformed
