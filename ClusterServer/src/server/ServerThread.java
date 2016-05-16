@@ -37,6 +37,8 @@ public class ServerThread extends Thread {
     Hashtable<String, Socket> allClient =
              new Hashtable<String, Socket>(); // Login of client <-> SocketClient
     
+    // PriorityBlockingQueue
+    
     public ServerThread(JTextArea _Logs) {
         Logs = _Logs;
         
