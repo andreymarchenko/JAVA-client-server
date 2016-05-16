@@ -66,6 +66,11 @@ public class client extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1000, 650));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         SendFile.setText("Send .class file");
         SendFile.addActionListener(new java.awt.event.ActionListener() {
@@ -162,7 +167,7 @@ public class client extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(DisconnectFromServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                                .addComponent(ReadRezultOfExecution, javax.swing.GroupLayout.PREFERRED_SIZE, 253, Short.MAX_VALUE)
                                 .addComponent(Authorization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -281,7 +286,7 @@ public class client extends javax.swing.JFrame {
                     AddToLog("Disconnect is not OK!");
                 }
 
-                 //cs.close();
+                IsAuthorized = false;
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -319,6 +324,40 @@ public class client extends javax.swing.JFrame {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        if (cs != null && IsAuthorized) {
+            try {
+                if (send_thread != null) {
+                    send_thread.stop();
+                }
+
+                if (recv_thread != null) {
+                    recv_thread.stop();
+                }
+
+                OutputStream cos = cs.getOutputStream();
+                DataOutputStream dcos = new DataOutputStream(cos);
+
+                dcos.writeUTF("D");
+
+                InputStream cis = cs.getInputStream();
+                DataInputStream dcis = new DataInputStream(cis);
+                String reply = dcis.readUTF();
+
+                if (reply.equalsIgnoreCase("DO")) {
+                    AddToLog("Disconnect is OK!");
+                } else {
+                    AddToLog("Disconnect is not OK!");
+                }
+
+                IsAuthorized = false;
+            } catch (IOException ex) {
+                Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

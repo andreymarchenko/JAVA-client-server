@@ -257,7 +257,7 @@ public class RecvThread extends Thread {
             }
         }
     }
-    
+
     public void WrongCommand() {
         SendReplyToClient("CN");
     }
