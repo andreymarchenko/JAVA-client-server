@@ -67,6 +67,11 @@ public class client extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(600, 440));
         setPreferredSize(new java.awt.Dimension(600, 440));
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         SendFile.setText("Send file");
         SendFile.setMaximumSize(new java.awt.Dimension(91, 23));
@@ -200,8 +205,6 @@ public class client extends javax.swing.JFrame {
     InetAddress ip = null;
     String path_to_file = null;
     String log_client = null;
-    boolean IsAuthorized = false;
-    boolean IsRegFormAlreadyOpen = false;
     SendThread send_thread = null;
     RecvThread recv_thread = null;
     RegistrationForm rform;
@@ -215,7 +218,7 @@ public class client extends javax.swing.JFrame {
 
     private void AuthorizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuthorizationActionPerformed
         // TODO add your handling code here:
-            if (!IsAuthorized) {
+            if (cs == null) {
                 try {
                     ip = InetAddress.getLocalHost();
                 } catch (IOException ex) {
@@ -233,7 +236,6 @@ public class client extends javax.swing.JFrame {
                     aform = new AuthorizationForm();
                     aform.setClientSocket(cs);
                     aform.setVisible(true);
-                    IsAuthorized = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true
                 }
             } else {
                 AddToLog("ClientMain: client already connected and authorized!");
@@ -244,7 +246,7 @@ public class client extends javax.swing.JFrame {
     private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
         // TODO add your handling code here:
 
-        if (IsAuthorized) {
+        if (cs != null) {
             try {
                 if (send_thread != null) {
                     send_thread.stop();
@@ -268,8 +270,9 @@ public class client extends javax.swing.JFrame {
                 } else {
                     AddToLog("Disconnect is not OK!");
                 }
+                
+                cs = null;
 
-                 //cs.close();
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -280,7 +283,7 @@ public class client extends javax.swing.JFrame {
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
     private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
-        if (!IsAuthorized) {
+        if (cs == null) {
             rform = new RegistrationForm();
             rform.setVisible(true);
         }
@@ -288,7 +291,7 @@ public class client extends javax.swing.JFrame {
 
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
         // TODO add your handling code here:
-        if (IsAuthorized) {
+        if (cs != null) {
             send_thread = new SendThread(cs, jTextArea2);
             String priority = (String) jComboBox1.getSelectedItem();
             send_thread.SendJavaByteFile(path_to_file, priority);
@@ -309,6 +312,39 @@ public class client extends javax.swing.JFrame {
             path_to_file = file.getAbsolutePath();    
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        if (cs != null) {
+            try {
+                if (send_thread != null) {
+                    send_thread.stop();
+                }
+
+                if (recv_thread != null) {
+                    recv_thread.stop();
+                }
+
+                OutputStream cos = cs.getOutputStream();
+                DataOutputStream dcos = new DataOutputStream(cos);
+
+                dcos.writeUTF("D");
+
+                InputStream cis = cs.getInputStream();
+                DataInputStream dcis = new DataInputStream(cis);
+                String reply = dcis.readUTF();
+
+                if (reply.equalsIgnoreCase("DO")) {
+                    AddToLog("Disconnect is OK!");
+                } else {
+                    AddToLog("Disconnect is not OK!");
+                }
+                
+            } catch (IOException ex) {
+                Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
