@@ -114,8 +114,8 @@ public class RecvThread extends Thread {
             checkuser.close();
         } catch (SQLException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }       
-        
+        }
+
         if (!str.equalsIgnoreCase(_Login)) { // Если пользователя нет в БД
             PreparedStatement adduser;
             try {
@@ -136,24 +136,18 @@ public class RecvThread extends Thread {
                 String directory_client_results = path_to_directory_client + "Results";
                 File directory_with_results_for_client = new File(directory_client_results);
                 directory_with_results_for_client.mkdir();
-                
+
                 String directory_client_binaries = path_to_directory_client + "JavaByteFiles";
                 File directory_with_binaries_from_client = new File(directory_client_binaries);
                 directory_with_binaries_from_client.mkdir();
-                
+
             } catch (SQLException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
             String reply = "RecvThread:" + _Login + " was registrated!";
             SendReplyToClient("RO");
             AddToLog(reply);
-                c1.close();
-                String reply = "RecvThread:" + _Login + " was registrated!";
-                SendReplyToClient("RO");
-                AddToLog(reply);
-            } catch (SQLException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }                      
+
         } else {
             String reply = "RecvThread:" + _Login + " was not registrated!";
             SendReplyToClient("RN"); // Пользователь с таким именем существует
@@ -161,7 +155,7 @@ public class RecvThread extends Thread {
         }
 
         IsClientDisconnect = true;
-        
+
         try {
             cs.close(); // Если пользователь авторизован, то Registration не будет вызвана, поэтому сокет не закроется
         } catch (IOException ex) {
@@ -173,76 +167,76 @@ public class RecvThread extends Thread {
         if (!IsAuthorized) {
             try {
                 Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         Connection c2 = null;        
-         try {
-            c2 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
-            System.out.println("Opened database successfully");
-         }
-         catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-        
-         PreparedStatement checkuser;
-         String str1 = "";
-        
-         try {
-            checkuser = c2.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
-            checkuser.setString(1, _Login);
-            checkedlogin = checkuser.executeQuery();
-            
-            while(checkedlogin.next()) {
-            str1 = checkedlogin.getString(1);
-            break;
+
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(RecvThread.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
-            
-            checkuser.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-         
-         PreparedStatement checkpassword;
-         String str2 = "";
-         
-         try {
-            checkpassword = c2.prepareStatement("SELECT password FROM CLIENTS WHERE password = ?; ");
-            checkpassword.setString(1, _Login);
-            checkedpassword = checkpassword.executeQuery();
-            
-            while(checkedpassword.next()) {
-            str2 = checkedpassword.getString(1);
-            break;
-            }
-            checkpassword.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-            
-         if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Login)) {
-            Login = _Login;
-            Password = _Password;
-            HT.put(Login, cs);
-            IsAuthorized = true;
-            SendReplyToClient("AO");
-            String reply = "RecvThread:" + Login + " is authorized";
-            AddToLog(reply);
-         
-        } else {
-            String reply = "RecvThread:" + "Authorization failed for " + Login;
-            AddToLog(reply);
-            SendReplyToClient("AN");
-            IsClientDisconnect = true;
+            Connection c2 = null;
             try {
-                cs.close();
-            } catch (IOException ex) {
+                c2 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
+                System.out.println("Opened database successfully");
+            } catch (SQLException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-         }
-        }
-        else {
-        SendReplyToClient("AN");
+
+            PreparedStatement checkuser;
+            String str1 = "";
+
+            try {
+                checkuser = c2.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
+                checkuser.setString(1, _Login);
+                checkedlogin = checkuser.executeQuery();
+
+                while (checkedlogin.next()) {
+                    str1 = checkedlogin.getString(1);
+                    break;
+                }
+
+                checkuser.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            PreparedStatement checkpassword;
+            String str2 = "";
+
+            try {
+                checkpassword = c2.prepareStatement("SELECT password FROM CLIENTS WHERE password = ?; ");
+                checkpassword.setString(1, _Login);
+                checkedpassword = checkpassword.executeQuery();
+
+                while (checkedpassword.next()) {
+                    str2 = checkedpassword.getString(1);
+                    break;
+                }
+                checkpassword.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Login)) {
+                Login = _Login;
+                Password = _Password;
+                HT.put(Login, cs);
+                IsAuthorized = true;
+                SendReplyToClient("AO");
+                String reply = "RecvThread:" + Login + " is authorized";
+                AddToLog(reply);
+
+            } else {
+                String reply = "RecvThread:" + "Authorization failed for " + Login;
+                AddToLog(reply);
+                SendReplyToClient("AN");
+                IsClientDisconnect = true;
+                try {
+                    cs.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            SendReplyToClient("AN");
         }
     }
 
@@ -325,9 +319,9 @@ public class RecvThread extends Thread {
             SendReplyToClient("SN");
         }
     }
-    
+
     public void Disconnect() {
-        if(IsAuthorized) {
+        if (IsAuthorized) {
             HT.remove(Login);
             IsAuthorized = false;
             try {
@@ -366,7 +360,7 @@ public class RecvThread extends Thread {
        2.8 "DN" - Disconnect from server is not OK
        2.9 "CN" - Wrong Command
      */
-    
+
     public void HandlerOfClient() {
         DataInputStream sdis = new DataInputStream(sis);
         String login;
