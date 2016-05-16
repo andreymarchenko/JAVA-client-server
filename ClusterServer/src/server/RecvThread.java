@@ -32,9 +32,9 @@ import javax.swing.JTextArea;
  */
 public class RecvThread extends Thread {
 
-    final String RELATIVE_PATH_FOR_JAVA_BYTE_FILES = "src/Files/JavaByteFilesFromClient/";
-    String path_to_java_byte_files;
-    String path_to_result_files;
+    final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
+    String path_to_java_byte_file;
+    String path_to_result_file;
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
@@ -115,8 +115,8 @@ public class RecvThread extends Thread {
             checkuser.close();
         } catch (SQLException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }       
-        
+        }
+
         if (!str.equalsIgnoreCase(_Login)) { // Если пользователя нет в БД
             PreparedStatement adduser;
             try {
@@ -127,12 +127,28 @@ public class RecvThread extends Thread {
                 adduser.executeUpdate();
                 adduser.close();
                 c1.close();
-                String reply = "RecvThread:" + _Login + " was registrated!";
-                SendReplyToClient("RO");
-                AddToLog(reply);
+
+                // Creating directories for each client
+                String directory_client = RELATIVE_PATH_FOR_ALL_DIRECTORIES + _Login;
+                File specially_directory_for_client = new File(directory_client);
+                specially_directory_for_client.mkdir();
+                String path_to_directory_client = directory_client + "/";
+
+                String directory_client_results = path_to_directory_client + "Results";
+                File directory_with_results_for_client = new File(directory_client_results);
+                directory_with_results_for_client.mkdir();
+
+                String directory_client_binaries = path_to_directory_client + "JavaByteFiles";
+                File directory_with_binaries_from_client = new File(directory_client_binaries);
+                directory_with_binaries_from_client.mkdir();
+
             } catch (SQLException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }                      
+            }
+            String reply = "RecvThread:" + _Login + " was registrated!";
+            SendReplyToClient("RO");
+            AddToLog(reply);
+
         } else {
             String reply = "RecvThread:" + _Login + " was not registrated!";
             SendReplyToClient("RN"); // Пользователь с таким именем существует
@@ -140,7 +156,7 @@ public class RecvThread extends Thread {
         }
 
         IsClientDisconnect = true;
-        
+
         try {
             cs.close(); // Если пользователь авторизован, то Registration не будет вызвана, поэтому сокет не закроется
         } catch (IOException ex) {
@@ -198,15 +214,10 @@ public class RecvThread extends Thread {
             AddToLog(reply);
             SendReplyToClient("AN");
             IsClientDisconnect = true;
-            try {
-                cs.close();
-            } catch (IOException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
          }
-        }
+    }
         else {
-        SendReplyToClient("AN");
+            SendReplyToClient("AN");
         }
     }
 
@@ -227,8 +238,8 @@ public class RecvThread extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String path_to_file = RELATIVE_PATH_FOR_JAVA_BYTE_FILES + name;
-            file = new File(path_to_file);
+            String path_to_java_byte_files = RELATIVE_PATH_FOR_ALL_DIRECTORIES + Login + "/JavaByteFiles/" + name;
+            file = new File(path_to_java_byte_files);
 
             /* At the second step we read bytes of JavaByteCode file from client */
             byte[][] chunks_whole;
@@ -241,7 +252,7 @@ public class RecvThread extends Thread {
             OutputStream sos = null;
 
             try {
-                sos = new FileOutputStream(path_to_file);
+                sos = new FileOutputStream(path_to_java_byte_files);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -289,9 +300,9 @@ public class RecvThread extends Thread {
             SendReplyToClient("SN");
         }
     }
-    
+
     public void Disconnect() {
-        if(IsAuthorized) {
+        if (IsAuthorized) {
             HT.remove(Login);
             IsAuthorized = false;
             try {
@@ -330,7 +341,7 @@ public class RecvThread extends Thread {
        2.8 "DN" - Disconnect from server is not OK
        2.9 "CN" - Wrong Command
      */
-    
+
     public void HandlerOfClient() {
         DataInputStream sdis = new DataInputStream(sis);
         String login;
