@@ -15,6 +15,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.logging.Level;
@@ -75,7 +80,48 @@ public class RecvThread extends Thread {
     }
 
     public void Registration(String _Login, String _Password) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         Connection c = null;        
+         try {
+            c = DriverManager.getConnection("jdbc:sqlite:BASE.db");
+            System.out.println("Opened database successfully");
+         }
+         catch (SQLException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        
+         PreparedStatement checkuser;
+         ResultSet checkedlogin=null;
+        
+        /*
+         try {
+            checkuser = c.prepareStatement("SELECT COUNT login FROM CLIENTS WHERE login = " + "VALUES (?); ");
+            checkuser.setString(1, _Login);
+            checkuser.executeUpdate();
+            checkedlogin = checkuser.getResultSet();
+            checkuser.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         */
+        
         if (true) { // Если пользователя нет в БД
+            PreparedStatement adduser;
+            try {
+                adduser = c.prepareStatement("INSERT INTO CLIENTS (login, password)"
+                        + " VALUES (?, ?); ");
+                adduser.setString(1, _Login);
+                adduser.setString(2, _Password);
+                adduser.executeUpdate();
+                adduser.close();
+                c.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }           
             String reply = "RecvThread:" + _Login + " was registrated!";
             SendReplyToClient("RO");
             AddToLog(reply);
@@ -119,7 +165,6 @@ public class RecvThread extends Thread {
 
     public void Receive() {
         if (IsAuthorized) {
-
             File file;
             long size_file = 0;
             String name = null;
@@ -176,7 +221,6 @@ public class RecvThread extends Thread {
                 } catch (IOException ex) {
                     Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
             /* try {
                 sdis.close();
@@ -197,18 +241,16 @@ public class RecvThread extends Thread {
         } else {
             SendReplyToClient("SN");
         }
-
     }
     
     public void Disconnect() {
         if(IsAuthorized) {
             HT.remove(Login);
             IsAuthorized = false;
-            
             try {
-                cs.close();
                 IsClientDisconnect = true;
                 SendReplyToClient("DO");
+                cs.close();
             } catch (IOException ex) {
                 SendReplyToClient("DN");
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -253,12 +295,10 @@ public class RecvThread extends Thread {
             if (command_from_client.equalsIgnoreCase("R")) {
                 login = sdis.readUTF();
                 password = sdis.readUTF();
-
                 Registration(login, password);
             } else if (command_from_client.equalsIgnoreCase("A")) {
                 login = sdis.readUTF();
                 password = sdis.readUTF();
-
                 Authorization(login, password);
             } else if (command_from_client.equalsIgnoreCase("S")) {
                 Receive();
@@ -274,14 +314,10 @@ public class RecvThread extends Thread {
 
     @Override
     public void run() {
-
         while (true) {
-            HandlerOfClient();
-            
+            HandlerOfClient();           
             if(IsClientDisconnect) {
-                break;
-
-                
+                break;                
             }
         }
     }
