@@ -43,6 +43,7 @@ public class RecvThread extends Thread {
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;
+    ResultSet checkedpassword = null;
     
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
@@ -88,9 +89,9 @@ public class RecvThread extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-         Connection c = null;        
+         Connection c1 = null;        
          try {
-            c = DriverManager.getConnection("jdbc:sqlite:BASE.db");
+            c1 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
             System.out.println("Opened database successfully");
          }
          catch (SQLException ex) {
@@ -101,7 +102,7 @@ public class RecvThread extends Thread {
          String str = "";
         
          try {
-            checkuser = c.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
+            checkuser = c1.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
             checkuser.setString(1, _Login);
             checkedlogin = checkuser.executeQuery();
             
@@ -118,13 +119,13 @@ public class RecvThread extends Thread {
         if (!str.equalsIgnoreCase(_Login)) { // Если пользователя нет в БД
             PreparedStatement adduser;
             try {
-                adduser = c.prepareStatement("INSERT INTO CLIENTS (login, password)"
+                adduser = c1.prepareStatement("INSERT INTO CLIENTS (login, password)"
                         + " VALUES (?, ?); ");
                 adduser.setString(1, _Login);
                 adduser.setString(2, _Password);
                 adduser.executeUpdate();
                 adduser.close();
-                c.close();
+                c1.close();
                 String reply = "RecvThread:" + _Login + " was registrated!";
                 SendReplyToClient("RO");
                 AddToLog(reply);
@@ -148,20 +149,64 @@ public class RecvThread extends Thread {
 
     public void Authorization(String _Login, String _Password) {
         if (!IsAuthorized) {
-
-            // ПРОВЕРЯЕМ_ЗАРЕГАН_ЛИ_ПОЛЗЬОВАТЕЛЬ
-            // IF_ZAREGAN: {
+            try {
+                Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         Connection c2 = null;        
+         try {
+            c2 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
+            System.out.println("Opened database successfully");
+         }
+         catch (SQLException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        
+         PreparedStatement checkuser;
+         String str1 = "";
+        
+         try {
+            checkuser = c2.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
+            checkuser.setString(1, _Login);
+            checkedlogin = checkuser.executeQuery();
+            
+            while(checkedlogin.next()) {
+            str1 = checkedlogin.getString(1);
+            break;
+            }
+            
+            checkuser.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+         
+         PreparedStatement checkpassword;
+         String str2 = "";
+         
+         try {
+            checkpassword = c2.prepareStatement("SELECT password FROM CLIENTS WHERE password = ?; ");
+            checkpassword.setString(1, _Login);
+            checkedpassword = checkpassword.executeQuery();
+            
+            while(checkedpassword.next()) {
+            str2 = checkedpassword.getString(1);
+            break;
+            }
+            checkpassword.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+            
+         if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Login)) {
             Login = _Login;
             Password = _Password;
-
             HT.put(Login, cs);
-
             IsAuthorized = true;
-            // }
-
             SendReplyToClient("AO");
             String reply = "RecvThread:" + Login + " is authorized";
             AddToLog(reply);
+         
         } else {
             String reply = "RecvThread:" + "Authorization failed for " + Login;
             AddToLog(reply);
@@ -172,6 +217,10 @@ public class RecvThread extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
+         }
+        }
+        else {
+        SendReplyToClient("AN");
         }
     }
 
