@@ -42,6 +42,7 @@ public class RecvThread extends Thread {
     Hashtable<String, Socket> HT;
     String Login = null;
     String Password = null;
+    ResultSet checkedlogin = null;
     
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
@@ -97,21 +98,24 @@ public class RecvThread extends Thread {
         }        
         
          PreparedStatement checkuser;
-         ResultSet checkedlogin=null;
+         String str = "";
         
-        /*
          try {
-            checkuser = c.prepareStatement("SELECT COUNT login FROM CLIENTS WHERE login = " + "VALUES (?); ");
+            checkuser = c.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
             checkuser.setString(1, _Login);
-            checkuser.executeUpdate();
-            checkedlogin = checkuser.getResultSet();
+            checkedlogin = checkuser.executeQuery();
+            
+            while(checkedlogin.next()) {
+            str = checkedlogin.getString(1);
+            break;
+            }
+            
             checkuser.close();
         } catch (SQLException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         */
+        }       
         
-        if (true) { // Если пользователя нет в БД
+        if (!str.equalsIgnoreCase(_Login)) { // Если пользователя нет в БД
             PreparedStatement adduser;
             try {
                 adduser = c.prepareStatement("INSERT INTO CLIENTS (login, password)"
@@ -121,12 +125,12 @@ public class RecvThread extends Thread {
                 adduser.executeUpdate();
                 adduser.close();
                 c.close();
+                String reply = "RecvThread:" + _Login + " was registrated!";
+                SendReplyToClient("RO");
+                AddToLog(reply);
             } catch (SQLException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }           
-            String reply = "RecvThread:" + _Login + " was registrated!";
-            SendReplyToClient("RO");
-            AddToLog(reply);
+            }                      
         } else {
             String reply = "RecvThread:" + _Login + " was not registrated!";
             SendReplyToClient("RN"); // Пользователь с таким именем существует
