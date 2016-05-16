@@ -71,6 +71,7 @@ public class RegistrationForm extends javax.swing.JFrame {
                     AddToLog("Registration is OK!");
                 } else {
                     AddToLog("Registration is not OK!");
+                    cs = null;
                 }
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);

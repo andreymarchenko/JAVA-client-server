@@ -217,8 +217,6 @@ public class client extends javax.swing.JFrame {
     InetAddress ip = null;
     String path_to_file = null;
     String log_client = null;
-    boolean IsAuthorized = false;
-    boolean IsRegFormAlreadyOpen = false;
     SendThread send_thread = null;
     RecvThread recv_thread = null;
     RegistrationForm rform;
@@ -232,7 +230,7 @@ public class client extends javax.swing.JFrame {
 
     private void AuthorizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuthorizationActionPerformed
         // TODO add your handling code here:
-            if (!IsAuthorized) {
+            if (cs == null) {
                 try {
                     ip = InetAddress.getLocalHost();
                 } catch (IOException ex) {
@@ -250,7 +248,6 @@ public class client extends javax.swing.JFrame {
                     aform = new AuthorizationForm();
                     aform.setClientSocket(cs);
                     aform.setVisible(true);
-                    IsAuthorized = true; // Нужно как-то определять, что мы авторизировались. Если авторизовались, то true
                 }
             } else {
                 AddToLog("ClientMain: client already connected and authorized!");
@@ -261,7 +258,7 @@ public class client extends javax.swing.JFrame {
     private void DisconnectFromServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectFromServerActionPerformed
         // TODO add your handling code here:
 
-        if (IsAuthorized) {
+        if (cs != null) {
             try {
                 if (send_thread != null) {
                     send_thread.stop();
@@ -285,8 +282,9 @@ public class client extends javax.swing.JFrame {
                 } else {
                     AddToLog("Disconnect is not OK!");
                 }
+                
+                cs = null;
 
-                IsAuthorized = false;
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -297,7 +295,7 @@ public class client extends javax.swing.JFrame {
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
     private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
-        if (!IsAuthorized) {
+        if (cs == null) {
             rform = new RegistrationForm();
             rform.setVisible(true);
         }
@@ -309,7 +307,7 @@ public class client extends javax.swing.JFrame {
 
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
         // TODO add your handling code here:
-        if (IsAuthorized) {
+        if (cs != null) {
             send_thread = new SendThread(cs, jTextArea2);
             String priority = (String) jComboBox1.getSelectedItem();
 
@@ -327,7 +325,7 @@ public class client extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-        if (cs != null && IsAuthorized) {
+        if (cs != null) {
             try {
                 if (send_thread != null) {
                     send_thread.stop();
@@ -351,8 +349,7 @@ public class client extends javax.swing.JFrame {
                 } else {
                     AddToLog("Disconnect is not OK!");
                 }
-
-                IsAuthorized = false;
+                
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -33,6 +33,8 @@ import javax.swing.JTextArea;
 public class RecvThread extends Thread {
 
     final String RELATIVE_PATH_FOR_JAVA_BYTE_FILES = "src/Files/JavaByteFilesFromClient/";
+    String path_to_java_byte_files;
+    String path_to_result_files;
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
@@ -160,6 +162,12 @@ public class RecvThread extends Thread {
             String reply = "RecvThread:" + "Authorization failed for " + Login;
             AddToLog(reply);
             SendReplyToClient("AN");
+            IsClientDisconnect = true;
+            try {
+                cs.close();
+            } catch (IOException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
