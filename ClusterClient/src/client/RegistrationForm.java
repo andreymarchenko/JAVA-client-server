@@ -166,20 +166,7 @@ public class RegistrationForm extends javax.swing.JFrame {
         if (jTextField1.getText() != null && jPasswordField1.getText() != null) {
             String login = jTextField1.getText();
             String password = jPasswordField1.getText();
-            Registration(login, password);
-            Socket soc;
-            
-            /* Class.forName("org.sqlite.JDBC");
-                Connection c = DriverManager.getConnection("jdbc:sqlite:BASE.db");
-                System.out.println("Opened database successfully");
-                PreparedStatement stmt = c.prepareStatement("INSERT INTO CLIENTS (login, password)"
-                        + " VALUES (?, ?); ");
-                stmt.setString(1, login1);
-                stmt.setString(2, password1);
-                stmt.executeUpdate();
-                stmt.close();
-                c.close();*/
-
+            Registration(login, password);                    
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
