@@ -204,18 +204,18 @@ public class RecvThread extends Thread {
         if(IsAuthorized) {
             HT.remove(Login);
             IsAuthorized = false;
-            
+
             try {
-                cs.close();
                 IsClientDisconnect = true;
                 SendReplyToClient("DO");
+                cs.close();
             } catch (IOException ex) {
                 SendReplyToClient("DN");
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-    
+
     public void WrongCommand() {
         SendReplyToClient("CN");
     }
