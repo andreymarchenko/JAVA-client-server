@@ -143,6 +143,7 @@ public class AuthorizationForm extends javax.swing.JFrame {
                 } else {
                     AddToLog("Authorization is not OK!");
                 }
+                
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
             }

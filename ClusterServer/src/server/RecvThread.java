@@ -207,6 +207,7 @@ public class RecvThread extends Thread {
             
             try {
                 cs.close();
+                IsClientDisconnect = true;
                 SendReplyToClient("DO");
             } catch (IOException ex) {
                 SendReplyToClient("DN");

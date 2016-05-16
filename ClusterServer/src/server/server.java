@@ -147,26 +147,37 @@ public class server extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     ServerThread st = null;
+
+    public void AddToLog(String info) {
+        String curr_info = jTextArea1.getText();
+        curr_info += info + "\n";
+        jTextArea1.setText(curr_info);
+    }
+
     private void StartServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartServerActionPerformed
         // TODO add your handling code here:
-        if(st == null) {
+        if (st == null) {
             st = new ServerThread(jTextArea1);
             st.StartServer();
+        } else {
+            AddToLog("ServerThread: Server already started!");
         }
     }//GEN-LAST:event_StartServerActionPerformed
 
     private void StopServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServerActionPerformed
         // TODO add your handling code here:
-        if(st != null) {
+        if (st != null) {
             st.StopServer();
             st = null;
+        } else {
+            AddToLog("ServerThread: Server is not started yet!");
         }
     }//GEN-LAST:event_StopServerActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) throws IOException{
+    public static void main(String args[]) throws IOException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
