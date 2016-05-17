@@ -18,37 +18,29 @@ import java.util.logging.Logger;
  * @author Andrey
  */
 public class ExecutingThread extends Thread{
-   public ExecutingThread() {
-   
+   public ExecutingThread() {   
    }   
-   public void execute() {
-       ProcessBuilder procBuilder = new ProcessBuilder("java", "-jar", "sqlite-jdbc-3.8.11.2.jar");       
+   
+   public void execute(String str) {        
+       File fl = new File(str);
+       ProcessBuilder procBuilder = new ProcessBuilder("java", "-jar", "C:\\JAVA-client-server\\ClusterServer\\easy.jar");       
+       procBuilder.directory(fl);
+       procBuilder.redirectErrorStream(true);
        try {
-           Process process = procBuilder.start();          
-           procBuilder.redirectErrorStream(true);
+           Process process = procBuilder.start();
            InputStream stdout = process.getInputStream();
            InputStreamReader isrStdout = new InputStreamReader(stdout);
            BufferedReader brStdout = new BufferedReader(isrStdout);
            String line = null;
-           System.out.println("huuuu");
-           while(brStdout.readLine()!=null) {
+           while((line = brStdout.readLine()) != null) {
                System.out.println(line);
            }
-           try {
-               int exitVal = process.waitFor();
-               System.out.println(exitVal);
-           } catch (InterruptedException ex) {
-               Logger.getLogger(ExecutingThread.class.getName()).log(Level.SEVERE, null, ex);
-           }
        } catch (IOException ex) {
-           Logger.getLogger(ExecutingThread.class.getName()).log(Level.SEVERE, null, ex);
-       }
-       
+           Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
+       }             
    }
     
     public void run() {
-        while(true) {
 
-}
     }
 }

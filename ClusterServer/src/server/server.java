@@ -12,6 +12,8 @@ package server;
 
 import java.io.*;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import server.ServerThread;
 
 public class server extends javax.swing.JFrame {
@@ -161,9 +163,8 @@ public class server extends javax.swing.JFrame {
     }//GEN-LAST:event_StopServerActionPerformed
 
     private void StopServer1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer1ActionPerformed
-        ExecutingThread ex = new ExecutingThread();
-        //String str="C:/Users/Andrey/Desktop/JavaApplication7.class";
-        ex.execute();      
+        ExecutingThread et = new ExecutingThread();
+        et.execute("C:\\JAVA-client-server\\ClusterServer");
     }//GEN-LAST:event_StopServer1ActionPerformed
 
     private void StopServer2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer2ActionPerformed
