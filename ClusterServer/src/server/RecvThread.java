@@ -313,6 +313,8 @@ public class RecvThread extends Thread {
                 SendReplyToClient("DN");
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } else {
+            SendReplyToClient("DN");
         }
     }
 
