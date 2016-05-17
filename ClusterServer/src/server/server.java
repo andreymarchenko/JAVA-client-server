@@ -161,7 +161,9 @@ public class server extends javax.swing.JFrame {
     }//GEN-LAST:event_StopServerActionPerformed
 
     private void StopServer1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer1ActionPerformed
-        // TODO add your handling code here:
+        ExecutingThread ex = new ExecutingThread();
+        //String str="C:/Users/Andrey/Desktop/JavaApplication7.class";
+        ex.execute();      
     }//GEN-LAST:event_StopServer1ActionPerformed
 
     private void StopServer2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer2ActionPerformed
