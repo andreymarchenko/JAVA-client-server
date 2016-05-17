@@ -331,6 +331,7 @@ public class client extends javax.swing.JFrame {
             }
         } else {
             AddToLog("Connection with server is not exist, please, connect to server!");
+            IsConnect = false;
         }
     }//GEN-LAST:event_DisconnectFromServerActionPerformed
 
