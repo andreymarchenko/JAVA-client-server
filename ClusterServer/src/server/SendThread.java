@@ -52,7 +52,7 @@ public class SendThread extends Thread {
         Logs.setText(curr_info);
     }
 
-    public void SendResult(String _path_to_file) {
+    public void SendResult(String _path_to_file, String _priority_file) {
         path_to_file = _path_to_file;
         start();
     }
@@ -76,6 +76,7 @@ public class SendThread extends Thread {
                 try {
                     sdos.writeLong(size_file);
                     sdos.writeUTF(name);
+                    
                 } catch (IOException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                 }

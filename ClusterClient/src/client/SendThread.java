@@ -96,6 +96,7 @@ public class SendThread extends Thread {
                 // this info to server
                 DataOutputStream dos = new DataOutputStream(cos);
                 try {
+                    dos.writeUTF("S");
                     dos.writeLong(size_file);
                     dos.writeUTF(name);
                     dos.writeUTF(priority);
