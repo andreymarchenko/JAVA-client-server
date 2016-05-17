@@ -5,10 +5,17 @@
  */
 package server;
 
+import java.util.concurrent.PriorityBlockingQueue;
+
 /**
  *
  * @author Игорь
  */
 public class QueueHandlerThread {
+    PriorityBlockingQueue PBQ;
+    
+    QueueHandlerThread() {
+        
+    }
     
 }
