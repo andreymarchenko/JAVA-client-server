@@ -7,7 +7,7 @@ package server;
 
 /**
  *
- * @author Олег
+ * @author Игорь
  */
 public class Key {
     String Login;
