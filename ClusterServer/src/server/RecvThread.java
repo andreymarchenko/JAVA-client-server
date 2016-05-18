@@ -39,7 +39,7 @@ public class RecvThread extends Thread {
     JTextArea Logs = null;
     Socket cs = null;
     InputStream sis = null;
-    Hashtable<String, Socket> HT;
+    static Hashtable<String, Socket> HT;
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;

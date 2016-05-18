@@ -163,8 +163,8 @@ public class server extends javax.swing.JFrame {
     }//GEN-LAST:event_StopServerActionPerformed
 
     private void StopServer1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer1ActionPerformed
-        ExecutingThread et = new ExecutingThread();
-        et.execute("C:\\JAVA-client-server\\ClusterServer");
+        /*ExecutingThread et = new ExecutingThread();
+        et.execute("C:\\JAVA-client-server\\ClusterServer");*/
     }//GEN-LAST:event_StopServer1ActionPerformed
 
     private void StopServer2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer2ActionPerformed

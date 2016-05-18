@@ -17,12 +17,15 @@ import java.util.logging.Logger;
  *
  * @author Andrey
  */
-public class ExecutingThread extends Thread{
-   public ExecutingThread() {   
+public class ExecutingThread extends Thread {
+    
+    String path_to_jar_file;
+   public ExecutingThread(String _path_to_jar_file) {
+       path_to_jar_file = _path_to_jar_file;
    }   
    
-   public void execute(String str) {        
-       File fl = new File(str);
+   public void execute() {        
+       File fl = new File(path_to_jar_file);
        ProcessBuilder procBuilder = new ProcessBuilder("java", "-jar", "C:\\JAVA-client-server\\ClusterServer\\easy.jar");       
        procBuilder.directory(fl);
        procBuilder.redirectErrorStream(true);
@@ -40,7 +43,8 @@ public class ExecutingThread extends Thread{
        }             
    }
     
+    @Override
     public void run() {
-
+        execute();
     }
 }
