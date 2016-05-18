@@ -18,12 +18,15 @@ public class BlockInstance {
     Socket cs;
     String path_to_result = "";
     String priority;
+    boolean LookedByQueue = false;
     JTextArea Logs;
     
     SendThread ST = null;
     
     
-    BlockInstance( Socket _cs,  JTextArea _Logs) {    
+    BlockInstance( Socket _cs,  String _path_to_jar_file, String _priority, JTextArea _Logs) {    
+        path_to_jar_file = _path_to_jar_file;
+        priority = _priority;
         cs = _cs;
         Logs = _Logs;
         
@@ -34,9 +37,8 @@ public class BlockInstance {
         path_to_result = _path_to_result;
     }
     
-    public void setFileData(String _path_to_jar_file, String _priority) {
-        path_to_jar_file = _path_to_jar_file;
-        priority = _priority;
+    public void setLookedByQueue(boolean _LookedByQueue) {
+        LookedByQueue = _LookedByQueue;
     }
     
     public void SendResults() {

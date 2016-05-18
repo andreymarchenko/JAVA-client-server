@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import server.BlockInstance;
+import server.Key;
 
 /**
  *
@@ -40,7 +41,7 @@ public class RecvThread extends Thread {
     JTextArea Logs = null;
     Socket cs = null;
     InputStream sis = null;
-    static Hashtable<String, BlockInstance> HT;
+    static Hashtable<Key, BlockInstance> HT;
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;
@@ -50,7 +51,7 @@ public class RecvThread extends Thread {
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
 
-    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<String, BlockInstance> _HT) {
+    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<Key, BlockInstance> _HT) {
         cs = _cs;
         Logs = _Logs;
         HT = _HT;
@@ -205,8 +206,6 @@ public class RecvThread extends Thread {
 
                 Login = _Login;
                 Password = _Password;
-                BlockInstance BI = new BlockInstance(cs, Logs);
-                HT.put(Login, BI);
                 IsAuthorized = true;
                 SendReplyToClient("AO");
                 String reply = "RecvThread:" + Login + " is authorized";
@@ -229,7 +228,7 @@ public class RecvThread extends Thread {
             File file;
             long size_file = 0;
             String name = null;
-            String priority_file;
+            String priority_file = null;
 
             DataInputStream sdis = new DataInputStream(sis);
 
@@ -290,6 +289,11 @@ public class RecvThread extends Thread {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }*/
 
+            Key key = new Key(Login, name);
+            
+            BlockInstance BI = new BlockInstance(cs, path_to_java_byte_files, priority_file, Logs);
+            HT.put(key, BI);
+                
             SendReplyToClient("SO");
             AddToLog("RecvThread: File has been successfully received!");
 
@@ -306,7 +310,6 @@ public class RecvThread extends Thread {
 
     public void Disconnect() {
         if (IsAuthorized) {
-            HT.remove(Login);
             IsAuthorized = false;
             try {
                 IsClientDisconnect = true;

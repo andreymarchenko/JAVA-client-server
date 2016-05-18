@@ -23,6 +23,7 @@ import javax.swing.JTextArea;
 import server.RecvThread;
 import server.QueueHandlerThread;
 import server.BlockInstance;
+import server.Key;
 
 /**
  *
@@ -39,8 +40,8 @@ public class ServerThread extends Thread {
     InputStream sis;
     OutputStream sos;
     QueueHandlerThread QHT;
-    Hashtable<String, BlockInstance> allClient =
-             new Hashtable<String, BlockInstance>(); // Login of client <-> SocketClient
+    Hashtable<Key, BlockInstance> allClient =
+             new Hashtable<Key, BlockInstance>(); // Login of client <-> SocketClient
     
     // PriorityBlockingQueue
     

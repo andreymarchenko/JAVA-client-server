@@ -27,11 +27,11 @@ enum STATUSES {
 
 public class QueueHandlerThread extends Thread {
     static PriorityBlockingQueue PBQ;
-    static Hashtable<String, BlockInstance> HT;
+    static Hashtable<Key, BlockInstance> HT;
     JTable Table;
     JTextArea Logs;
 
-    QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<String, BlockInstance> _HT) {
+    QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<Key, BlockInstance> _HT) {
         Table = _Table;
         Logs = _Logs;
         HT = _HT;
