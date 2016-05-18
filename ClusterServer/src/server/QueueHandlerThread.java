@@ -18,6 +18,13 @@ import server.BlockInstance;
  *
  * @author Игорь
  */
+
+enum STATUSES {
+    PENDING,
+    START,
+    FINISH
+};
+
 public class QueueHandlerThread extends Thread {
     static PriorityBlockingQueue PBQ;
     static Hashtable<String, BlockInstance> HT;
@@ -34,6 +41,15 @@ public class QueueHandlerThread extends Thread {
         String curr_info = Logs.getText();
         curr_info += info + "\n";
         Logs.setText(curr_info);
+    }
+    
+    public String ConvertSTATUSESToString(STATUSES S) {
+        switch(S) {
+            case PENDING: return "PENDING";
+            case START: return "START";
+            case FINISH: return "FINISH";
+            default: return "N/A";             
+        }
     }
 
     @Override
