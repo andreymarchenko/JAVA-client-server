@@ -41,7 +41,7 @@ public class BlockInstance {
         LookedByQueue = _LookedByQueue;
     }
     
-    public void SendResults() {
+    synchronized public void SendResults() {
         if(ST != null) {
             ST.SendResult(path_to_result);
         }

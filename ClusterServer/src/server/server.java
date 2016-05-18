@@ -73,7 +73,7 @@ public class server extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Login of client", "Name of task", "Priority", "Status"
+                "Login_client", "Name_task", "Priority", "Status"
             }
         ));
         jTable1.setMaximumSize(new java.awt.Dimension(104, 64));

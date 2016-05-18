@@ -7,9 +7,11 @@ package server;
 
 import java.net.Socket;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.table.TableColumn;
 import server.SendThread;
 import server.ExecutingThread;
 import server.BlockInstance;
@@ -26,10 +28,17 @@ enum STATUSES {
 };
 
 public class QueueHandlerThread extends Thread {
+
     static PriorityBlockingQueue PBQ;
     static Hashtable<Key, BlockInstance> HT;
-    JTable Table;
+    
     JTextArea Logs;
+    
+    JTable Table;
+    String[] columnNames = {"Login_client",
+        "Name_task",
+        "Priority",
+        "Status"};
 
     QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<Key, BlockInstance> _HT) {
         Table = _Table;
@@ -52,10 +61,23 @@ public class QueueHandlerThread extends Thread {
         }
     }
 
+    public void AddTaskToQueue(BlockInstance BI) {
+        //Table.add
+       // TableColumn TC = null;
+       // TC = Table.getColumnModel().getColumn(0).
+    }
+    
     @Override
     public void run() {
-        while(true) {
-            
+        while (true) {
+            for (Map.Entry<Key, BlockInstance> entrySet : HT.entrySet()) {
+                Key key = entrySet.getKey();
+                BlockInstance BI = entrySet.getValue();
+                if(BI.LookedByQueue == false) {
+                    BI.LookedByQueue = true;
+                    AddTaskToQueue(BI);
+                }
+            }
         }
 
     }

@@ -198,10 +198,10 @@ public class RecvThread extends Thread {
             }
             
             checkpair.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }             
-            
+            } catch (SQLException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Password)) {
 
                 Login = _Login;
@@ -215,10 +215,9 @@ public class RecvThread extends Thread {
                 String reply = "RecvThread:" + "Authorization failed for " + Login;
                 AddToLog(reply);
                 SendReplyToClient("AN");
-            IsClientDisconnect = true;
-         }
-    }
-        else {
+                IsClientDisconnect = true;
+            }
+        } else {
             SendReplyToClient("AN");
         }
     }
