@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
+import server.BlockInstance;
 
 /**
  *
@@ -39,7 +40,7 @@ public class RecvThread extends Thread {
     JTextArea Logs = null;
     Socket cs = null;
     InputStream sis = null;
-    static Hashtable<String, Socket> HT;
+    static Hashtable<String, BlockInstance> HT;
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;
@@ -49,7 +50,7 @@ public class RecvThread extends Thread {
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
 
-    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<String, Socket> _HT) {
+    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<String, BlockInstance> _HT) {
         cs = _cs;
         Logs = _Logs;
         HT = _HT;
@@ -200,19 +201,21 @@ public class RecvThread extends Thread {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
         }             
             
-         if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Password)) {
-            Login = _Login;
-            Password = _Password;
-            HT.put(Login, cs);
-            IsAuthorized = true;
-            SendReplyToClient("AO");
-            String reply = "RecvThread:" + Login + " is authorized";
-            AddToLog(reply);
-         
-        } else {
-            String reply = "RecvThread:" + "Authorization failed for " + Login;
-            AddToLog(reply);
-            SendReplyToClient("AN");
+            if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Password)) {
+
+                Login = _Login;
+                Password = _Password;
+                BlockInstance BI = new BlockInstance(cs, Logs);
+                HT.put(Login, BI);
+                IsAuthorized = true;
+                SendReplyToClient("AO");
+                String reply = "RecvThread:" + Login + " is authorized";
+                AddToLog(reply);
+
+            } else {
+                String reply = "RecvThread:" + "Authorization failed for " + Login;
+                AddToLog(reply);
+                SendReplyToClient("AN");
             IsClientDisconnect = true;
          }
     }

@@ -22,6 +22,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import server.RecvThread;
 import server.QueueHandlerThread;
+import server.BlockInstance;
 
 /**
  *
@@ -38,8 +39,8 @@ public class ServerThread extends Thread {
     InputStream sis;
     OutputStream sos;
     QueueHandlerThread QHT;
-    Hashtable<String, Socket> allClient =
-             new Hashtable<String, Socket>(); // Login of client <-> SocketClient
+    Hashtable<String, BlockInstance> allClient =
+             new Hashtable<String, BlockInstance>(); // Login of client <-> SocketClient
     
     // PriorityBlockingQueue
     
@@ -61,7 +62,7 @@ public class ServerThread extends Thread {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in create server_socket", ex);
         }
         
-        QHT = new QueueHandlerThread(Logs, allClient);
+        QHT = new QueueHandlerThread(Logs, Table, allClient);
         
         QHT.start();
         AddToLog("ServerThread: Creating of server thread complete!");

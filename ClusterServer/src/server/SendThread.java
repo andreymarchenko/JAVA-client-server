@@ -52,7 +52,7 @@ public class SendThread extends Thread {
         Logs.setText(curr_info);
     }
 
-    public void SendResult(String _path_to_file, String _priority_file) {
+    public void SendResult(String _path_to_file) {
         path_to_file = _path_to_file;
         start();
     }

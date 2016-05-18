@@ -12,6 +12,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import server.SendThread;
 import server.ExecutingThread;
+import server.BlockInstance;
 
 /**
  *
@@ -19,11 +20,11 @@ import server.ExecutingThread;
  */
 public class QueueHandlerThread extends Thread {
     static PriorityBlockingQueue PBQ;
-    static Hashtable<String, Socket> HT;
+    static Hashtable<String, BlockInstance> HT;
     JTable Table;
     JTextArea Logs;
 
-    QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<String, Socket> _HT) {
+    QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<String, BlockInstance> _HT) {
         Table = _Table;
         Logs = _Logs;
         HT = _HT;

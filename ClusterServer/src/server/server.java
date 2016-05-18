@@ -145,7 +145,7 @@ public class server extends javax.swing.JFrame {
     private void StartServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartServerActionPerformed
         // TODO add your handling code here:
         if (st == null) {
-            st = new ServerThread(jTextArea1);
+            st = new ServerThread(jTextArea1, jTable1);
             st.StartServer();
         } else {
             AddToLog("ServerThread: Server already started!");
