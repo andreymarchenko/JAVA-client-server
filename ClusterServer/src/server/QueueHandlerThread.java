@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import server.BlockInstance;
 import server.ComparatorPriorityTask;
@@ -21,19 +22,22 @@ import server.ComparatorPriorityTask;
  * @author Игорь
  */
 
-enum STATUSES {
+
+public class QueueHandlerThread extends Thread {
+
+    enum STATUSES {
     PENDING,
     WAITING,
     PROCESSING,
     FINISH
 };
-
-public class QueueHandlerThread extends Thread {
-
+    
     static PriorityBlockingQueue<ComparatorPriorityTask> PBQ;
     static Hashtable<Key, BlockInstance> HT;
     
     JTextArea Logs;
+    
+    int size_rows_in_table = 0;
     
     JTable Table;
     String[] columnNames = {"Login_client",
@@ -63,9 +67,13 @@ public class QueueHandlerThread extends Thread {
         }
     }
 
-    public void AddTaskToQueue(BlockInstance BI) {
+    public void AddTaskToQueue(BlockInstance BI, Key key) {
         ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
         PBQ.add(CPT);
+        
+        Object[] row = {key.Login, key.name_file, BI.priority, "WAITING"};
+        DefaultTableModel model = (DefaultTableModel) Table.getModel();
+        model.addRow(row);
     }
     
     @Override
@@ -76,13 +84,12 @@ public class QueueHandlerThread extends Thread {
                 BlockInstance BI = entrySet.getValue();
                 if(BI.LookedByQueue == false) {
                     BI.LookedByQueue = true;
-                    AddTaskToQueue(BI);
-                    
+                    AddTaskToQueue(BI, key);  
                 }
             }
-            if(!HT.isEmpty()) {
+           /* if(!HT.isEmpty()) {
                 PBQ.poll().BI.Implement();
-            }
+            }*/
         }
 
     }

@@ -12,7 +12,7 @@ import server.BlockInstance;
  *
  * @author Игорь
  */
-public class ComparatorPriorityTask implements Comparator<ComparatorPriorityTask> {
+public class ComparatorPriorityTask implements Comparable<ComparatorPriorityTask> {
 
     public BlockInstance BI;
 
@@ -20,14 +20,14 @@ public class ComparatorPriorityTask implements Comparator<ComparatorPriorityTask
         BI = _BI;
     }
 
-    public int compare(ComparatorPriorityTask CPT_1, ComparatorPriorityTask CPT_2) {
-        if (CPT_1.BI.priority > CPT_2.BI.priority) {
-            return 1;
-        } else if (CPT_1.BI.priority < CPT_2.BI.priority) {
+    @Override
+    public int compareTo(ComparatorPriorityTask CPT) {
+        if (CPT.BI.priority > BI.priority) {
             return -1;
+        } else if (CPT.BI.priority < BI.priority) {
+            return 1;
         } else {
             return 0;
         }
-
     }
 }
