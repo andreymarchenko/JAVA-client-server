@@ -82,7 +82,6 @@ public class SendThread extends Thread {
                 try {
                     sdos.writeLong(size_file);
                     sdos.writeUTF(name);
-                    
                 } catch (IOException ex) {
                     Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                 }

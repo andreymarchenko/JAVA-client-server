@@ -282,6 +282,8 @@ public class client extends javax.swing.JFrame {
                     if (reply.equalsIgnoreCase("AO")) {
                         AddToLog("ClientMain: Authorization succesful!");
                         IsConnect = true;
+                        recv_thread = new RecvThread(cs, jTextArea3);
+                        recv_thread.start();
                     } else {
                         AddToLog("ClientMain: Please, enter correct login and password!");
                         IsConnect = false;
