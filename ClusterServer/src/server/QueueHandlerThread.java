@@ -32,7 +32,7 @@ public class QueueHandlerThread extends Thread {
     FINISH
 };
     
-    static PriorityBlockingQueue<ComparatorPriorityTask> PBQ;
+    static PriorityBlockingQueue<ComparatorPriorityTask> PBQ = new PriorityBlockingQueue<>();
     static Hashtable<Key, BlockInstance> HT;
     
     JTextArea Logs;
@@ -74,6 +74,7 @@ public class QueueHandlerThread extends Thread {
         Object[] row = {key.Login, key.name_file, BI.priority, "WAITING"};
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
         model.addRow(row);
+        Table.setModel(model);
     }
     
     @Override

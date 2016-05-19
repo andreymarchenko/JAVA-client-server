@@ -15,9 +15,9 @@ import server.ExecutingThread;
  * @author Игорь
  */
 public class BlockInstance {
-    String path_to_jar_file = "";
+    String path_to_jar_file;
     Socket cs;
-    String path_to_result = "";
+    String path_to_result;
     int priority;
     boolean LookedByQueue = false;
     JTextArea Logs;
@@ -25,6 +25,9 @@ public class BlockInstance {
     SendThread ST = null;
     ExecutingThread ET = null;
     
+    BlockInstance() {
+    
+    }
     
     BlockInstance( Socket _cs,  String _path_to_jar_file, String _path_to_result, int _priority, JTextArea _Logs) {    
         path_to_jar_file = _path_to_jar_file;

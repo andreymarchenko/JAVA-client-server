@@ -369,7 +369,7 @@ public class client extends javax.swing.JFrame {
         if (ret == JFileChooser.APPROVE_OPTION) {
             File file = fileopen.getSelectedFile();
             path_to_file = file.getAbsolutePath();
-            String to_logs = "ClientMain: You have choosen " + path_to_file + " file";
+            String to_logs = "ClientMain: You have chosen " + path_to_file + " file";
             AddToLog(to_logs);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
