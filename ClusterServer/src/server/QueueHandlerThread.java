@@ -6,15 +6,16 @@
 package server;
 
 import java.net.Socket;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableColumn;
-import server.SendThread;
 import server.ExecutingThread;
 import server.BlockInstance;
+import server.ComparatorPriorityTask;
 
 /**
  *
@@ -29,7 +30,7 @@ enum STATUSES {
 
 public class QueueHandlerThread extends Thread {
 
-    static PriorityBlockingQueue PBQ;
+    static PriorityBlockingQueue<ComparatorPriorityTask> PBQ;
     static Hashtable<Key, BlockInstance> HT;
     
     JTextArea Logs;
@@ -62,9 +63,7 @@ public class QueueHandlerThread extends Thread {
     }
 
     public void AddTaskToQueue(BlockInstance BI) {
-        //Table.add
-       // TableColumn TC = null;
-       // TC = Table.getColumnModel().getColumn(0).
+        System.out.print("OK!");
     }
     
     @Override
