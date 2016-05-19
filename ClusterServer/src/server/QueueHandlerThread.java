@@ -13,7 +13,6 @@ import java.util.concurrent.PriorityBlockingQueue;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableColumn;
-import server.ExecutingThread;
 import server.BlockInstance;
 import server.ComparatorPriorityTask;
 
@@ -24,7 +23,8 @@ import server.ComparatorPriorityTask;
 
 enum STATUSES {
     PENDING,
-    START,
+    WAITING,
+    PROCESSING,
     FINISH
 };
 
@@ -56,14 +56,16 @@ public class QueueHandlerThread extends Thread {
     public String ConvertSTATUSESToString(STATUSES S) {
         switch(S) {
             case PENDING: return "PENDING";
-            case START: return "START";
+            case WAITING: return "WAITING";
+            case PROCESSING: return "PROCESSING";
             case FINISH: return "FINISH";
             default: return "N/A";             
         }
     }
 
     public void AddTaskToQueue(BlockInstance BI) {
-        System.out.print("OK!");
+        ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
+        PBQ.add(CPT);
     }
     
     @Override
@@ -75,7 +77,11 @@ public class QueueHandlerThread extends Thread {
                 if(BI.LookedByQueue == false) {
                     BI.LookedByQueue = true;
                     AddTaskToQueue(BI);
+                    
                 }
+            }
+            if(!HT.isEmpty()) {
+                PBQ.poll().BI.Implement();
             }
         }
 

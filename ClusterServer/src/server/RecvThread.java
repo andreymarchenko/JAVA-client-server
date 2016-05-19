@@ -35,8 +35,8 @@ import server.Key;
 public class RecvThread extends Thread {
 
     final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
-    String path_to_java_byte_file;
-    String path_to_result_file;
+    String path_to_java_byte_file = "";
+    String path_to_result_file = "";
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
@@ -67,8 +67,20 @@ public class RecvThread extends Thread {
         }
     }
 
+    public int ConvertStringPriorityToInt(String str) {
+        if (str.equalsIgnoreCase("Low")) {
+            return 0;
+        } else if (str.equalsIgnoreCase("Medium")) {
+            return 1;
+        } else if (str.equalsIgnoreCase("High")) {
+            return 2;
+        } else {
+            return -1;
+        }
+    }
+
     public void SendReplyToClient(String reply) {
-        if(cs != null) {
+        if (cs != null) {
             try {
                 OutputStream sos = cs.getOutputStream();
                 DataOutputStream dsos = new DataOutputStream(sos);
@@ -289,10 +301,11 @@ public class RecvThread extends Thread {
             }*/
 
             Key key = new Key(Login, name);
-            
-            BlockInstance BI = new BlockInstance(cs, path_to_java_byte_files, priority_file, Logs);
+            String name_of_result_file = name.replaceAll("jar", "txt");
+            path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES + Login + "/" + "Results/" + name_of_result_file;
+            BlockInstance BI = new BlockInstance(cs, path_to_java_byte_files, path_to_result_file, ConvertStringPriorityToInt(priority_file), Logs);
             HT.put(key, BI);
-                
+
             SendReplyToClient("SO");
             AddToLog("RecvThread: File has been successfully received!");
 

@@ -18,7 +18,7 @@ public class BlockInstance {
     String path_to_jar_file = "";
     Socket cs;
     String path_to_result = "";
-    String priority;
+    int priority;
     boolean LookedByQueue = false;
     JTextArea Logs;
     
@@ -26,8 +26,9 @@ public class BlockInstance {
     ExecutingThread ET = null;
     
     
-    BlockInstance( Socket _cs,  String _path_to_jar_file, String _priority, JTextArea _Logs) {    
+    BlockInstance( Socket _cs,  String _path_to_jar_file, String _path_to_result, int _priority, JTextArea _Logs) {    
         path_to_jar_file = _path_to_jar_file;
+        path_to_result = _path_to_result;
         priority = _priority;
         cs = _cs;
         Logs = _Logs;
@@ -46,7 +47,7 @@ public class BlockInstance {
     
     synchronized public void ExecuteTask() {
         if(ET != null) {
-            ET.start();
+            ET.execute(ST);
         }
     }
     
@@ -54,6 +55,11 @@ public class BlockInstance {
         if(ST != null) {
             ST.SendResult(path_to_result);
         }
+    }
+    
+    public void Implement() {
+        SendResults(); // Здесь поток SendThread застопается. Он пробудится только после того, как его разбудит ExecutingThread
+        ExecuteTask();
     }
     
 }

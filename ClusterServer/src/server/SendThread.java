@@ -53,6 +53,12 @@ public class SendThread extends Thread {
     }
 
     public void SendResult(String _path_to_file) {
+        try {
+            wait();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         path_to_file = _path_to_file;
         start();
     }
