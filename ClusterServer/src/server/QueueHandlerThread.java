@@ -38,6 +38,7 @@ public class QueueHandlerThread extends Thread {
     JTextArea Logs;
     
     int size_rows_in_table = 0;
+    Object lock;
     
     JTable Table;
     String[] columnNames = {"Login_client",
@@ -45,7 +46,8 @@ public class QueueHandlerThread extends Thread {
         "Priority",
         "Status"};
 
-    QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<Key, BlockInstance> _HT) {
+    QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<Key, BlockInstance> _HT, Object _lock) {
+        lock = _lock;
         Table = _Table;
         Logs = _Logs;
         HT = _HT;
@@ -74,21 +76,26 @@ public class QueueHandlerThread extends Thread {
         Object[] row = {key.Login, key.name_file, BI.priority, "WAITING"};
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
         model.addRow(row);
+        //model.setValueAt("ee", size_rows_in_table, 1);
         Table.setModel(model);
+        //size_rows_in_table++;
+        //System.out.print(size_rows_in_table);
     }
-    
+
     @Override
     public void run() {
         while (true) {
-            for (Map.Entry<Key, BlockInstance> entrySet : HT.entrySet()) {
-                Key key = entrySet.getKey();
-                BlockInstance BI = entrySet.getValue();
-                if(BI.LookedByQueue == false) {
-                    BI.LookedByQueue = true;
-                    AddTaskToQueue(BI, key);  
+            synchronized (lock) {
+                for (Map.Entry<Key, BlockInstance> entrySet : HT.entrySet()) {
+                    Key key = entrySet.getKey();
+                    BlockInstance BI = entrySet.getValue();
+                    if (BI.LookedByQueue == false) {
+                        BI.LookedByQueue = true;
+                        AddTaskToQueue(BI, key);
+                    }
                 }
             }
-           /* if(!HT.isEmpty()) {
+            /* if(!HT.isEmpty()) {
                 PBQ.poll().BI.Implement();
             }*/
         }

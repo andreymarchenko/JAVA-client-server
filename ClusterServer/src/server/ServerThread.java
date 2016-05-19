@@ -42,6 +42,7 @@ public class ServerThread extends Thread {
     QueueHandlerThread QHT;
     Hashtable<Key, BlockInstance> allClient =
              new Hashtable<Key, BlockInstance>(); // Login of client <-> SocketClient
+    private final Object lock = new Object();
     
     // PriorityBlockingQueue
     
@@ -63,7 +64,7 @@ public class ServerThread extends Thread {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in create server_socket", ex);
         }
         
-        QHT = new QueueHandlerThread(Logs, Table, allClient);
+        QHT = new QueueHandlerThread(Logs, Table, allClient, lock);
         
         QHT.start();
         AddToLog("ServerThread: Creating of server thread complete!");
@@ -87,7 +88,7 @@ public class ServerThread extends Thread {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
             }
             
-            RecvThread RT = new RecvThread(socket_client, Logs, allClient);
+            RecvThread RT = new RecvThread(socket_client, Logs, allClient, lock);
             RT.start();
             
             /*SendThread ST = new SendThread(socket_client, Logs);

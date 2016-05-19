@@ -46,12 +46,14 @@ public class RecvThread extends Thread {
     String Password = null;
     ResultSet checkedlogin = null;
     ResultSet checkedpair = null;
+    Object lock;
     
     
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
 
-    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<Key, BlockInstance> _HT) {
+    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<Key, BlockInstance> _HT, Object _lock) {
+        lock = _lock;
         cs = _cs;
         Logs = _Logs;
         HT = _HT;
@@ -304,10 +306,14 @@ public class RecvThread extends Thread {
             String name_of_result_file = name.replaceAll("jar", "txt");
             path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES + Login + "/" + "Results/" + name_of_result_file;
             BlockInstance BI = new BlockInstance(cs, path_to_java_byte_files, path_to_result_file, ConvertStringPriorityToInt(priority_file), Logs);
-            HT.put(key, BI);
+            
+            synchronized (lock) {
+                HT.put(key, BI);
+            }
 
             SendReplyToClient("SO");
             AddToLog("RecvThread: File has been successfully received!");
+            System.out.print(Login);
 
             /*try {
                 sis.close();
