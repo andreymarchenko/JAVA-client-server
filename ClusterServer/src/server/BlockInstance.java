@@ -8,6 +8,7 @@ package server;
 import java.net.Socket;
 import javax.swing.JTextArea;
 import server.SendThread;
+import server.ExecutingThread;
 
 /**
  *
@@ -22,6 +23,7 @@ public class BlockInstance {
     JTextArea Logs;
     
     SendThread ST = null;
+    ExecutingThread ET = null;
     
     
     BlockInstance( Socket _cs,  String _path_to_jar_file, String _priority, JTextArea _Logs) {    
@@ -31,6 +33,7 @@ public class BlockInstance {
         Logs = _Logs;
         
         ST = new SendThread(cs, Logs);
+        ET = new ExecutingThread(path_to_jar_file);
     }
     
     public void setPathToResultFile(String _path_to_result) {
@@ -39,6 +42,12 @@ public class BlockInstance {
     
     public void setLookedByQueue(boolean _LookedByQueue) {
         LookedByQueue = _LookedByQueue;
+    }
+    
+    synchronized public void ExecuteTask() {
+        if(ET != null) {
+            ET.start();
+        }
     }
     
     synchronized public void SendResults() {
