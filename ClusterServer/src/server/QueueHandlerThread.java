@@ -24,13 +24,6 @@ import server.ComparatorPriorityTask;
 
 
 public class QueueHandlerThread extends Thread {
-
-    enum STATUSES {
-    PENDING,
-    WAITING,
-    PROCESSING,
-    FINISH
-};
     
     static PriorityBlockingQueue<ComparatorPriorityTask> PBQ = new PriorityBlockingQueue<>();
     static Hashtable<Key, BlockInstance> HT;
@@ -59,26 +52,28 @@ public class QueueHandlerThread extends Thread {
         Logs.setText(curr_info);
     }
     
-    public String ConvertSTATUSESToString(STATUSES S) {
-        switch(S) {
-            case PENDING: return "PENDING";
-            case WAITING: return "WAITING";
-            case PROCESSING: return "PROCESSING";
-            case FINISH: return "FINISH";
-            default: return "N/A";             
+    public String ConvertPriorityToString(int priority) {
+        switch(priority) {
+            case 0: return "Low";
+            case 1: return "Medium";
+            case 2: return "High";
+            default: return "N/A";
         }
     }
 
     public void AddTaskToQueue(BlockInstance BI, Key key) {
         ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
         PBQ.add(CPT);
-        
-        Object[] row = {key.Login, key.name_file, BI.priority, "WAITING"};
+
+        String namefile = key.name_file;
+        //Object[] row = {, key.name_file, BI.priority, "WAITING"};
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
-        model.addRow(row);
-        //model.setValueAt("ee", size_rows_in_table, 1);
+        model.setValueAt(key.Login, size_rows_in_table, 0);
+        model.setValueAt(namefile, size_rows_in_table, 1);
+        model.setValueAt(ConvertPriorityToString(BI.priority), size_rows_in_table, 2);
+        model.setValueAt("WAITING", size_rows_in_table, 3);
         Table.setModel(model);
-        //size_rows_in_table++;
+        size_rows_in_table++;
         //System.out.print(size_rows_in_table);
     }
 
