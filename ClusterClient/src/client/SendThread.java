@@ -32,7 +32,7 @@ import javax.swing.JTextArea;
 public class SendThread extends Thread {
 
     final int CHUNK_BYTE_SIZE = 1024;
-    final String FORMAT_FILE = "class";
+    final String FORMAT_FILE = "jar";
 
     JTextArea Logs = null;
     OutputStream cos;  // for writing bytes to stream
@@ -151,7 +151,7 @@ public class SendThread extends Thread {
                  */
                 AddToLog("SendThread: File has been successfully sent!");
             } else {
-                AddToLog("SendThread: Format of file incorrect! Should be .class");
+                AddToLog("SendThread: Format of file incorrect! Should be .jar");
             }
 
         } else {

@@ -347,7 +347,7 @@ public class client extends javax.swing.JFrame {
 
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
         // TODO add your handling code here:
-        if (cs != null) {
+        if (IsConnect) {
             send_thread = new SendThread(cs, jTextArea3);
             String priority = (String) jComboBox1.getSelectedItem();
             send_thread.SendJavaByteFile(path_to_file, priority);
