@@ -25,6 +25,8 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
+import server.BlockInstance;
+import server.Key;
 
 /**
  *
@@ -33,13 +35,13 @@ import javax.swing.JTextArea;
 public class RecvThread extends Thread {
 
     final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
-    String path_to_java_byte_file;
-    String path_to_result_file;
+    String path_to_java_byte_file = "";
+    String path_to_result_file = "";
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
     InputStream sis = null;
-    Hashtable<String, Socket> HT;
+    static Hashtable<Key, BlockInstance> HT;
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;
@@ -49,7 +51,7 @@ public class RecvThread extends Thread {
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
 
-    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<String, Socket> _HT) {
+    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<Key, BlockInstance> _HT) {
         cs = _cs;
         Logs = _Logs;
         HT = _HT;
@@ -65,8 +67,20 @@ public class RecvThread extends Thread {
         }
     }
 
+    public int ConvertStringPriorityToInt(String str) {
+        if (str.equalsIgnoreCase("Low")) {
+            return 0;
+        } else if (str.equalsIgnoreCase("Medium")) {
+            return 1;
+        } else if (str.equalsIgnoreCase("High")) {
+            return 2;
+        } else {
+            return -1;
+        }
+    }
+
     public void SendReplyToClient(String reply) {
-        if(cs != null) {
+        if (cs != null) {
             try {
                 OutputStream sos = cs.getOutputStream();
                 DataOutputStream dsos = new DataOutputStream(sos);
@@ -196,27 +210,26 @@ public class RecvThread extends Thread {
             }
             
             checkpair.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }             
-            
-         if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Password)) {
-            Login = _Login;
-            Password = _Password;
-            HT.put(Login, cs);
-            IsAuthorized = true;
-            SendReplyToClient("AO");
-            String reply = "RecvThread:" + Login + " is authorized";
-            AddToLog(reply);
-         
+            } catch (SQLException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Password)) {
+
+                Login = _Login;
+                Password = _Password;
+                IsAuthorized = true;
+                SendReplyToClient("AO");
+                String reply = "RecvThread:" + Login + " is authorized";
+                AddToLog(reply);
+
+            } else {
+                String reply = "RecvThread:" + "Authorization failed for " + Login;
+                AddToLog(reply);
+                SendReplyToClient("AN");
+                IsClientDisconnect = true;
+            }
         } else {
-            String reply = "RecvThread:" + "Authorization failed for " + Login;
-            AddToLog(reply);
-            SendReplyToClient("AN");
-            IsClientDisconnect = true;
-         }
-    }
-        else {
             SendReplyToClient("AN");
         }
     }
@@ -226,7 +239,7 @@ public class RecvThread extends Thread {
             File file;
             long size_file = 0;
             String name = null;
-            String priority_file;
+            String priority_file = null;
 
             DataInputStream sdis = new DataInputStream(sis);
 
@@ -287,6 +300,12 @@ public class RecvThread extends Thread {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }*/
 
+            Key key = new Key(Login, name);
+            String name_of_result_file = name.replaceAll("jar", "txt");
+            path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES + Login + "/" + "Results/" + name_of_result_file;
+            BlockInstance BI = new BlockInstance(cs, path_to_java_byte_files, path_to_result_file, ConvertStringPriorityToInt(priority_file), Logs);
+            HT.put(key, BI);
+
             SendReplyToClient("SO");
             AddToLog("RecvThread: File has been successfully received!");
 
@@ -303,7 +322,6 @@ public class RecvThread extends Thread {
 
     public void Disconnect() {
         if (IsAuthorized) {
-            HT.remove(Login);
             IsAuthorized = false;
             try {
                 IsClientDisconnect = true;

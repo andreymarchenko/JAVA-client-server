@@ -18,8 +18,12 @@ import java.util.UUID;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Hashtable;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import server.RecvThread;
+import server.QueueHandlerThread;
+import server.BlockInstance;
+import server.Key;
 
 /**
  *
@@ -27,6 +31,7 @@ import server.RecvThread;
  */
 public class ServerThread extends Thread {
     JTextArea Logs = null;
+    JTable Table = null;
     ServerSocket server_socket;  // for establishing connection with clients
     Socket socket_client;
     int port = 4445;
@@ -34,13 +39,15 @@ public class ServerThread extends Thread {
     boolean IsStopped = true;
     InputStream sis;
     OutputStream sos;
-    Hashtable<String, Socket> allClient =
-             new Hashtable<String, Socket>(); // Login of client <-> SocketClient
+    QueueHandlerThread QHT;
+    Hashtable<Key, BlockInstance> allClient =
+             new Hashtable<Key, BlockInstance>(); // Login of client <-> SocketClient
     
     // PriorityBlockingQueue
     
-    public ServerThread(JTextArea _Logs) {
+    public ServerThread(JTextArea _Logs, JTable _Table) {
         Logs = _Logs;
+        Table = _Table;
         
         try {
             ip = InetAddress.getLocalHost();
@@ -56,6 +63,9 @@ public class ServerThread extends Thread {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in create server_socket", ex);
         }
         
+        QHT = new QueueHandlerThread(Logs, Table, allClient);
+        
+        QHT.start();
         AddToLog("ServerThread: Creating of server thread complete!");
     }
     
@@ -93,6 +103,8 @@ public class ServerThread extends Thread {
         
         try {
             server_socket.close();
+            QHT.stop();
+            
         } catch (IOException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }

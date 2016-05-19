@@ -73,7 +73,7 @@ public class server extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Login of client", "Name of task", "Priority", "Status"
+                "Login_client", "Name_task", "Priority", "Status"
             }
         ));
         jTable1.setMaximumSize(new java.awt.Dimension(104, 64));
@@ -145,7 +145,7 @@ public class server extends javax.swing.JFrame {
     private void StartServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartServerActionPerformed
         // TODO add your handling code here:
         if (st == null) {
-            st = new ServerThread(jTextArea1);
+            st = new ServerThread(jTextArea1, jTable1);
             st.StartServer();
         } else {
             AddToLog("ServerThread: Server already started!");
@@ -163,8 +163,8 @@ public class server extends javax.swing.JFrame {
     }//GEN-LAST:event_StopServerActionPerformed
 
     private void StopServer1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer1ActionPerformed
-        ExecutingThread et = new ExecutingThread();
-        et.execute("C:\\JAVA-client-server\\ClusterServer");
+        /*ExecutingThread et = new ExecutingThread();
+        et.execute("C:\\JAVA-client-server\\ClusterServer");*/
     }//GEN-LAST:event_StopServer1ActionPerformed
 
     private void StopServer2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer2ActionPerformed
