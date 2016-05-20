@@ -52,19 +52,20 @@ public class SendThread extends Thread {
         Logs.setText(curr_info);
     }
 
-    public void SendResult(String _path_to_file) {
-        try {
-            wait();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+    public void SendResult(String _path_to_file) {     
         path_to_file = _path_to_file;
         start();
     }
 
     @Override
     public void run() {
+        synchronized(this){
+        try {
+            this.wait();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }
 
         while (true) {
             File file = new File(path_to_file);

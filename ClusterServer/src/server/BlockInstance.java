@@ -50,7 +50,7 @@ public class BlockInstance {
     
     synchronized public void ExecuteTask() {
         if(ET != null) {
-            ET.execute(ST);
+            ET.execute(ST, path_to_result);
         }
     }
     

@@ -87,12 +87,13 @@ public class QueueHandlerThread extends Thread {
                     if (BI.LookedByQueue == false) {
                         BI.LookedByQueue = true;
                         AddTaskToQueue(BI, key);
+                        if(!HT.isEmpty()) {
+                        PBQ.poll().BI.Implement();
+            }
                     }
                 }
             }
-            /* if(!HT.isEmpty()) {
-                PBQ.poll().BI.Implement();
-            }*/
+             
         }
 
     }
