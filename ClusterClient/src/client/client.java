@@ -283,8 +283,8 @@ public class client extends javax.swing.JFrame {
                     if (reply.equalsIgnoreCase("AO")) {
                         AddToLog("ClientMain: Authorization succesful!");
                         IsConnect = true;
-                        recv_thread = new RecvThread(cs, jTextArea3);
-                        recv_thread.start();
+                        //recv_thread = new RecvThread(cs, jTextArea3);
+                        //recv_thread.start();
                     } else {
                         AddToLog("ClientMain: Please, enter correct login and password!");
                         IsConnect = false;
@@ -307,7 +307,7 @@ public class client extends javax.swing.JFrame {
                 }
                 
                 if (recv_thread != null) {
-                    recv_thread.suspend();
+                    recv_thread.stop();
                 }
                 
                 OutputStream cos = cs.getOutputStream();
@@ -389,7 +389,7 @@ public class client extends javax.swing.JFrame {
                 }
 
                 if (recv_thread != null) {
-                    recv_thread.destroy();
+                    recv_thread.stop();
                 }
 
                 OutputStream cos = cs.getOutputStream();

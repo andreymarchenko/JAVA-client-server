@@ -39,46 +39,48 @@ public class ExecutingThread extends Thread {
 
     @Override
     public void run() {
-          
-          
-          String ss [] = path_to_jar_file.split("/");
-          String sss = ss[0];
-          for (int i = 1; i < ss.length; i++)
-              sss += "\\" + ss[i];
-          
-          String sss2 = "C:\\JAVA-client-server\\ClusterServer\\";
-          for (int i = 1; i < ss.length-1; i++)
-              sss2 += "\\" + ss[i];
-        String str_path = "C:\\JAVA-client-server\\ClusterServer\\" + sss;
-        File fl = new File(sss2);
-        ArrayList<String> l = new ArrayList<>();
-        l.add("\"C:\\Program Files\\Java\\jre7\\bin\\java.exe\"");
-        l.add("-jar");
-        l.add(str_path);
-        //path_to_jar_file.replaceAll("\\", "/")
-        ProcessBuilder procBuilder = new ProcessBuilder(l);
-     //   procBuilder.directory(fl);
-     //   procBuilder.redirectErrorStream(true);
+        File fl = new File(path_to_result); // Создаем текстовый файл с результатом
+
+        String string_split[] = path_to_jar_file.split("/");
+        String new_path_to_jar_file_for_process_builder = string_split[0];
+        for (int i = 1; i < string_split.length; i++) {
+            new_path_to_jar_file_for_process_builder += "\\" + string_split[i];
+        }
+
+        String absolute_path_to_directory = "C:\\JavaRep\\JAVA-client-server\\ClusterServer\\src"; // У Андрея другой путь
+        for (int i = 1; i < string_split.length - 1; i++) {
+            absolute_path_to_directory += "\\" + string_split[i];
+        }
+        
+        File dir = new File(absolute_path_to_directory);
+        String str_path = "C:\\JavaRep\\JAVA-client-server\\ClusterServer\\" + new_path_to_jar_file_for_process_builder; // У Андрея другой путь
+        ArrayList<String> command_for_builder = new ArrayList<>();
+        command_for_builder.add("C:\\Program Files\\Java\\jre1.8.0_74\\bin\\java"); // У Андрея здесь будет не jre1.8.0_74, а другое что-то
+        command_for_builder.add("-jar");
+        command_for_builder.add(str_path);
+        ProcessBuilder procBuilder = new ProcessBuilder(command_for_builder);
+        procBuilder.directory(dir);
+        procBuilder.redirectErrorStream(true);
+
         System.out.println(path_to_jar_file);
+        System.out.println(absolute_path_to_directory);
+        System.out.println(str_path);
+        System.out.println(new_path_to_jar_file_for_process_builder);
+
         try {
             Process process = procBuilder.start();
             InputStream stdout = process.getInputStream();
             InputStreamReader isrStdout = new InputStreamReader(stdout);
-            //InputStreamReader q = new InputStreamWriter(stdout);
             BufferedReader brStdout = new BufferedReader(isrStdout);
             FileOutputStream fos = new FileOutputStream(path_to_result);
 //BufferedWriter bwStdout = new BufferedWriter(isrStdout);
             String line = null;
             byte[] buffer;
-            while (brStdout.readLine() != null) {
-                line=brStdout.readLine();
-                buffer = line.getBytes();
-                fos.write(buffer,0,buffer.length);
+            while ((line = brStdout.readLine()) != null) {
                 System.out.println(line);
             }
             //result=new File(path_to_result,brStdout.);
-            
-            
+
             IsFinished = true;
             ST.notify();
         } catch (IOException ex) {

@@ -28,6 +28,7 @@ public class RecvThread extends Thread {
     JTextArea Logs = null;
     Socket cs = null;
     InputStream cis = null;
+    boolean IsConnect = true;
 
     public RecvThread(Socket _cs, JTextArea _Logs) {
         cs = _cs;
@@ -53,7 +54,7 @@ public class RecvThread extends Thread {
     @Override
     public void run() {
 
-        while (true) {
+        while (IsConnect) {
             File file;
             long size_file = 0;
             String name = null;
@@ -65,7 +66,17 @@ public class RecvThread extends Thread {
                 size_file = cdis.readLong();
                 name = cdis.readUTF();
             } catch (IOException ex) {
+                IsConnect = false;
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            if(!IsConnect) {
+                try {
+                    cs.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
             }
             String path_to_file = RELATIVE_PATH_FOR_FILES + name;
             file = new File(path_to_file);
