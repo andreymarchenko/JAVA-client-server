@@ -236,6 +236,7 @@ public class client extends javax.swing.JFrame {
     int port = 4445;
     InetAddress ip = null;
     String path_to_file = "";
+    String old_path = "";
     SendThread send_thread = null;
     RecvThread recv_thread = null;
     RegistrationForm rform;
@@ -306,7 +307,7 @@ public class client extends javax.swing.JFrame {
                 }
                 
                 if (recv_thread != null) {
-                    recv_thread.stop();
+                    recv_thread.suspend();
                 }
                 
                 OutputStream cos = cs.getOutputStream();
@@ -348,9 +349,14 @@ public class client extends javax.swing.JFrame {
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
         if (IsConnect) {
             if (!path_to_file.equalsIgnoreCase("")) {
-                send_thread = new SendThread(cs, jTextArea3);
-                String priority = (String) jComboBox1.getSelectedItem();
-                send_thread.SendJavaByteFile(path_to_file, priority);
+                if (!path_to_file.equalsIgnoreCase(old_path)) {
+                    send_thread = new SendThread(cs, jTextArea3);
+                    String priority = (String) jComboBox1.getSelectedItem();
+                    send_thread.SendJavaByteFile(path_to_file, priority);
+                    old_path = path_to_file;
+                } else {
+                    AddToLog("ClientMain: This file is already send, choose other file!");
+                }
             } else {
                 AddToLog("ClientMain: Jar file is not choosen!");
             }
@@ -383,7 +389,7 @@ public class client extends javax.swing.JFrame {
                 }
 
                 if (recv_thread != null) {
-                    recv_thread.stop();
+                    recv_thread.destroy();
                 }
 
                 OutputStream cos = cs.getOutputStream();
