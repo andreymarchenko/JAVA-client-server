@@ -70,16 +70,13 @@ public class ExecutingThread extends Thread {
         try {
             Process process = procBuilder.start();
             InputStream stdout = process.getInputStream();
-            InputStreamReader isrStdout = new InputStreamReader(stdout);
-            BufferedReader brStdout = new BufferedReader(isrStdout);
+
             FileOutputStream fos = new FileOutputStream(path_to_result);
-//BufferedWriter bwStdout = new BufferedWriter(isrStdout);
-            String line = null;
-            byte[] buffer;
-            while ((line = brStdout.readLine()) != null) {
-                System.out.println(line);
+            byte symbol;
+            while ((symbol = (byte)stdout.read()) != -1) {
+
+                fos.write(symbol);
             }
-            //result=new File(path_to_result,brStdout.);
 
             IsFinished = true;
             ST.notify();
