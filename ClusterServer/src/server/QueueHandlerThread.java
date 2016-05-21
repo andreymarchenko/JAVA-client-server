@@ -21,19 +21,17 @@ import server.ComparatorPriorityTask;
  *
  * @author Игорь
  */
-
-
 public class QueueHandlerThread extends Thread {
-    
+
     static PriorityBlockingQueue<ComparatorPriorityTask> PBQ = new PriorityBlockingQueue<>();
     static Hashtable<Key, BlockInstance> HT;
-    
+
     JTextArea Logs;
-    
+
     int size_rows_in_table = 0;
     int old_row = 0;
     Object lock;
-    
+
     JTable Table;
     String[] columnNames = {"Login_client",
         "Name_task",
@@ -52,13 +50,17 @@ public class QueueHandlerThread extends Thread {
         curr_info += info + "\n";
         Logs.setText(curr_info);
     }
-    
+
     public String ConvertPriorityToString(int priority) {
-        switch(priority) {
-            case 0: return "Low";
-            case 1: return "Medium";
-            case 2: return "High";
-            default: return "N/A";
+        switch (priority) {
+            case 0:
+                return "Low";
+            case 1:
+                return "Medium";
+            case 2:
+                return "High";
+            default:
+                return "N/A";
         }
     }
 
@@ -87,15 +89,12 @@ public class QueueHandlerThread extends Thread {
                     if (BI.LookedByQueue == false) {
                         BI.LookedByQueue = true;
                         AddTaskToQueue(BI, key);
-                    }
-                    if (!HT.isEmpty() && (((DefaultTableModel) Table.getModel()).getValueAt(old_row, 3).equals("FINISHED") || size_rows_in_table == 1)) {  // МЕГА КОСТЫЛЬ
-                        old_row = PBQ.peek().BI.pos_in_table;
                         PBQ.poll().BI.Implement(Table);
                     }
-                     
-                }
-            }
 
+                }
+
+            }
         }
 
     }
