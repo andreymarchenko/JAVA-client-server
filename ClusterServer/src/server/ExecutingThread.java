@@ -47,6 +47,7 @@ public class ExecutingThread extends Thread {
     public void run() {
         File fl = new File(path_to_result); // Создаем текстовый файл с результатом
 
+        System.out.println(path_to_result);
         String string_split[] = path_to_jar_file.split("/");
         String new_path_to_jar_file_for_process_builder = string_split[0];
         for (int i = 1; i < string_split.length; i++) {
