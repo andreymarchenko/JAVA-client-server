@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -26,12 +28,16 @@ public class ExecutingThread extends Thread {
    SendThread ST;
    boolean IsFinished = false;
    File result;
+   JTable Table;
+   int pos_in_table = 0;
    
    public ExecutingThread(String _path_to_jar_file) {
        path_to_jar_file = _path_to_jar_file;
     }
 
-    public void execute(SendThread _ST, String _path) {
+    public void execute(SendThread _ST, String _path, JTable _Table, int _pos_in_table) {
+        Table = _Table;
+        pos_in_table = _pos_in_table;
         path_to_result=_path;
         ST = _ST;
         start();
@@ -73,12 +79,14 @@ public class ExecutingThread extends Thread {
 
             FileOutputStream fos = new FileOutputStream(path_to_result);
             byte symbol;
-            while ((symbol = (byte)stdout.read()) != -1) {
+            while ((symbol = (byte) stdout.read()) != -1) {
 
                 fos.write(symbol);
             }
 
             IsFinished = true;
+            DefaultTableModel model = (DefaultTableModel) Table.getModel();
+            model.setValueAt("FINISHED", pos_in_table, 3);
             ST.notify();
         } catch (IOException ex) {
             Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);

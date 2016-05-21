@@ -6,7 +6,9 @@
 package server;
 
 import java.net.Socket;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
 import server.SendThread;
 import server.ExecutingThread;
 
@@ -21,6 +23,8 @@ public class BlockInstance {
     int priority;
     boolean LookedByQueue = false;
     JTextArea Logs;
+    JTable Table; // для отображения статуса задачи
+    int pos_in_table = 0; // для отображения статуса задачи
     
     SendThread ST = null;
     ExecutingThread ET = null;
@@ -50,7 +54,7 @@ public class BlockInstance {
     
     synchronized public void ExecuteTask() {
         if(ET != null) {
-            ET.execute(ST, path_to_result);
+            ET.execute(ST, path_to_result, Table, pos_in_table);
         }
     }
     
@@ -60,7 +64,11 @@ public class BlockInstance {
         }
     }
     
-    public void Implement() {
+    public void Implement(JTable _Table) {
+        Table = _Table;
+        DefaultTableModel model = (DefaultTableModel) Table.getModel();
+        model.setValueAt("RUNNING", pos_in_table, 3);
+        
         SendResults(); // Здесь поток SendThread застопается. Он пробудится только после того, как его разбудит ExecutingThread
         ExecuteTask();
     }

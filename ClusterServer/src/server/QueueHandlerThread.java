@@ -62,11 +62,11 @@ public class QueueHandlerThread extends Thread {
     }
 
     public void AddTaskToQueue(BlockInstance BI, Key key) {
+        BI.pos_in_table = size_rows_in_table;
         ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
         PBQ.add(CPT);
 
         String namefile = key.name_file;
-        //Object[] row = {, key.name_file, BI.priority, "WAITING"};
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
         model.setValueAt(key.Login, size_rows_in_table, 0);
         model.setValueAt(namefile, size_rows_in_table, 1);
@@ -74,7 +74,6 @@ public class QueueHandlerThread extends Thread {
         model.setValueAt("WAITING", size_rows_in_table, 3);
         Table.setModel(model);
         size_rows_in_table++;
-        //System.out.print(size_rows_in_table);
     }
 
     @Override
@@ -88,7 +87,7 @@ public class QueueHandlerThread extends Thread {
                         BI.LookedByQueue = true;
                         AddTaskToQueue(BI, key);
                         if(!HT.isEmpty()) {
-                        PBQ.poll().BI.Implement();
+                        PBQ.poll().BI.Implement(Table);
             }
                     }
                 }
