@@ -31,6 +31,7 @@ public class QueueHandlerThread extends Thread {
     JTextArea Logs;
     
     int size_rows_in_table = 0;
+    int old_row = 0;
     Object lock;
     
     JTable Table;
@@ -86,13 +87,15 @@ public class QueueHandlerThread extends Thread {
                     if (BI.LookedByQueue == false) {
                         BI.LookedByQueue = true;
                         AddTaskToQueue(BI, key);
-                        if(!HT.isEmpty()) {
-                        PBQ.poll().BI.Implement(Table);
-            }
                     }
+                    if (!HT.isEmpty() && (((DefaultTableModel) Table.getModel()).getValueAt(old_row, 3).equals("FINISHED") || size_rows_in_table == 1)) {  // МЕГА КОСТЫЛЬ
+                        old_row = PBQ.peek().BI.pos_in_table;
+                        PBQ.poll().BI.Implement(Table);
+                    }
+                     
                 }
             }
-             
+
         }
 
     }
