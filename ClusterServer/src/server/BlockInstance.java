@@ -17,6 +17,8 @@ import server.ExecutingThread;
  * @author Игорь
  */
 public class BlockInstance {
+    Object semophore = new Object();
+    private final Object lock = new Object();
     String path_to_jar_file;
     Socket cs;
     String path_to_result;
@@ -33,7 +35,7 @@ public class BlockInstance {
     
     }
     
-    BlockInstance( Socket _cs,  String _path_to_jar_file, String _path_to_result, int _priority, JTextArea _Logs) {    
+    BlockInstance(Socket _cs,  String _path_to_jar_file, String _path_to_result, int _priority, JTextArea _Logs) {
         path_to_jar_file = _path_to_jar_file;
         path_to_result = _path_to_result;
         priority = _priority;
@@ -54,23 +56,22 @@ public class BlockInstance {
     
     synchronized public void ExecuteTask() {
         if(ET != null) {
-            ET.execute(ST, path_to_result, Table, pos_in_table);
+            ET.execute(ST, path_to_result, Table, pos_in_table, semophore);
         }
     }
     
     synchronized public void SendResults() {
         if(ST != null) {
-            ST.SendResult(path_to_result);
+            ST.SendResult(path_to_result, semophore);
         }
     }
     
     public void Implement(JTable _Table) {
         Table = _Table;
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
-        model.setValueAt("RUNNING", pos_in_table, 3);
-        
-        SendResults(); // Здесь поток SendThread застопается. Он пробудится только после того, как его разбудит ExecutingThread
+        model.setValueAt("RUNNING", pos_in_table, 3);        
         ExecuteTask();
+        SendResults(); // Здесь поток SendThread застопается. Он пробудится только после того, как его разбудит ExecutingThread
     }
     
 }

@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
  */
 public class RecvThread extends Thread {
     
-    final String RELATIVE_PATH_FOR_FILES = "src/Results/";
+    final String RELATIVE_PATH_FOR_FILES = "C:/JavaRep/JAVA-client-server/ClusterClient/src/Results/";
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
@@ -81,11 +81,9 @@ public class RecvThread extends Thread {
             String path_to_file = RELATIVE_PATH_FOR_FILES + name;
             System.out.println(name);
             System.out.println(path_to_file);
-            file = new File(path_to_file);
-            
-            
+            file = new File(path_to_file);           
 
-            /* At the second step we read bytes of Result file from server */
+            /* At the second step we must read bytes of Result file from server */
             byte[][] chunks_whole;
             byte[] chunk_rem;
             long num_of_chunks = size_file / CHUNK_BYTE_SIZE;
