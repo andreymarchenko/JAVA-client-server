@@ -28,8 +28,6 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="StopServer" min="-2" pref="126" max="-2" attributes="0"/>
                   <Component id="StartServer" min="-2" pref="126" max="-2" attributes="0"/>
-                  <Component id="StopServer1" alignment="1" min="-2" pref="126" max="-2" attributes="0"/>
-                  <Component id="StopServer2" min="-2" pref="126" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -49,10 +47,6 @@
                       <Component id="StartServer" min="-2" pref="41" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="StopServer" min="-2" pref="41" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="StopServer1" min="-2" pref="41" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="StopServer2" min="-2" pref="41" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jScrollPane2" min="-2" pref="247" max="-2" attributes="0"/>
               </Group>
@@ -158,21 +152,5 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="StopServer1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Interrupt task"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="StopServer1ActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="StopServer2">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Continue execution"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="StopServer2ActionPerformed"/>
-      </Events>
-    </Component>
   </SubComponents>
 </Form>

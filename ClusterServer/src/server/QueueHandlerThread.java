@@ -6,9 +6,11 @@
 package server;
 
 import java.net.Socket;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.PriorityBlockingQueue;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -31,14 +33,16 @@ public class QueueHandlerThread extends Thread {
     int size_rows_in_table = 0;
     int old_row = 0;
     Object lock;
+    Vector<String> dataVector; 
 
     JTable Table;
-    String[] columnNames = {"Login_client",
-        "Name_task",
-        "Priority",
-        "Status"};
+    Vector<String> columnNames;
 
     QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<Key, BlockInstance> _HT, Object _lock) {
+        columnNames.add("Login client");
+        columnNames.add("Name task");
+        columnNames.add("Priority");
+        columnNames.add("Status");
         lock = _lock;
         Table = _Table;
         Logs = _Logs;
@@ -69,13 +73,16 @@ public class QueueHandlerThread extends Thread {
         ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
         PBQ.add(CPT);
 
+        
         String namefile = key.name_file;
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
-        model.setValueAt(key.Login, size_rows_in_table, 0);
-        model.setValueAt(namefile, size_rows_in_table, 1);
-        model.setValueAt(ConvertPriorityToString(BI.priority), size_rows_in_table, 2);
-        model.setValueAt("WAITING", size_rows_in_table, 3);
+        dataVector.add(key.Login);
+        dataVector.add(namefile);
+        dataVector.add(ConvertPriorityToString(BI.priority));
+        dataVector.add("WAITING");
+        model.setDataVector(dataVector, columnNames);
         Table.setModel(model);
+        
         size_rows_in_table++;
     }
 
@@ -91,12 +98,8 @@ public class QueueHandlerThread extends Thread {
                         AddTaskToQueue(BI, key);
                         PBQ.poll().BI.Implement(Table);
                     }
-
                 }
-
             }
         }
-
     }
-
 }

@@ -41,8 +41,6 @@ public class server extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        StopServer1 = new javax.swing.JButton();
-        StopServer2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,20 +106,6 @@ public class server extends javax.swing.JFrame {
         jTable1.setPreferredSize(new java.awt.Dimension(104, 64));
         jScrollPane2.setViewportView(jTable1);
 
-        StopServer1.setText("Interrupt task");
-        StopServer1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                StopServer1ActionPerformed(evt);
-            }
-        });
-
-        StopServer2.setText("Continue execution");
-        StopServer2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                StopServer2ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -130,9 +114,7 @@ public class server extends javax.swing.JFrame {
                 .addGap(46, 46, 46)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(StopServer, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(StartServer, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(StopServer1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(StopServer2, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(StartServer, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
@@ -147,11 +129,7 @@ public class server extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(StartServer, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(StopServer, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(StopServer1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(StopServer2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(StopServer, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
@@ -188,15 +166,6 @@ public class server extends javax.swing.JFrame {
             AddToLog("ServerThread: Server is not started yet!");
         }
     }//GEN-LAST:event_StopServerActionPerformed
-
-    private void StopServer1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer1ActionPerformed
-        /*ExecutingThread et = new ExecutingThread();
-        et.execute("C:\\JAVA-client-server\\ClusterServer");*/
-    }//GEN-LAST:event_StopServer1ActionPerformed
-
-    private void StopServer2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServer2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_StopServer2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -238,8 +207,6 @@ public class server extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton StartServer;
     private javax.swing.JButton StopServer;
-    private javax.swing.JButton StopServer1;
-    private javax.swing.JButton StopServer2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
