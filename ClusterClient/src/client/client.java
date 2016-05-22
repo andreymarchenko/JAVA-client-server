@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import client.SendThread;
 import client.RecvThread;
 import client.RegistrationForm;
+import java.awt.Desktop;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
@@ -36,8 +37,6 @@ public class client extends javax.swing.JFrame {
 
         jFrame1 = new javax.swing.JFrame();
         SendFile = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
         javax.swing.JButton Authorization = new javax.swing.JButton();
@@ -52,6 +51,7 @@ public class client extends javax.swing.JFrame {
         jTextArea3 = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        SendFile1 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -84,15 +84,6 @@ public class client extends javax.swing.JFrame {
                 SendFileActionPerformed(evt);
             }
         });
-
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jTextArea1.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        jTextArea1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        jTextArea1.setMaximumSize(new java.awt.Dimension(104, 64));
-        jTextArea1.setMinimumSize(new java.awt.Dimension(104, 64));
-        jScrollPane1.setViewportView(jTextArea1);
 
         jLabel2.setText("Priority:");
 
@@ -215,6 +206,16 @@ public class client extends javax.swing.JFrame {
             jTable1.getColumnModel().getColumn(1).setResizable(false);
         }
 
+        SendFile1.setText("View result");
+        SendFile1.setMaximumSize(new java.awt.Dimension(91, 23));
+        SendFile1.setMinimumSize(new java.awt.Dimension(91, 23));
+        SendFile1.setPreferredSize(new java.awt.Dimension(91, 23));
+        SendFile1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SendFile1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -228,12 +229,12 @@ public class client extends javax.swing.JFrame {
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(SendFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Registration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(Registration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(SendFile1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -264,10 +265,7 @@ public class client extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
                                 .addComponent(Registration, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -276,9 +274,12 @@ public class client extends javax.swing.JFrame {
                                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel2))
                                 .addGap(18, 18, 18)
-                                .addComponent(SendFile, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(SendFile, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                            .addComponent(SendFile1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -483,6 +484,19 @@ public class client extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
+    private void SendFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFile1ActionPerformed
+    File Folder = new File("C:/JavaRep/JAVA-client-server/ClusterClient/Results");
+    Desktop desktop = null; 
+            if (Desktop.isDesktopSupported()) { 
+            desktop = Desktop.getDesktop(); 
+        try { 
+            desktop.open(Folder);
+        } catch (IOException ex) {
+            Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            }
+    }//GEN-LAST:event_SendFile1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -522,6 +536,7 @@ public class client extends javax.swing.JFrame {
     private javax.swing.JButton DisconnectFromServer;
     private javax.swing.JButton Registration;
     private javax.swing.JButton SendFile;
+    private javax.swing.JButton SendFile1;
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JFrame jFrame1;
@@ -529,11 +544,9 @@ public class client extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
