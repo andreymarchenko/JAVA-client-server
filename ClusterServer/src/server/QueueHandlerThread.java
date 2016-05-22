@@ -33,13 +33,8 @@ public class QueueHandlerThread extends Thread {
     int size_rows_in_table = 0;
     int old_row = 0;
     Object lock;
-    Vector<String> dataVector; 
-
+    Vector<String> dataVector;
     JTable Table;
-       String[] columnNames = {"Login_client",
-        "Name_task",
-        "Priority",
-        "Status"};
 
     QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<Key, BlockInstance> _HT, Object _lock) {
         lock = _lock;
@@ -72,7 +67,6 @@ public class QueueHandlerThread extends Thread {
         ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
         PBQ.add(CPT);
 
-        
         String namefile = key.name_file;
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
         model.setValueAt(key.Login, size_rows_in_table, 0);
@@ -80,7 +74,7 @@ public class QueueHandlerThread extends Thread {
         model.setValueAt(ConvertPriorityToString(BI.priority), size_rows_in_table, 2);
         model.setValueAt("WAITING", size_rows_in_table, 3);
         Table.setModel(model);
-        
+
         size_rows_in_table++;
     }
 
@@ -94,8 +88,14 @@ public class QueueHandlerThread extends Thread {
                     if (BI.LookedByQueue == false) {
                         BI.LookedByQueue = true;
                         AddTaskToQueue(BI, key);
-                        PBQ.poll().BI.Implement(Table);
                     }
+
+                }
+                DefaultTableModel model = (DefaultTableModel)Table.getModel();
+                if (!PBQ.isEmpty() && (model.getValueAt(old_row, 3).equals("FINISHED") || size_rows_in_table == 1)) {
+                    old_row = PBQ.peek().BI.pos_in_table;
+                    PBQ.poll().BI.Implement(Table);
+
                 }
             }
         }

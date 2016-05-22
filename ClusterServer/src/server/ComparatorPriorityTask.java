@@ -23,9 +23,9 @@ public class ComparatorPriorityTask implements Comparable<ComparatorPriorityTask
     @Override
     public int compareTo(ComparatorPriorityTask CPT) {
         if (CPT.BI.priority > BI.priority) {
-            return -1;
-        } else if (CPT.BI.priority < BI.priority) {
             return 1;
+        } else if (CPT.BI.priority < BI.priority) {
+            return -1;
         } else {
             return 0;
         }
