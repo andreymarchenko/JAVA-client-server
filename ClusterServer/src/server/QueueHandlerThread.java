@@ -36,13 +36,12 @@ public class QueueHandlerThread extends Thread {
     Vector<String> dataVector; 
 
     JTable Table;
-    Vector<String> columnNames;
+       String[] columnNames = {"Login_client",
+        "Name_task",
+        "Priority",
+        "Status"};
 
     QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<Key, BlockInstance> _HT, Object _lock) {
-        columnNames.add("Login client");
-        columnNames.add("Name task");
-        columnNames.add("Priority");
-        columnNames.add("Status");
         lock = _lock;
         Table = _Table;
         Logs = _Logs;
@@ -76,11 +75,10 @@ public class QueueHandlerThread extends Thread {
         
         String namefile = key.name_file;
         DefaultTableModel model = (DefaultTableModel) Table.getModel();
-        dataVector.add(key.Login);
-        dataVector.add(namefile);
-        dataVector.add(ConvertPriorityToString(BI.priority));
-        dataVector.add("WAITING");
-        model.setDataVector(dataVector, columnNames);
+        model.setValueAt(key.Login, size_rows_in_table, 0);
+        model.setValueAt(namefile, size_rows_in_table, 1);
+        model.setValueAt(ConvertPriorityToString(BI.priority), size_rows_in_table, 2);
+        model.setValueAt("WAITING", size_rows_in_table, 3);
         Table.setModel(model);
         
         size_rows_in_table++;
