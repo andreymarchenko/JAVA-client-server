@@ -47,8 +47,7 @@ public class RecvThread extends Thread {
     ResultSet checkedlogin = null;
     ResultSet checkedpair = null;
     Object lock;
-    
-    
+
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
 
@@ -86,7 +85,7 @@ public class RecvThread extends Thread {
             try {
                 OutputStream sos = cs.getOutputStream();
                 DataOutputStream dsos = new DataOutputStream(sos);
-                
+
                 dsos.writeUTF(reply);
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -106,28 +105,27 @@ public class RecvThread extends Thread {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-         Connection c1 = null;        
-         try {
+        Connection c1 = null;
+        try {
             c1 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
             System.out.println("Opened database successfully");
-         }
-         catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-        
-         PreparedStatement checkuser;
-         String str = "";
-        
-         try {
+        }
+
+        PreparedStatement checkuser;
+        String str = "";
+
+        try {
             checkuser = c1.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
             checkuser.setString(1, _Login);
             checkedlogin = checkuser.executeQuery();
-            
-            while(checkedlogin.next()) {
-            str = checkedlogin.getString(1);
-            break;
+
+            while (checkedlogin.next()) {
+                str = checkedlogin.getString(1);
+                break;
             }
-            
+
             checkuser.close();
         } catch (SQLException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -184,34 +182,33 @@ public class RecvThread extends Thread {
         if (!IsAuthorized) {
             try {
                 Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         Connection c = null;
-         try {
-            c = DriverManager.getConnection("jdbc:sqlite:BASE.db");
-            System.out.println("Opened database successfully");
-         }
-         catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-        
-         PreparedStatement checkpair;
-         String str1 = "";
-         String str2 = "";
-         
-         try {
-            checkpair = c.prepareStatement("SELECT login,password FROM CLIENTS WHERE login = ?; ");
-            checkpair.setString(1, _Login);
-            checkedpair = checkpair.executeQuery();
-            
-            while(checkedpair.next()) {
-            str1 = checkedpair.getString(1);
-            str2 = checkedpair.getString(2);
-            break;
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            checkpair.close();
+            Connection c = null;
+            try {
+                c = DriverManager.getConnection("jdbc:sqlite:BASE.db");
+                System.out.println("Opened database successfully");
+            } catch (SQLException ex) {
+                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            PreparedStatement checkpair;
+            String str1 = "";
+            String str2 = "";
+
+            try {
+                checkpair = c.prepareStatement("SELECT login,password FROM CLIENTS WHERE login = ?; ");
+                checkpair.setString(1, _Login);
+                checkedpair = checkpair.executeQuery();
+
+                while (checkedpair.next()) {
+                    str1 = checkedpair.getString(1);
+                    str2 = checkedpair.getString(2);
+                    break;
+                }
+
+                checkpair.close();
             } catch (SQLException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -306,23 +303,13 @@ public class RecvThread extends Thread {
             String name_of_result_file = name.replaceAll("jar", "txt");
             path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES + Login + "/" + "Results/" + name_of_result_file;
             BlockInstance BI = new BlockInstance(cs, path_to_java_byte_files, path_to_result_file, ConvertStringPriorityToInt(priority_file), Logs);
-            
+
             synchronized (lock) {
                 HT.put(key, BI);
             }
 
-            SendReplyToClient("SO");
             AddToLog("RecvThread: File has been successfully received!");
             System.out.print(Login);
-
-            /*try {
-                sis.close();
-
-            } catch (IOException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
-            }*/
-        } else {
-            SendReplyToClient("SN");
         }
     }
 
@@ -367,7 +354,6 @@ public class RecvThread extends Thread {
        2.8 "DN" - Disconnect from server is not OK
        2.9 "CN" - Wrong Command
      */
-
     public void HandlerOfClient() {
         DataInputStream sdis = new DataInputStream(sis);
         String login;
@@ -399,9 +385,9 @@ public class RecvThread extends Thread {
     @Override
     public void run() {
         while (true) {
-            HandlerOfClient();           
-            if(IsClientDisconnect) {
-                break;                
+            HandlerOfClient();
+            if (IsClientDisconnect) {
+                break;
             }
         }
     }

@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
  */
 public class RecvThread extends Thread {
     
-    final String RELATIVE_PATH_FOR_FILES = "C:/JavaRep/JAVA-client-server/ClusterClient/src/Results/";
+    final String RELATIVE_PATH_FOR_FILES = "C:/JavaRep/JAVA-client-server/ClusterClient/Results/";
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
@@ -64,6 +64,8 @@ public class RecvThread extends Thread {
             // Reading bytes of result from server
             try {
                 size_file = cdis.readLong();
+                
+                System.out.println(size_file);
                 name = cdis.readUTF();
             } catch (IOException ex) {
                 IsConnect = false;

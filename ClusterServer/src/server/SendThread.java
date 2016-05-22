@@ -63,7 +63,7 @@ public class SendThread extends Thread {
     public void run() {
         synchronized (semophore) {
             File file = new File(path_to_file);
-
+            
             if (file.exists()) {
 
                 String name;
@@ -107,7 +107,6 @@ public class SendThread extends Thread {
                         }
                     }
                 }
-
                 // Send the chunk with remainder bytes
                 if (remainder_chunk_size != 0) {
                     num_of_chunks++;
