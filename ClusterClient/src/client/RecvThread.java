@@ -25,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class RecvThread extends Thread {
 
-    final String RELATIVE_PATH_FOR_FILES = "C:/JavaRep/JAVA-client-server/ClusterClient/Results/";
+    final String RELATIVE_PATH_FOR_FILES = "C:/JavaRep/JAVA-client-server/ClusterClient/AllResults/";
     final int CHUNK_BYTE_SIZE = 1024;
     JTextArea Logs = null;
     Socket cs = null;
@@ -33,12 +33,14 @@ public class RecvThread extends Thread {
     boolean IsConnect = true;
     JTable table;
     int table_size = 0;
+    String Login;
 
-    public RecvThread(Socket _cs, JTextArea _Logs, JTable _table) {
+    public RecvThread(Socket _cs, JTextArea _Logs, JTable _table, String _Login) {
         cs = _cs;
         Logs = _Logs;
         table = _table;
-
+        Login = _Login;
+        
         if (cs != null) {
 
             try {
@@ -83,7 +85,7 @@ public class RecvThread extends Thread {
                 }
                 break;
             }
-            String path_to_file = RELATIVE_PATH_FOR_FILES + name;
+            String path_to_file = RELATIVE_PATH_FOR_FILES + Login +"/Results/"+ name;
             System.out.println(name);
             System.out.println(path_to_file);
             file = new File(path_to_file);

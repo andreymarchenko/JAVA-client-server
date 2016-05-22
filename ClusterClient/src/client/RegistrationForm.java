@@ -7,6 +7,7 @@ package client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +30,8 @@ public class RegistrationForm extends javax.swing.JFrame {
     Socket cs;
     int port = 4445;
     InetAddress ip = null;
+    final String PATH="C:/JavaRep/JAVA-client-server/ClusterClient/AllResults/";
+
     /**
      * Creates new form RegistrationForm
      */
@@ -36,7 +39,7 @@ public class RegistrationForm extends javax.swing.JFrame {
         initComponents();
         setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
     }
-    
+
     public void AddToLog(String info) {
         String curr_info = jTextArea1.getText();
         curr_info += info + "\n";
@@ -65,10 +68,22 @@ public class RegistrationForm extends javax.swing.JFrame {
 
                 InputStream cis = cs.getInputStream();
                 DataInputStream dcis = new DataInputStream(cis);
-                String reply = dcis.readUTF();                     
-                
+                String reply = dcis.readUTF();
+
                 if (reply.equalsIgnoreCase("RO")) {
                     AddToLog("Registration is OK!");
+                    String directory_client = PATH + Login;
+                    File specially_directory_for_client = new File(directory_client);
+                    specially_directory_for_client.mkdir();
+                    String path_to_directory_client = directory_client + "/";
+
+                    String directory_client_results = path_to_directory_client + "Results";
+                    File directory_with_results_for_client = new File(directory_client_results);
+                    directory_with_results_for_client.mkdir();
+
+                    String directory_client_binaries = path_to_directory_client + "JavaByteFiles";
+                    File directory_with_binaries_from_client = new File(directory_client_binaries);
+                    directory_with_binaries_from_client.mkdir();
                 } else {
                     AddToLog("Registration is not OK!");
                     cs = null;
@@ -167,13 +182,13 @@ public class RegistrationForm extends javax.swing.JFrame {
         if (jTextField1.getText() != null && jPasswordField1.getText() != null) {
             String login = jTextField1.getText();
             String password = jPasswordField1.getText();
-            Registration(login, password);                    
+            Registration(login, password);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void CloseHandler(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_CloseHandler
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_CloseHandler
 
     /**

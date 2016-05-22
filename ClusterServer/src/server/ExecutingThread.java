@@ -56,7 +56,7 @@ public class ExecutingThread extends Thread {
                 new_path_to_jar_file_for_process_builder += "\\" + string_split[i];
             }
 
-            String absolute_path_to_directory = "C:\\JavaRep\\JAVA-client-server\\ClusterServer\\src"; // У Андрея другой путь
+            String absolute_path_to_directory = "C:\\JavaRep\\JAVA-client-server\\ClusterServer\\src";
             for (int i = 1; i < string_split.length - 1; i++) {
                 absolute_path_to_directory += "\\" + string_split[i];
             }
@@ -64,7 +64,7 @@ public class ExecutingThread extends Thread {
             File dir = new File(absolute_path_to_directory);
             String str_path = "C:\\JavaRep\\JAVA-client-server\\ClusterServer\\" + new_path_to_jar_file_for_process_builder;
             ArrayList<String> command_for_builder = new ArrayList<>();
-            command_for_builder.add("C:\\Program Files\\Java\\jre1.8.0_74\\bin\\java"); // jre1.8.0_74
+            command_for_builder.add("C:\\Program Files\\Java\\jdk1.7.0_79\\bin\\java");
             command_for_builder.add("-jar");
             command_for_builder.add(str_path);
             ProcessBuilder procBuilder = new ProcessBuilder(command_for_builder);
