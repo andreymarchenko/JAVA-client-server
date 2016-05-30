@@ -46,6 +46,7 @@ public class RecvThread extends Thread {
     String Password = null;
     ResultSet checkedlogin = null;
     ResultSet checkedpair = null;
+    ResultSet alllogin = null;
     Object lock;
 
     boolean IsAuthorized = false;
@@ -85,8 +86,8 @@ public class RecvThread extends Thread {
             try {
                 OutputStream sos = cs.getOutputStream();
                 DataOutputStream dsos = new DataOutputStream(sos);
-
                 dsos.writeUTF(reply);
+                
             } catch (IOException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -328,6 +329,53 @@ public class RecvThread extends Thread {
             SendReplyToClient("DN");
         }
     }
+    
+    public void GetLoginFromDataBase() {
+    try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Connection c2 = null;
+        try {
+            c2 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
+            System.out.println("Opened database successfully");
+        } catch (SQLException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        PreparedStatement allusers;
+        String str = "";
+
+        try {
+            allusers = c2.prepareStatement("SELECT login FROM CLIENTS; ");
+            alllogin = allusers.executeQuery();
+
+            int count=0;
+            while (alllogin.next()) {
+                if(count==0) {
+                    str = alllogin.getString(1);
+                    count++;
+                }
+                else {
+                    str += "\n" + alllogin.getString(1);
+                    count++;
+                }
+            }
+
+        try {
+            OutputStream os1 = cs.getOutputStream();
+            DataOutputStream dataoutputstream = new DataOutputStream(os1);
+            dataoutputstream.writeUTF(str);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+            allusers.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void WrongCommand() {
         SendReplyToClient("CN");
@@ -374,6 +422,8 @@ public class RecvThread extends Thread {
                 Receive();
             } else if (command_from_client.equalsIgnoreCase("D")) {
                 Disconnect();
+            } else if (command_from_client.equalsIgnoreCase("B")) {
+                GetLoginFromDataBase();
             } else {
                 WrongCommand();
             }
