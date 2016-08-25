@@ -145,7 +145,7 @@ public class RecvThread extends Thread {
             table.setModel(model);
             table_size++;
 
-            /*try {
+            /* try {
                 sis.close();
 
             } catch (IOException ex) {
