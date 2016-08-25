@@ -22,6 +22,7 @@ import java.awt.Desktop;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import client.Log;
 
 public class client extends javax.swing.JFrame {
     /**
@@ -64,9 +65,7 @@ public class client extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(600, 440));
         setMinimumSize(new java.awt.Dimension(600, 440));
-        setPreferredSize(new java.awt.Dimension(750, 440));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -277,6 +276,7 @@ public class client extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    final String MY_NAME = "ClientThread";
     Socket cs;
     int port = 4445;
     InetAddress ip = null;
@@ -289,13 +289,6 @@ public class client extends javax.swing.JFrame {
     String Password = "";
     boolean IsConnect = false;
             
-    
-    
-    public void AddToLog(String info) {
-        String curr_info = jTextArea3.getText();
-        curr_info += info + "\n";
-        jTextArea3.setText(curr_info);
-    }
 
     private void AuthorizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuthorizationActionPerformed
            if (!IsConnect ) {
@@ -326,21 +319,22 @@ public class client extends javax.swing.JFrame {
                     reply = dcis.readUTF();
                     
                     if (reply.equalsIgnoreCase("AO")) {
-                        AddToLog("ClientMain: Authorization succesful!");
+                        Log.AddToLog("Authorization succesful!", jTextArea3, MY_NAME);
                         IsConnect = true;
                         recv_thread = new RecvThread(cs, jTextArea3, jTable1, Login);
                         recv_thread.start();
                     } else {
-                        AddToLog("ClientMain: Please, enter correct login and password!");
+                        Log.AddToLog("Please, enter correct login and password!", jTextArea3, MY_NAME);
                         IsConnect = false;
                     }
                 
                     } catch (IOException ex) {
                         Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } else AddToLog("ClientMain: Please, input Login and Password!");
+                } else 
+                   Log.AddToLog("Please, input Login and Password!", jTextArea3, MY_NAME);
            } else {
-                AddToLog("ClientMain: Client heve already connected and authorized!");
+                Log.AddToLog("Client heve already connected and authorized!", jTextArea3, MY_NAME);
             }
     }//GEN-LAST:event_AuthorizationActionPerformed
 
@@ -350,7 +344,7 @@ public class client extends javax.swing.JFrame {
             rform.setVisible(true);
         }
         else {
-            AddToLog("ClientMain: You have already authorized, if you want to registration, you will need to click Disconnect!");
+            Log.AddToLog("You have already authorized, if you want to registration, you will need to click Disconnect!", jTextArea3, MY_NAME);
         }
     }//GEN-LAST:event_RegistrationActionPerformed
 
@@ -363,13 +357,13 @@ public class client extends javax.swing.JFrame {
                     send_thread.SendJavaByteFile(path_to_file, priority);
                     old_path = path_to_file;
                 } else {
-                    AddToLog("ClientMain: This file is already send, choose other file!");
+                    Log.AddToLog("This file is already send, choose other file!", jTextArea3, MY_NAME);
                 }
             } else {
-                AddToLog("ClientMain: Jar file is not choosen!");
+                Log.AddToLog("Jar file is not choosen!", jTextArea3, MY_NAME);
             }
         } else {
-            AddToLog("ClientMain: You are not authorized on server");
+            Log.AddToLog("You are not authorized on server", jTextArea3, MY_NAME);
         }
     }//GEN-LAST:event_SendFileActionPerformed
 
@@ -383,8 +377,8 @@ public class client extends javax.swing.JFrame {
         if (ret == JFileChooser.APPROVE_OPTION) {
             File file = fileopen.getSelectedFile();
             path_to_file = file.getAbsolutePath();
-            String to_logs = "ClientMain: You have chosen " + path_to_file + " file";
-            AddToLog(to_logs);
+            String to_logs = "You have chosen " + path_to_file + " file";
+            Log.AddToLog(to_logs, jTextArea3, MY_NAME);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -410,10 +404,10 @@ public class client extends javax.swing.JFrame {
                 String reply = dcis.readUTF();
 
                 if (reply.equalsIgnoreCase("DO")) {
-                    AddToLog("ClientMain: Disconnect is OK!");
+                    Log.AddToLog("Disconnect is OK!", jTextArea3, MY_NAME);
                     IsConnect = false;
                 } else {
-                    AddToLog("ClientMain: Disconnect is not OK!");
+                    Log.AddToLog("Disconnect is not OK!", jTextArea3, MY_NAME);
                 }
                 
             } catch (IOException ex) {

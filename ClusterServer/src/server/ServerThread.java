@@ -24,12 +24,15 @@ import server.RecvThread;
 import server.QueueHandlerThread;
 import server.BlockInstance;
 import server.Key;
+import server.Log;
 
 /**
  *
  * @author Игорь
  */
 public class ServerThread extends Thread {
+    final String MY_NAME = "ServerThread";
+    
     JTextArea Logs = null;
     JTable Table = null;
     ServerSocket server_socket;  // for establishing connection with clients
@@ -42,6 +45,7 @@ public class ServerThread extends Thread {
     QueueHandlerThread QHT;
     Hashtable<Key, BlockInstance> allClient =
              new Hashtable<Key, BlockInstance>(); // Login of client <-> SocketClient
+    
     private final Object lock = new Object();
     
     // PriorityBlockingQueue
@@ -67,22 +71,16 @@ public class ServerThread extends Thread {
         QHT = new QueueHandlerThread(Logs, Table, allClient, lock);
         
         QHT.start();
-        AddToLog("ServerThread: Creating of server thread complete!");
-    }
-    
-    public void AddToLog(String info) {
-        String curr_info = Logs.getText();
-        curr_info += info + "\n";
-        Logs.setText(curr_info);
+        Log.AddToLog("Creating of server thread complete!", Logs, MY_NAME);
     }
     
     @Override
     public void run() {
         while(!IsStopped) {
             try {
-                AddToLog("ServerThread: Waiting of client...");
+                Log.AddToLog("Waiting of client...", Logs, MY_NAME);
                 socket_client = server_socket.accept();
-                AddToLog("ServerThread: Connection with client complete!");
+                Log.AddToLog("Connection with client complete!", Logs, MY_NAME);
             }
             catch(IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
@@ -99,7 +97,7 @@ public class ServerThread extends Thread {
     synchronized void StopServer() {
 
         IsStopped = true;
-        AddToLog("ServerThread: Server was stopped!");
+        Log.AddToLog("Server was stopped!", Logs, MY_NAME);
         stop();
         
         try {
@@ -114,7 +112,7 @@ public class ServerThread extends Thread {
 
     synchronized void StartServer() {
         IsStopped = false;
-        AddToLog("ServerThread: Server was started!");
+        Log.AddToLog("Server was started!", Logs, MY_NAME);
         start(); // Call the run method of client
     }
 }

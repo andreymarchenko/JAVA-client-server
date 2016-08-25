@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import server.BlockInstance;
 import server.ComparatorPriorityTask;
+import server.Log;
 
 /**
  *
@@ -41,12 +42,6 @@ public class QueueHandlerThread extends Thread {
         Table = _Table;
         Logs = _Logs;
         HT = _HT;
-    }
-
-    public void AddToLog(String info) {
-        String curr_info = Logs.getText();
-        curr_info += info + "\n";
-        Logs.setText(curr_info);
     }
 
     public String ConvertPriorityToString(int priority) {

@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import server.BlockInstance;
 import server.Key;
+import server.Log;
 
 /**
  *
@@ -35,6 +36,8 @@ import server.Key;
 public class RecvThread extends Thread {
 
     final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
+    final String MY_NAME = "RecvThread";
+    
     String path_to_java_byte_file = "";
     String path_to_result_file = "";
     final int CHUNK_BYTE_SIZE = 1024;
@@ -92,12 +95,6 @@ public class RecvThread extends Thread {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    public void AddToLog(String info) {
-        String curr_info = Logs.getText();
-        curr_info += info + "\n";
-        Logs.setText(curr_info);
     }
 
     public void Registration(String _Login, String _Password) {
@@ -160,14 +157,14 @@ public class RecvThread extends Thread {
             } catch (SQLException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String reply = "RecvThread:" + _Login + " was registrated!";
+            String reply = _Login + " was registrated!";
             SendReplyToClient("RO");
-            AddToLog(reply);
+            Log.AddToLog(reply, Logs, MY_NAME);
 
         } else {
-            String reply = "RecvThread:" + _Login + " was not registrated!";
+            String reply = _Login + " was not registrated!";
             SendReplyToClient("RN"); // Пользователь с таким именем существует
-            AddToLog(reply);
+            Log.AddToLog(reply, Logs, MY_NAME);
         }
 
         IsClientDisconnect = true;
@@ -220,12 +217,12 @@ public class RecvThread extends Thread {
                 Password = _Password;
                 IsAuthorized = true;
                 SendReplyToClient("AO");
-                String reply = "RecvThread:" + Login + " is authorized";
-                AddToLog(reply);
+                String reply = Login + " is authorized";
+                Log.AddToLog(reply, Logs, MY_NAME);
 
             } else {
-                String reply = "RecvThread:" + "Authorization failed for " + Login;
-                AddToLog(reply);
+                String reply = "Authorization failed for " + Login;
+                Log.AddToLog(reply, Logs, MY_NAME);
                 SendReplyToClient("AN");
                 IsClientDisconnect = true;
             }
@@ -309,7 +306,7 @@ public class RecvThread extends Thread {
                 HT.put(key, BI);
             }
 
-            AddToLog("RecvThread: File has been successfully received!");
+            Log.AddToLog("File has been successfully received!", Logs, MY_NAME);
             System.out.print(Login);
         }
     }

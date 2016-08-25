@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
+import server.Log;
 
 /**
  *
@@ -24,8 +25,11 @@ import javax.swing.JTextArea;
 public class SendThread extends Thread {
 
     Object semophore;
+    
     final String RELATIVE_PATH_FOR_RESULTS = "src/Results/";
     final int CHUNK_BYTE_SIZE = 1024;
+    final String MY_NAME = "SendThread";
+    
     JTextArea Logs = null;
     Socket cs = null;
     OutputStream sos = null;
@@ -45,12 +49,6 @@ public class SendThread extends Thread {
             }
 
         }
-    }
-
-    public void AddToLog(String info) {
-        String curr_info = Logs.getText();
-        curr_info += info + "\n";
-        Logs.setText(curr_info);
     }
 
     public void SendResult(String _path_to_file, Object obj) {
@@ -119,9 +117,9 @@ public class SendThread extends Thread {
                     }
 
                 }
-                AddToLog("SendThread: Result has been successfully sent!");
+                Log.AddToLog("Result has been successfully sent!", Logs, MY_NAME);
             } else {
-                AddToLog("SendThread: File is not exist!");
+                Log.AddToLog("File is not exist!", Logs, MY_NAME);
             }
         }
     }

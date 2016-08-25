@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
+import client.Log;
 
 /**
  *
@@ -27,6 +28,8 @@ public class RecvThread extends Thread {
 
     final String RELATIVE_PATH_FOR_FILES = "C:/JavaRep/JAVA-client-server/ClusterClient/AllResults/";
     final int CHUNK_BYTE_SIZE = 1024;
+    final String MY_NAME = "RecvThread";
+    
     JTextArea Logs = null;
     Socket cs = null;
     InputStream cis = null;
@@ -49,12 +52,6 @@ public class RecvThread extends Thread {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, "Error of getting intput stream", ex);
             }
         }
-    }
-
-    public void AddToLog(String info) {
-        String curr_info = Logs.getText();
-        curr_info += info + "\n";
-        Logs.setText(curr_info);
     }
 
     @Override
@@ -130,27 +127,14 @@ public class RecvThread extends Thread {
                 }
 
             }
-            /* try {
-                sdis.close();
-                sos.close();
-            } catch (IOException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
 
-            AddToLog("RecvThread: Result has been successfully received!");
+            Log.AddToLog("Result has been successfully received!", Logs, MY_NAME);
 
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setValueAt(name, table_size, 0);
             model.setValueAt(path_to_file, table_size, 1);
             table.setModel(model);
             table_size++;
-
-            /* try {
-                sis.close();
-
-            } catch (IOException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
-            }*/
         }
     }
 
