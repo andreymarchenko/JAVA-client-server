@@ -408,41 +408,20 @@ public class client extends javax.swing.JFrame {
     private void Disconnect() {
         if (IsConnect) {
             try {
-                Log.AddToLog("32!", jTextArea3, MY_NAME);
                 if (send_thread != null) {
-                    Log.AddToLog("1!", jTextArea3, MY_NAME);
-                    
                     send_thread.stop();
                 }
 
                 if (recv_thread != null) {
-                    Log.AddToLog("2!", jTextArea3, MY_NAME);
                     recv_thread.stop();
                 }
-Log.AddToLog("3!", jTextArea3, MY_NAME);
+                
                 OutputStream cos = cs.getOutputStream();
-                Log.AddToLog("4!", jTextArea3, MY_NAME);
                 DataOutputStream dcos = new DataOutputStream(cos);
-                Log.AddToLog("5!", jTextArea3, MY_NAME);
 
                 dcos.writeUTF("D");
-                Log.AddToLog("6!", jTextArea3, MY_NAME);
-
-                InputStream cis = cs.getInputStream();
-                Log.AddToLog("7!", jTextArea3, MY_NAME);
-                DataInputStream dcis = new DataInputStream(cis);
-                Log.AddToLog("8!", jTextArea3, MY_NAME);
-                String reply = dcis.readUTF();
-                Log.AddToLog("9!", jTextArea3, MY_NAME);
-
-                if (reply.equalsIgnoreCase("DO")) {
-                    Log.AddToLog("Disconnect is OK!", jTextArea3, MY_NAME);
-                    cs.close();
-                    IsConnect = false;
-                } else {
-                    Log.AddToLog("Disconnect is not OK!", jTextArea3, MY_NAME);
-                }
                 
+                IsConnect = false;            
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -492,7 +471,7 @@ Log.AddToLog("3!", jTextArea3, MY_NAME);
                 if (recv_thread != null) {
                     recv_thread.stop();
                 }
-                Log.AddToLog("1!", jTextArea3, MY_NAME);
+                
                 OutputStream cos = cs.getOutputStream();
                 DataOutputStream dcos = new DataOutputStream(cos);
 
@@ -500,16 +479,6 @@ Log.AddToLog("3!", jTextArea3, MY_NAME);
 
                 InputStream cis = cs.getInputStream();
                 DataInputStream dcis = new DataInputStream(cis);
-                Log.AddToLog("1!", jTextArea3, MY_NAME);
-                String reply = dcis.readUTF();
-                Log.AddToLog("2!", jTextArea3, MY_NAME);
-
-                if (reply.equalsIgnoreCase("DO")) {
-                    Log.AddToLog("Disconnect is OK!", jTextArea3, MY_NAME);
-                    IsConnect = false;
-                } else {
-                    Log.AddToLog("Disconnect is not OK!", jTextArea3, MY_NAME);
-                }
                 
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);

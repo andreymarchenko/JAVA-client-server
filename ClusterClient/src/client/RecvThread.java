@@ -56,7 +56,8 @@ public class RecvThread extends Thread {
 
     @Override
     public void run() {
-
+        end:
+        
         while (IsConnect) {
             File file;
             long size_file = 0;
@@ -67,18 +68,15 @@ public class RecvThread extends Thread {
             // Reading bytes of result from server
             try {
                 size_file = cdis.readLong();
-                System.out.println(size_file);
                 name = cdis.readUTF();
             } catch (IOException ex) {
                 IsConnect = false;
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+                break end;
             }
 
             if (IsConnect) {
-
                 String path_to_file = RELATIVE_PATH_FOR_FILES + Login + "/Results/" + name;
-                System.out.println(name);
-                System.out.println(path_to_file);
                 file = new File(path_to_file);
 
                 /* At the second step we must read bytes of Result file from server */
@@ -130,7 +128,10 @@ public class RecvThread extends Thread {
                 table.setModel(model);
                 table_size++;
             }
+           
         }
+        
+                    
     }
 
 }
