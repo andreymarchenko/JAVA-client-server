@@ -52,6 +52,7 @@ public class client extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         SendFile1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -86,11 +87,6 @@ public class client extends javax.swing.JFrame {
         jLabel2.setText("Priority:");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Low", "Medium", "High" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
-            }
-        });
 
         Authorization.setLabel("Sign in");
         Authorization.setMaximumSize(new java.awt.Dimension(91, 23));
@@ -117,16 +113,11 @@ public class client extends javax.swing.JFrame {
         jButton1.setPreferredSize(new java.awt.Dimension(91, 23));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                ChooseActionPerformed(evt);
             }
         });
 
         jTextField1.setMaximumSize(new java.awt.Dimension(6, 20));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
 
         jLabel3.setText("Login");
 
@@ -200,7 +191,14 @@ public class client extends javax.swing.JFrame {
         SendFile1.setPreferredSize(new java.awt.Dimension(91, 23));
         SendFile1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SendFile1ActionPerformed(evt);
+                ViewActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Disconnect");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DisconnectActionPerformed(evt);
             }
         });
 
@@ -235,7 +233,10 @@ public class client extends javax.swing.JFrame {
                             .addComponent(Authorization, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(80, 80, 80)
-                        .addComponent(jLabel4)))
+                        .addComponent(jLabel4))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(63, 63, 63)
+                        .addComponent(jButton2)))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -266,11 +267,17 @@ public class client extends javax.swing.JFrame {
                             .addGap(18, 18, 18)
                             .addComponent(SendFile, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
-                    .addComponent(SendFile1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                            .addComponent(SendFile1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton2)
+                        .addGap(38, 38, 38))))
         );
 
         pack();
@@ -288,10 +295,43 @@ public class client extends javax.swing.JFrame {
     String Login = "";
     String Password = "";
     boolean IsConnect = false;
-            
-
-    private void AuthorizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuthorizationActionPerformed
-           if (!IsConnect ) {
+    
+    /*
+      1. Commands from client:
+       
+       1.1 "R" - Registration
+       1.2 "A" - Authorization
+       1.3 "S" - Send
+       1.4 "D" - Disconnect
+       1.5 "WRONG_COMMAND"
+     */
+    
+    private void HandlerRequestOfClient(String req) {
+        if(req.equalsIgnoreCase("R")) {
+            Registration();
+        } else if(req.equalsIgnoreCase("A")) {
+            Authorization();
+        } else if(req.equalsIgnoreCase("S")) {
+            Send();
+        } else if(req.equalsIgnoreCase("D")) {
+            Disconnect();
+        } else {
+            WrongCommand();
+        }
+    }
+    
+    private void Registration() {
+        if (!IsConnect) {
+            rform = new RegistrationForm();
+            rform.setVisible(true);
+        }
+        else {
+            Log.AddToLog("You have already authorized, if you want to registratation, you will need to click Disconnect!", jTextArea3, MY_NAME);
+        }
+    }
+    
+    private void Authorization() {
+        if (!IsConnect ) {
                if (!jTextField1.getText().equalsIgnoreCase("") && !jPasswordField1.getText().equalsIgnoreCase("")) {
                 try {
                     ip = InetAddress.getLocalHost();
@@ -306,21 +346,28 @@ public class client extends javax.swing.JFrame {
                 }
                 
                 Login = jTextField1.getText();
-                Password = jPasswordField1.getText();                
+                Password = jPasswordField1.getText();  
+                
                 try {
                     OutputStream cos = cs.getOutputStream();
                     DataOutputStream dcos = new DataOutputStream(cos);
+                    
                     dcos.writeUTF("A");
                     dcos.writeUTF(Login);
                     dcos.writeUTF(Password);
+                    
                     InputStream cis = cs.getInputStream();
                     DataInputStream dcis = new DataInputStream(cis);
+                    
                     String reply;
+                    
                     reply = dcis.readUTF();
                     
                     if (reply.equalsIgnoreCase("AO")) {
                         Log.AddToLog("Authorization succesful!", jTextArea3, MY_NAME);
+                        
                         IsConnect = true;
+                        
                         recv_thread = new RecvThread(cs, jTextArea3, jTable1, Login);
                         recv_thread.start();
                     } else {
@@ -328,27 +375,18 @@ public class client extends javax.swing.JFrame {
                         IsConnect = false;
                     }
                 
-                    } catch (IOException ex) {
+                }
+                catch (IOException ex) {
                         Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else 
                    Log.AddToLog("Please, input Login and Password!", jTextArea3, MY_NAME);
            } else {
-                Log.AddToLog("Client heve already connected and authorized!", jTextArea3, MY_NAME);
+                Log.AddToLog("Client have already connected and authorized!", jTextArea3, MY_NAME);
             }
-    }//GEN-LAST:event_AuthorizationActionPerformed
-
-    private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
-        if (!IsConnect) {
-            rform = new RegistrationForm();
-            rform.setVisible(true);
-        }
-        else {
-            Log.AddToLog("You have already authorized, if you want to registration, you will need to click Disconnect!", jTextArea3, MY_NAME);
-        }
-    }//GEN-LAST:event_RegistrationActionPerformed
-
-    private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
+    }
+        
+    private void Send() {
         if (IsConnect) {
             if (!path_to_file.equalsIgnoreCase("")) {
                 if (!path_to_file.equalsIgnoreCase(old_path)) {
@@ -364,14 +402,75 @@ public class client extends javax.swing.JFrame {
             }
         } else {
             Log.AddToLog("You are not authorized on server", jTextArea3, MY_NAME);
+          }
+    }
+            
+    private void Disconnect() {
+        if (IsConnect) {
+            try {
+                Log.AddToLog("32!", jTextArea3, MY_NAME);
+                if (send_thread != null) {
+                    Log.AddToLog("1!", jTextArea3, MY_NAME);
+                    
+                    send_thread.stop();
+                }
+
+                if (recv_thread != null) {
+                    Log.AddToLog("2!", jTextArea3, MY_NAME);
+                    recv_thread.stop();
+                }
+Log.AddToLog("3!", jTextArea3, MY_NAME);
+                OutputStream cos = cs.getOutputStream();
+                Log.AddToLog("4!", jTextArea3, MY_NAME);
+                DataOutputStream dcos = new DataOutputStream(cos);
+                Log.AddToLog("5!", jTextArea3, MY_NAME);
+
+                dcos.writeUTF("D");
+                Log.AddToLog("6!", jTextArea3, MY_NAME);
+
+                InputStream cis = cs.getInputStream();
+                Log.AddToLog("7!", jTextArea3, MY_NAME);
+                DataInputStream dcis = new DataInputStream(cis);
+                Log.AddToLog("8!", jTextArea3, MY_NAME);
+                String reply = dcis.readUTF();
+                Log.AddToLog("9!", jTextArea3, MY_NAME);
+
+                if (reply.equalsIgnoreCase("DO")) {
+                    Log.AddToLog("Disconnect is OK!", jTextArea3, MY_NAME);
+                    cs.close();
+                    IsConnect = false;
+                } else {
+                    Log.AddToLog("Disconnect is not OK!", jTextArea3, MY_NAME);
+                }
+                
+            } catch (IOException ex) {
+                Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            Log.AddToLog("Client is not authorized to server!", jTextArea3, MY_NAME);
         }
+    }
+                
+    private void WrongCommand() {
+        Log.AddToLog("Wrong command!", jTextArea3, MY_NAME);
+    }
+
+    private void AuthorizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuthorizationActionPerformed
+        String request = "A";
+        HandlerRequestOfClient(request);
+    }//GEN-LAST:event_AuthorizationActionPerformed
+
+    private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
+        String request = "R";
+        HandlerRequestOfClient(request);
+    }//GEN-LAST:event_RegistrationActionPerformed
+
+    private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
+        String request = "S";
+        HandlerRequestOfClient(request);
     }//GEN-LAST:event_SendFileActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void ChooseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChooseActionPerformed
         JFileChooser fileopen = new JFileChooser();
         int ret = fileopen.showDialog(null, "Открыть файл");
         if (ret == JFileChooser.APPROVE_OPTION) {
@@ -380,7 +479,7 @@ public class client extends javax.swing.JFrame {
             String to_logs = "You have chosen " + path_to_file + " file";
             Log.AddToLog(to_logs, jTextArea3, MY_NAME);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_ChooseActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
@@ -393,7 +492,7 @@ public class client extends javax.swing.JFrame {
                 if (recv_thread != null) {
                     recv_thread.stop();
                 }
-
+                Log.AddToLog("1!", jTextArea3, MY_NAME);
                 OutputStream cos = cs.getOutputStream();
                 DataOutputStream dcos = new DataOutputStream(cos);
 
@@ -401,7 +500,9 @@ public class client extends javax.swing.JFrame {
 
                 InputStream cis = cs.getInputStream();
                 DataInputStream dcis = new DataInputStream(cis);
+                Log.AddToLog("1!", jTextArea3, MY_NAME);
                 String reply = dcis.readUTF();
+                Log.AddToLog("2!", jTextArea3, MY_NAME);
 
                 if (reply.equalsIgnoreCase("DO")) {
                     Log.AddToLog("Disconnect is OK!", jTextArea3, MY_NAME);
@@ -416,22 +517,25 @@ public class client extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void SendFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFile1ActionPerformed
+    private void ViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ViewActionPerformed
     File Folder = new File("C:/JavaRep/JAVA-client-server/ClusterClient/AllResults");
     Desktop desktop = null; 
-            if (Desktop.isDesktopSupported()) { 
-            desktop = Desktop.getDesktop(); 
+    
+    if (Desktop.isDesktopSupported()) { 
+        desktop = Desktop.getDesktop(); 
+        
         try { 
             desktop.open(Folder);
         } catch (IOException ex) {
             Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            }
-    }//GEN-LAST:event_SendFile1ActionPerformed
+          }
+    }
+    }//GEN-LAST:event_ViewActionPerformed
+
+    private void DisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectActionPerformed
+        String request = "D";
+        HandlerRequestOfClient(request);
+    }//GEN-LAST:event_DisconnectActionPerformed
 
     /**
      * @param args the command line arguments
@@ -473,6 +577,7 @@ public class client extends javax.swing.JFrame {
     private javax.swing.JButton SendFile;
     private javax.swing.JButton SendFile1;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel jLabel2;

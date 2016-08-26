@@ -290,12 +290,6 @@ public class RecvThread extends Thread {
                     Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            /* try {
-                sdis.close();
-                sos.close();
-            } catch (IOException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
 
             Key key = new Key(Login, name);
             String name_of_result_file = name.replaceAll("jar", "txt");
@@ -314,14 +308,12 @@ public class RecvThread extends Thread {
     public void Disconnect() {
         if (IsAuthorized) {
             IsAuthorized = false;
-            try {
+                String reply = Login + " disconnect from server";
+                
                 IsClientDisconnect = true;
                 SendReplyToClient("DO");
-                cs.close();
-            } catch (IOException ex) {
-                SendReplyToClient("DN");
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                
+                Log.AddToLog(reply, Logs, MY_NAME);
         } else {
             SendReplyToClient("DN");
         }
@@ -385,7 +377,8 @@ public class RecvThread extends Thread {
        1.2 "A" - Authorization
        1.3 "S" - Send
        1.4 "D" - Disconnect
-       1.5 "WRONG_COMMAND"
+       1.5 "B" - Get all logins from database (Android client only)
+       1.6 "WRONG_COMMAND"
     
        2. Commands of server:
        
@@ -399,6 +392,7 @@ public class RecvThread extends Thread {
        2.8 "DN" - Disconnect from server is not OK
        2.9 "CN" - Wrong Command
      */
+    
     public void HandlerOfClient() {
         DataInputStream sdis = new DataInputStream(sis);
         String login;

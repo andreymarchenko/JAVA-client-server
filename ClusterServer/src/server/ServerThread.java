@@ -88,9 +88,6 @@ public class ServerThread extends Thread {
             
             RecvThread RT = new RecvThread(socket_client, Logs, allClient, lock);
             RT.start();
-            
-            /*SendThread ST = new SendThread(socket_client, Logs);
-            ST.SendResult(_path_to_file);*/
         }
     }
 
