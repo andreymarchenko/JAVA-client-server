@@ -25,7 +25,6 @@ import client.Log;
  * @author Игорь
  */
 public class RecvThread extends Thread {
-
     final String RELATIVE_PATH_FOR_FILES = "C:/JavaRep/JAVA-client-server/ClusterClient/AllResults/";
     final int CHUNK_BYTE_SIZE = 1024;
     final String MY_NAME = "RecvThread";
@@ -38,7 +37,11 @@ public class RecvThread extends Thread {
     int table_size = 0;
     String Login;
 
-    public RecvThread(Socket _cs, JTextArea _Logs, JTable _table, String _Login) {
+    public RecvThread(Socket _cs,
+                      JTextArea _Logs,
+                      JTable _table,
+                      String _Login) {
+        
         cs = _cs;
         Logs = _Logs;
         table = _table;

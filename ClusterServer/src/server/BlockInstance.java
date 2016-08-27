@@ -24,18 +24,27 @@ import static java.lang.Thread.sleep;
  */
 public class BlockInstance {
     private final Object lock = new Object();
+    
     String path_to_jar_file;
     Socket cs;
     String path_to_result;
     int priority;
+    
     JTextArea Logs;
+    
     JTable Table; // для отображения статуса задачи
     int pos_in_table = 0; // для отображения статуса задачи
 
     Sender SR = null;
     Executor EX = null;
 
-    BlockInstance(Socket _cs, String _path_to_jar_file, String _path_to_result, int _priority, JTextArea _Logs) {
+    
+    BlockInstance(Socket _cs,
+                  String _path_to_jar_file,
+                  String _path_to_result,
+                  int _priority,
+                  JTextArea _Logs) {
+        
         path_to_jar_file = _path_to_jar_file;
         path_to_result = _path_to_result;
         priority = _priority;
@@ -52,7 +61,7 @@ public class BlockInstance {
 
     synchronized public void ExecuteTask() {     
         if (EX != null) {
-            EX.execute(path_to_result, Table, pos_in_table);
+            EX.execute(path_to_result);
         }
     }
 

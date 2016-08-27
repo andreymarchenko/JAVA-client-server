@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import server.Log;
 
@@ -29,17 +28,12 @@ public class Executor {
     String path_to_result;
     
     File result;
-    JTable Table;
-    
-    int pos_in_table = 0;
 
     public Executor(String _path_to_jar_file) {
         path_to_jar_file = _path_to_jar_file;
     }
 
-    public void execute(String _path, JTable _Table, int _pos_in_table) {
-        Table = _Table;
-        pos_in_table = _pos_in_table;
+    public void execute(String _path) {
         path_to_result = _path;
 
         File fl = new File(path_to_result); // Создаем текстовый файл с результатом

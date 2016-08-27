@@ -284,16 +284,21 @@ public class client extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     final String MY_NAME = "ClientThread";
+    
     Socket cs;
     int port = 4445;
     InetAddress ip = null;
+    
     String path_to_file = "";
-    String old_path = "";
+    
     SendThread send_thread = null;
     RecvThread recv_thread = null;
+    
     RegistrationForm rform;
+    
     String Login = "";
     String Password = "";
+    
     boolean IsConnect = false;
     
     /*
@@ -368,7 +373,11 @@ public class client extends javax.swing.JFrame {
                         
                         IsConnect = true;
                         
-                        recv_thread = new RecvThread(cs, jTextArea3, jTable1, Login);
+                        recv_thread = new RecvThread(cs,
+                                                     jTextArea3,
+                                                     jTable1,
+                                                     Login);
+                        
                         recv_thread.start();
                     } else {
                         Log.AddToLog("Please, enter correct login and password!", jTextArea3, MY_NAME);

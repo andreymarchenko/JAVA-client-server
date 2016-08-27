@@ -39,7 +39,12 @@ public class QueueHandlerThread extends Thread {
     Vector<String> dataVector;
     JTable Table;
 
-    QueueHandlerThread(JTextArea _Logs, JTable _Table, Hashtable<Key, BlockInstance> _HT, Object _lock) {
+    
+    QueueHandlerThread(JTextArea _Logs,
+                       JTable _Table,
+                       Hashtable<Key, BlockInstance> _HT,
+                       Object _lock) {
+        
         lock = _lock;
         Table = _Table;
         Logs = _Logs;

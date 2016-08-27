@@ -68,7 +68,10 @@ public class ServerThread extends Thread {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in create server_socket", ex);
         }
         
-        QHT = new QueueHandlerThread(Logs, Table, allClient, lock);
+        QHT = new QueueHandlerThread(Logs,
+                                     Table,
+                                     allClient,
+                                     lock);
         
         QHT.start();
         Log.AddToLog("Creating of server thread complete!", Logs, MY_NAME);

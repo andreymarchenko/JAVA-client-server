@@ -37,25 +37,34 @@ public class RecvThread extends Thread {
 
     final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
     final String MY_NAME = "RecvThread";
-    
+    final int CHUNK_BYTE_SIZE = 1024;
+        
     String path_to_java_byte_file = "";
     String path_to_result_file = "";
-    final int CHUNK_BYTE_SIZE = 1024;
-    JTextArea Logs = null;
+
     Socket cs = null;
     InputStream sis = null;
+    
     static Hashtable<Key, BlockInstance> HT;
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;
     ResultSet checkedpair = null;
     ResultSet alllogin = null;
+    
+    JTextArea Logs = null;
+    
     Object lock;
 
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
 
-    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<Key, BlockInstance> _HT, Object _lock) {
+    
+    public RecvThread(Socket _cs,
+                      JTextArea _Logs,
+                      Hashtable<Key, BlockInstance> _HT,
+                      Object _lock) {
+        
         lock = _lock;
         cs = _cs;
         Logs = _Logs;
@@ -293,8 +302,16 @@ public class RecvThread extends Thread {
 
             Key key = new Key(Login, name);
             String name_of_result_file = name.replaceAll("jar", "txt");
-            path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES + Login + "/" + "Results/" + name_of_result_file;
-            BlockInstance BI = new BlockInstance(cs, path_to_java_byte_files, path_to_result_file, ConvertStringPriorityToInt(priority_file), Logs);
+            
+            path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES +
+                                  Login + "/" + "Results/" +
+                                  name_of_result_file;
+            
+            BlockInstance BI = new BlockInstance(cs,
+                                                 path_to_java_byte_files,
+                                                 path_to_result_file,
+                                                 ConvertStringPriorityToInt(priority_file),
+                                                 Logs);
 
             synchronized (lock) {
                 HT.put(key, BI);
