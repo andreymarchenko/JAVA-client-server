@@ -298,6 +298,7 @@ public class RecvThread extends Thread {
 
             synchronized (lock) {
                 HT.put(key, BI);
+                lock.notify();
             }
 
             Log.AddToLog("File has been successfully received!", Logs, MY_NAME);
@@ -319,7 +320,7 @@ public class RecvThread extends Thread {
     }
 
     public void GetLoginFromDataBase() {
-    try {
+        try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);

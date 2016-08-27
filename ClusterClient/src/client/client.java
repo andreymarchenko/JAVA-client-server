@@ -417,7 +417,8 @@ public class client extends javax.swing.JFrame {
 
                 dcos.writeUTF("D");
                 
-                IsConnect = false;            
+                IsConnect = false;
+                Log.AddToLog("Client disconnected from server!", jTextArea3, MY_NAME);
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -472,10 +473,8 @@ public class client extends javax.swing.JFrame {
                 DataOutputStream dcos = new DataOutputStream(cos);
 
                 dcos.writeUTF("D");
-
-                InputStream cis = cs.getInputStream();
-                DataInputStream dcis = new DataInputStream(cis);
                 
+                IsConnect = false;
             } catch (IOException ex) {
                 Logger.getLogger(client.class.getName()).log(Level.SEVERE, null, ex);
             }

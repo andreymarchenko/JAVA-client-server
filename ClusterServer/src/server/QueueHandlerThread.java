@@ -12,6 +12,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
@@ -82,14 +84,15 @@ public class QueueHandlerThread extends Thread {
                     BlockInstance BI = entrySet.getValue();
                     
                     AddTaskToQueue(BI, key);
+                    PBQ.poll().BI.Implement(Table);
+                    
                     HT.remove(key);
                 }
-
-                DefaultTableModel model = (DefaultTableModel) Table.getModel();
                 
-                if (!PBQ.isEmpty() && (model.getValueAt(old_row, 3).equals("FINISHED") || size_rows_in_table == 1)) {
-                    old_row = PBQ.peek().BI.pos_in_table;
-                    PBQ.poll().BI.Implement(Table);
+                try {
+                    lock.wait(); // QueueHandlerThread was norified by RecvThread (on server) which is handled request from some client
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(QueueHandlerThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
