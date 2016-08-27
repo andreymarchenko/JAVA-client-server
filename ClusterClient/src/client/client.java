@@ -389,20 +389,16 @@ public class client extends javax.swing.JFrame {
     private void Send() {
         if (IsConnect) {
             if (!path_to_file.equalsIgnoreCase("")) {
-                if (!path_to_file.equalsIgnoreCase(old_path)) {
-                    send_thread = new SendThread(cs, jTextArea3);
-                    String priority = (String) jComboBox1.getSelectedItem();
-                    send_thread.SendJavaByteFile(path_to_file, priority);
-                    old_path = path_to_file;
-                } else {
-                    Log.AddToLog("This file is already send, choose other file!", jTextArea3, MY_NAME);
-                }
+                String priority = (String) jComboBox1.getSelectedItem();
+                
+                send_thread = new SendThread(cs, jTextArea3);         
+                send_thread.SendJavaByteFile(path_to_file, priority);
             } else {
                 Log.AddToLog("Jar file is not choosen!", jTextArea3, MY_NAME);
             }
         } else {
             Log.AddToLog("You are not authorized on server", jTextArea3, MY_NAME);
-          }
+        }
     }
             
     private void Disconnect() {

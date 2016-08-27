@@ -27,7 +27,6 @@ public class BlockInstance {
     Socket cs;
     String path_to_result;
     int priority;
-    boolean LookedByQueue = false;
     JTextArea Logs;
     JTable Table; // для отображения статуса задачи
     int pos_in_table = 0; // для отображения статуса задачи
@@ -52,10 +51,6 @@ public class BlockInstance {
 
     public void setPathToResultFile(String _path_to_result) {
         path_to_result = _path_to_result;
-    }
-
-    public void setLookedByQueue(boolean _LookedByQueue) {
-        LookedByQueue = _LookedByQueue;
     }
 
     synchronized public void ExecuteTask() {

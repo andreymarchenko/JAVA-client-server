@@ -56,8 +56,6 @@ public class RecvThread extends Thread {
 
     @Override
     public void run() {
-        end:
-        
         while (IsConnect) {
             File file;
             long size_file = 0;
@@ -72,7 +70,6 @@ public class RecvThread extends Thread {
             } catch (IOException ex) {
                 IsConnect = false;
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-                break end;
             }
 
             if (IsConnect) {

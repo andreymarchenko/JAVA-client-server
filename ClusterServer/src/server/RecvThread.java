@@ -308,17 +308,16 @@ public class RecvThread extends Thread {
     public void Disconnect() {
         if (IsAuthorized) {
             IsAuthorized = false;
-                String reply = Login + " disconnect from server";
-                
-                IsClientDisconnect = true;
-                SendReplyToClient("DO");
-                
-                Log.AddToLog(reply, Logs, MY_NAME);
+            String reply = Login + " disconnect from server";
+
+            IsClientDisconnect = true;
+
+            Log.AddToLog(reply, Logs, MY_NAME);
         } else {
-            SendReplyToClient("DN");
+            Log.AddToLog(Login + " don't disconnect from server", Logs, MY_NAME);
         }
     }
-    
+
     public void GetLoginFromDataBase() {
     try {
             Class.forName("org.sqlite.JDBC");

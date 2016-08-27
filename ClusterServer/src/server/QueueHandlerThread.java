@@ -80,17 +80,16 @@ public class QueueHandlerThread extends Thread {
                 for (Map.Entry<Key, BlockInstance> entrySet : HT.entrySet()) {
                     Key key = entrySet.getKey();
                     BlockInstance BI = entrySet.getValue();
-                    if (BI.LookedByQueue == false) {
-                        BI.LookedByQueue = true;
-                        AddTaskToQueue(BI, key);
-                    }
-
+                    
+                    AddTaskToQueue(BI, key);
+                    HT.remove(key);
                 }
-                DefaultTableModel model = (DefaultTableModel)Table.getModel();
+
+                DefaultTableModel model = (DefaultTableModel) Table.getModel();
+                
                 if (!PBQ.isEmpty() && (model.getValueAt(old_row, 3).equals("FINISHED") || size_rows_in_table == 1)) {
                     old_row = PBQ.peek().BI.pos_in_table;
                     PBQ.poll().BI.Implement(Table);
-
                 }
             }
         }
