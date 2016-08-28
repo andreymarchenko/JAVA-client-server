@@ -81,9 +81,7 @@ public class TaskAdderThread extends Thread {
     public void run() {
         while (true) {
             synchronized (lockForRecvThread) {
-                Log.AddToLog("1", Logs, MY_NAME);
                 for (Map.Entry<Key, BlockInstance> entrySet : HT.entrySet()) {
-                    Log.AddToLog("2", Logs, MY_NAME);
                     Key key = entrySet.getKey();
                     BlockInstance BI = entrySet.getValue();
 
@@ -91,7 +89,6 @@ public class TaskAdderThread extends Thread {
                     AddTaskToQueue(BI, key);
                         
                    synchronized (lockForQueueHandlerThread) {
-                        Log.AddToLog("3", Logs, MY_NAME);
                         lockForQueueHandlerThread.notify();
                    }
                                     
