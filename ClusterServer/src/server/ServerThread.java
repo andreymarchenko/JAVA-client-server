@@ -46,7 +46,7 @@ public class ServerThread extends Thread {
     Hashtable<Key, BlockInstance> allClient =
              new Hashtable<Key, BlockInstance>(); // Login of client <-> SocketClient
     
-    private final Object lock = new Object();
+    private final Object lock = new Object(); // lock for using by RecvThread and TaskAdderThread
     
     // PriorityBlockingQueue
     

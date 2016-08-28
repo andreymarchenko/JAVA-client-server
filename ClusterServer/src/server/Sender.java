@@ -35,6 +35,7 @@ public class Sender {
     InputStream sis = null;
 
     public Sender(Socket _cs, JTextArea _Logs) {
+
         cs = _cs;
         Logs = _Logs;
 
@@ -49,7 +50,7 @@ public class Sender {
         }
     }
 
-    public void SendResult(String _path_to_file) {
+    public void SendResult(final String _path_to_file) {
         path_to_file = _path_to_file;
         File file = new File(path_to_file);
 
@@ -112,6 +113,6 @@ public class Sender {
         } else {
             Log.AddToLog("File is not exist!", Logs, MY_NAME);
         }
+
     }
 }
-

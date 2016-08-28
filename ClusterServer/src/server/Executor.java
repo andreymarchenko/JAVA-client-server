@@ -22,24 +22,25 @@ import server.Log;
  * @author Andrey
  */
 public class Executor {
+
     final String MY_NAME = "Executor";
-    
+
     String path_to_jar_file;
     String path_to_result;
-    
+
     File result;
 
     public Executor(String _path_to_jar_file) {
         path_to_jar_file = _path_to_jar_file;
     }
 
-    public void execute(String _path) {
+    public void execute(final String _path) {
         path_to_result = _path;
 
         File fl = new File(path_to_result); // Создаем текстовый файл с результатом
         String string_split[] = path_to_jar_file.split("/");
         String new_path_to_jar_file_for_process_builder = string_split[0];
-        
+
         for (int i = 1; i < string_split.length; i++) {
             new_path_to_jar_file_for_process_builder += "\\" + string_split[i];
         }
@@ -57,13 +58,12 @@ public class Executor {
             PATH FOR ANDREY "C:\\Program Files\\Java\\jdk1.7.0_79\\bin\\java"
             PATH FOR IGOR   "C:\\Program Files\\Java\\jdk1.8.0_74\\bin\\java"
          */
-        
         command_for_builder.add("C:\\Program Files\\Java\\jdk1.8.0_74\\bin\\java");
         command_for_builder.add("-jar");
         command_for_builder.add(str_path);
-        
+
         ProcessBuilder procBuilder = new ProcessBuilder(command_for_builder);
-        
+
         procBuilder.directory(dir);
         procBuilder.redirectErrorStream(true);
 
@@ -71,7 +71,7 @@ public class Executor {
             Process process = procBuilder.start();
             InputStream stdout = process.getInputStream();
             FileOutputStream fos = new FileOutputStream(path_to_result);
-            
+
             byte symbol;
             while ((symbol = (byte) stdout.read()) != -1) {
                 fos.write(symbol);
@@ -80,6 +80,7 @@ public class Executor {
         } catch (IOException ex) {
             Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
 }

@@ -46,6 +46,7 @@ public class RecvThread extends Thread {
     InputStream sis = null;
     
     static Hashtable<Key, BlockInstance> HT;
+
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;
@@ -319,7 +320,6 @@ public class RecvThread extends Thread {
             }
 
             Log.AddToLog("File has been successfully received!", Logs, MY_NAME);
-            System.out.print(Login);
         }
     }
 

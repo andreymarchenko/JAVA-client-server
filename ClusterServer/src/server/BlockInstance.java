@@ -23,28 +23,27 @@ import static java.lang.Thread.sleep;
  * @author Игорь
  */
 public class BlockInstance {
-    private final Object lock = new Object();
-    
+
     String path_to_jar_file;
     Socket cs;
     String path_to_result;
     int priority;
-    
+
     JTextArea Logs;
-    
+
     JTable Table; // для отображения статуса задачи
     int pos_in_table = 0; // для отображения статуса задачи
 
     Sender SR = null;
     Executor EX = null;
-
     
+
     BlockInstance(Socket _cs,
-                  String _path_to_jar_file,
-                  String _path_to_result,
-                  int _priority,
-                  JTextArea _Logs) {
-        
+            String _path_to_jar_file,
+            String _path_to_result,
+            int _priority,
+            JTextArea _Logs) {
+
         path_to_jar_file = _path_to_jar_file;
         path_to_result = _path_to_result;
         priority = _priority;
@@ -59,7 +58,7 @@ public class BlockInstance {
         path_to_result = _path_to_result;
     }
 
-    synchronized public void ExecuteTask() {     
+    synchronized public void ExecuteTask() {
         if (EX != null) {
             EX.execute(path_to_result);
         }
@@ -71,17 +70,20 @@ public class BlockInstance {
         }
     }
 
-    public void Implement(JTable _Table) {
-        Table = _Table;
-        DefaultTableModel model = (DefaultTableModel) Table.getModel();
-        
-        model.setValueAt("RUNNING", pos_in_table, 3);
-        ExecuteTask();
-        
-        model.setValueAt("SENDING", pos_in_table, 3);
-        SendResultToClient();
-        
-        model.setValueAt("FINISHED", pos_in_table, 3);
+    // lockForQHT mutex using by QueueHandlerThread
+    public void Implement(Object lockForQHT, JTable _Table) {
+        synchronized (lockForQHT) {
+            Table = _Table;
+            DefaultTableModel model = (DefaultTableModel) Table.getModel();
+
+            model.setValueAt("RUNNING", pos_in_table, 3);
+            ExecuteTask();
+
+            model.setValueAt("SENDING", pos_in_table, 3);
+            SendResultToClient();
+
+            model.setValueAt("FINISHED", pos_in_table, 3);
+        }
     }
 
 }

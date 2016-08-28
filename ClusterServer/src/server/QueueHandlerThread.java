@@ -5,12 +5,12 @@
  */
 package server;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,71 +33,54 @@ public class QueueHandlerThread extends Thread {
 
     JTextArea Logs;
 
-    int size_rows_in_table = 0;
-    int old_row = 0;
-    Object lock;
-    Vector<String> dataVector;
+    Object lockForRecvThread;
+    Object lockForBI = new Object();
+
     JTable Table;
+
+    TaskAdderThread TAT;
+    Object lockForTaskAdderThread = new Object();
 
     
     QueueHandlerThread(JTextArea _Logs,
-                       JTable _Table,
-                       Hashtable<Key, BlockInstance> _HT,
-                       Object _lock) {
-        
-        lock = _lock;
+            JTable _Table,
+            Hashtable<Key, BlockInstance> _HT,
+            Object _lockForRecvThread) {
+
+        lockForRecvThread = _lockForRecvThread;
         Table = _Table;
         Logs = _Logs;
         HT = _HT;
-    }
-
-    public String ConvertPriorityToString(int priority) {
-        switch (priority) {
-            case 0:
-                return "Low";
-            case 1:
-                return "Medium";
-            case 2:
-                return "High";
-            default:
-                return "N/A";
-        }
-    }
-
-    public void AddTaskToQueue(BlockInstance BI, Key key) {
-        BI.pos_in_table = size_rows_in_table;
-        ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
-        PBQ.add(CPT);
-
-        String namefile = key.name_file;
-        DefaultTableModel model = (DefaultTableModel) Table.getModel();
-        model.setValueAt(key.Login, size_rows_in_table, 0);
-        model.setValueAt(namefile, size_rows_in_table, 1);
-        model.setValueAt(ConvertPriorityToString(BI.priority), size_rows_in_table, 2);
-        model.setValueAt("WAITING", size_rows_in_table, 3);
-        Table.setModel(model);
-
-        size_rows_in_table++;
+        
+        TAT = new TaskAdderThread(PBQ,
+                                  HT,
+                                  Table,
+                                  lockForRecvThread,
+                                  lockForTaskAdderThread,
+                                  Logs);
+        
+        TAT.start();
     }
 
     @Override
     public void run() {
         while (true) {
-            synchronized (lock) {
-                for (Map.Entry<Key, BlockInstance> entrySet : HT.entrySet()) {
-                    Key key = entrySet.getKey();
-                    BlockInstance BI = entrySet.getValue();
-                    
-                    AddTaskToQueue(BI, key);
-                    PBQ.poll().BI.Implement(Table);
-                    
-                    HT.remove(key);
-                }
-                
+            synchronized (lockForTaskAdderThread) {
                 try {
-                    lock.wait(); // QueueHandlerThread was norified by RecvThread (on server) which is handled request from some client
+                    lockForTaskAdderThread.wait(); // QueueHandlerThread was norified by TaskAdderThread
                 } catch (InterruptedException ex) {
                     Logger.getLogger(QueueHandlerThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                while (!PBQ.isEmpty()) {
+                    synchronized (lockForBI) {
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                PBQ.poll().BI.Implement(lockForBI, Table);
+                            }
+                        }.start();
+                    }
                 }
             }
         }
