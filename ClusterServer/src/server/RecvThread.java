@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import server.BlockInstance;
 import server.Key;
+import server.Log;
 
 /**
  *
@@ -35,24 +36,36 @@ import server.Key;
 public class RecvThread extends Thread {
 
     final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
+    final String MY_NAME = "RecvThread";
+    final int CHUNK_BYTE_SIZE = 1024;
+        
     String path_to_java_byte_file = "";
     String path_to_result_file = "";
-    final int CHUNK_BYTE_SIZE = 1024;
-    JTextArea Logs = null;
+
     Socket cs = null;
     InputStream sis = null;
+    
     static Hashtable<Key, BlockInstance> HT;
+
     String Login = null;
     String Password = null;
     ResultSet checkedlogin = null;
     ResultSet checkedpair = null;
     ResultSet alllogin = null;
+    
+    JTextArea Logs = null;
+    
     Object lock;
 
     boolean IsAuthorized = false;
     boolean IsClientDisconnect = false;
 
-    public RecvThread(Socket _cs, JTextArea _Logs, Hashtable<Key, BlockInstance> _HT, Object _lock) {
+    
+    public RecvThread(Socket _cs,
+                      JTextArea _Logs,
+                      Hashtable<Key, BlockInstance> _HT,
+                      Object _lock) {
+        
         lock = _lock;
         cs = _cs;
         Logs = _Logs;
@@ -92,12 +105,6 @@ public class RecvThread extends Thread {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    public void AddToLog(String info) {
-        String curr_info = Logs.getText();
-        curr_info += info + "\n";
-        Logs.setText(curr_info);
     }
 
     public void Registration(String _Login, String _Password) {
@@ -160,14 +167,14 @@ public class RecvThread extends Thread {
             } catch (SQLException ex) {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String reply = "RecvThread:" + _Login + " was registrated!";
+            String reply = _Login + " was registrated!";
             SendReplyToClient("RO");
-            AddToLog(reply);
+            Log.AddToLog(reply, Logs, MY_NAME);
 
         } else {
-            String reply = "RecvThread:" + _Login + " was not registrated!";
+            String reply = _Login + " was not registrated!";
             SendReplyToClient("RN"); // Пользователь с таким именем существует
-            AddToLog(reply);
+            Log.AddToLog(reply, Logs, MY_NAME);
         }
 
         IsClientDisconnect = true;
@@ -220,12 +227,12 @@ public class RecvThread extends Thread {
                 Password = _Password;
                 IsAuthorized = true;
                 SendReplyToClient("AO");
-                String reply = "RecvThread:" + Login + " is authorized";
-                AddToLog(reply);
+                String reply = Login + " is authorized";
+                Log.AddToLog(reply, Logs, MY_NAME);
 
             } else {
-                String reply = "RecvThread:" + "Authorization failed for " + Login;
-                AddToLog(reply);
+                String reply = "Authorization failed for " + Login;
+                Log.AddToLog(reply, Logs, MY_NAME);
                 SendReplyToClient("AN");
                 IsClientDisconnect = true;
             }
@@ -293,45 +300,44 @@ public class RecvThread extends Thread {
                     Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            /* try {
-                sdis.close();
-                sos.close();
-            } catch (IOException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
 
             Key key = new Key(Login, name);
             String name_of_result_file = name.replaceAll("jar", "txt");
-            path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES + Login + "/" + "Results/" + name_of_result_file;
-            BlockInstance BI = new BlockInstance(cs, path_to_java_byte_files, path_to_result_file, ConvertStringPriorityToInt(priority_file), Logs);
+            
+            path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES +
+                                  Login + "/" + "Results/" +
+                                  name_of_result_file;
+            
+            BlockInstance BI = new BlockInstance(cs,
+                                                 path_to_java_byte_files,
+                                                 path_to_result_file,
+                                                 ConvertStringPriorityToInt(priority_file),
+                                                 Logs);
 
             synchronized (lock) {
                 HT.put(key, BI);
+                lock.notify();
             }
 
-            AddToLog("RecvThread: File has been successfully received!");
-            System.out.print(Login);
+            Log.AddToLog("File has been successfully received!", Logs, MY_NAME);
         }
     }
 
     public void Disconnect() {
         if (IsAuthorized) {
             IsAuthorized = false;
-            try {
-                IsClientDisconnect = true;
-                SendReplyToClient("DO");
-                cs.close();
-            } catch (IOException ex) {
-                SendReplyToClient("DN");
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            String reply = Login + " disconnect from server";
+
+            IsClientDisconnect = true;
+
+            Log.AddToLog(reply, Logs, MY_NAME);
         } else {
-            SendReplyToClient("DN");
+            Log.AddToLog(Login + " don't disconnect from server", Logs, MY_NAME);
         }
     }
-    
+
     public void GetLoginFromDataBase() {
-    try {
+        try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -388,7 +394,8 @@ public class RecvThread extends Thread {
        1.2 "A" - Authorization
        1.3 "S" - Send
        1.4 "D" - Disconnect
-       1.5 "WRONG_COMMAND"
+       1.5 "B" - Get all logins from database (Android client only)
+       1.6 "WRONG_COMMAND"
     
        2. Commands of server:
        
@@ -402,6 +409,7 @@ public class RecvThread extends Thread {
        2.8 "DN" - Disconnect from server is not OK
        2.9 "CN" - Wrong Command
      */
+    
     public void HandlerOfClient() {
         DataInputStream sdis = new DataInputStream(sis);
         String login;

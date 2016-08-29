@@ -20,13 +20,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import client.Log;
 
 /**
  *
  * @author Andrey
  */
 public class RegistrationForm extends javax.swing.JFrame {
-
+    final String MY_NAME = "Registration";
     Socket cs;
     int port = 4445;
     InetAddress ip = null;
@@ -38,12 +39,6 @@ public class RegistrationForm extends javax.swing.JFrame {
     public RegistrationForm() {
         initComponents();
         setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-    }
-
-    public void AddToLog(String info) {
-        String curr_info = jTextArea1.getText();
-        curr_info += info + "\n";
-        jTextArea1.setText(curr_info);
     }
 
     private void Registration(String Login, String Password) {
@@ -71,7 +66,7 @@ public class RegistrationForm extends javax.swing.JFrame {
                 String reply = dcis.readUTF();
 
                 if (reply.equalsIgnoreCase("RO")) {
-                    AddToLog("Registration is OK!");
+                    Log.AddToLog("Registration is OK!", jTextArea1, MY_NAME);
                     String directory_client = PATH + Login;
                     File specially_directory_for_client = new File(directory_client);
                     specially_directory_for_client.mkdir();
@@ -85,7 +80,7 @@ public class RegistrationForm extends javax.swing.JFrame {
                     File directory_with_binaries_from_client = new File(directory_client_binaries);
                     directory_with_binaries_from_client.mkdir();
                 } else {
-                    AddToLog("Registration is not OK!");
+                    Log.AddToLog("Registration is not OK!", jTextArea1, MY_NAME);
                     cs = null;
                 }
             } catch (IOException ex) {

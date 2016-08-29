@@ -16,9 +16,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import server.ServerThread;
+import server.Log;
 
 public class server extends javax.swing.JFrame {
 
+    final String MY_NAME = "ServerThread";
+    
+    ServerThread st = null;
+    
     /**
      * Creates new form server
      */
@@ -157,13 +162,6 @@ public class server extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    ServerThread st = null;
-
-    public void AddToLog(String info) {
-        String curr_info = jTextArea1.getText();
-        curr_info += info + "\n";
-        jTextArea1.setText(curr_info);
-    }
 
     private void StartServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartServerActionPerformed
         // TODO add your handling code here:
@@ -171,7 +169,7 @@ public class server extends javax.swing.JFrame {
             st = new ServerThread(jTextArea1, jTable2);
             st.StartServer();
         } else {
-            AddToLog("ServerThread: Server already started!");
+            Log.AddToLog("Server already started!", jTextArea1, MY_NAME);
         }
     }//GEN-LAST:event_StartServerActionPerformed
 
@@ -181,7 +179,7 @@ public class server extends javax.swing.JFrame {
             st.StopServer();
             st = null;
         } else {
-            AddToLog("ServerThread: Server is not started yet!");
+            Log.AddToLog("Server is not started yet!", jTextArea1, MY_NAME);
         }
     }//GEN-LAST:event_StopServerActionPerformed
 

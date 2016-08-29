@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
+import client.Log;
 
 /**
  *
@@ -33,6 +34,7 @@ public class SendThread extends Thread {
 
     final int CHUNK_BYTE_SIZE = 1024;
     final String FORMAT_FILE = "jar";
+    final String MY_NAME = "SendThread";
 
     JTextArea Logs = null;
     OutputStream cos;  // for writing bytes to stream
@@ -52,12 +54,6 @@ public class SendThread extends Thread {
                 Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error of getting output stream", ex);
             }
         }
-    }
-
-    public void AddToLog(String info) {
-        String curr_info = Logs.getText();
-        curr_info += info + "\n";
-        Logs.setText(curr_info);
     }
 
     private static String getFileExtension(File file) {
@@ -141,31 +137,15 @@ public class SendThread extends Thread {
                         Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                /* try {
-                    dos.close();
-                                System.out.println("11");
-                } catch (IOException ex) {
-                    Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, null, ex);
-                                System.out.println("12");
-                }
-                 */
-                AddToLog("SendThread: File has been successfully sent!");
+
+                Log.AddToLog("File has been successfully sent!", Logs, MY_NAME);
             } else {
-                AddToLog("SendThread: Format of file incorrect! Should be .jar");
+                Log.AddToLog("Format of file incorrect! Should be .jar", Logs, MY_NAME);
             }
 
         } else {
-            AddToLog("SendThread: File is not exist!");
+            Log.AddToLog("File is not exist!", Logs, MY_NAME);
         }
-
-        /* try {
-                cis.close();
-                cos.close();
-                            System.out.println("13");
-            } catch (IOException ex) {
-                Logger.getLogger(SendThread.class.getName()).log(Level.SEVERE, "Error in closing of Input and Output streams", ex);
-                            System.out.println("14");
-            }*/
     }
 
 }
