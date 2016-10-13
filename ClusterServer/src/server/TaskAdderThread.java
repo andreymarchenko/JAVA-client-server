@@ -85,7 +85,6 @@ public class TaskAdderThread extends Thread {
                     Key key = entrySet.getKey();
                     BlockInstance BI = entrySet.getValue();
 
-
                     AddTaskToQueue(BI, key);
                         
                    synchronized (lockForQueueHandlerThread) {
