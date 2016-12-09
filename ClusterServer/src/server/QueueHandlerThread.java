@@ -28,7 +28,7 @@ import server.Log;
  */
 public class QueueHandlerThread extends Thread {
 
-    static PriorityBlockingQueue<ComparatorPriorityTask> PBQ = new PriorityBlockingQueue<>();
+    static PriorityBlockingQueue<ComparatorPriorityTask> PBQ = new PriorityBlockingQueue<ComparatorPriorityTask>();
     static Hashtable<Key, BlockInstance> HT;
 
     JTextArea Logs;
@@ -77,7 +77,11 @@ public class QueueHandlerThread extends Thread {
                         new Thread() {
                             @Override
                             public void run() {
-                                PBQ.poll().BI.Implement(lockForBI, Table);
+                                if (!(PBQ.peek() == null)) {
+                                {
+                                    PBQ.poll().BI.Implement(lockForBI, Table);
+                                }
+                                }
                             }
                         }.start();
                     }
