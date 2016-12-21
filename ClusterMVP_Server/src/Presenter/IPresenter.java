@@ -9,6 +9,6 @@ package Presenter;
  *
  * @author Игорь
  */
-public class IPresenter {
+public interface IPresenter {
     
 }
