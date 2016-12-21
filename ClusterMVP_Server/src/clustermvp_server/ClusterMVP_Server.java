@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package clustermvc_server;
+package clustermvp_server;
 
 /**
  *
- * @author Олег
+ * @author Игорь
  */
-public class ClusterMVC_Server {
+public class ClusterMVP_Server {
 
     /**
      * @param args the command line arguments
