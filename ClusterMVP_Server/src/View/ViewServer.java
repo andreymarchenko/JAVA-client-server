@@ -7,7 +7,7 @@ package View;
 
 /**
  *
- * @author Олег
+ * @author Игорь
  */
 public class ViewServer {
     

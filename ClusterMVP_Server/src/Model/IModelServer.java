@@ -7,7 +7,7 @@ package Model;
 
 /**
  *
- * @author Олег
+ * @author Игорь
  */
 public class IModelServer {
     

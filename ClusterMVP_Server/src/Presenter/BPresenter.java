@@ -7,7 +7,7 @@ package Presenter;
 
 /**
  *
- * @author Олег
+ * @author Игорь
  */
 public class BPresenter {
     
