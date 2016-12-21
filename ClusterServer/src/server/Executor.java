@@ -55,10 +55,10 @@ public class Executor {
         ArrayList<String> command_for_builder = new ArrayList<>();
 
         /*
-            PATH FOR ANDREY "C:\\Program Files\\Java\\jdk1.7.0_79\\bin\\java"
+            PATH FOR ANDREY "C:\\Program Files\\Java\\jdk1.8.0_111\\bin\\java"
             PATH FOR IGOR   "C:\\Program Files\\Java\\jdk1.8.0_74\\bin\\java"
          */
-        command_for_builder.add("C:\\Program Files\\Java\\jdk1.8.0_74\\bin\\java");
+        command_for_builder.add("C:\\Program Files\\Java\\jdk1.8.0_111\\bin\\java");
         command_for_builder.add("-jar");
         command_for_builder.add(str_path);
 
