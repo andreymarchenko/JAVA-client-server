@@ -10,5 +10,5 @@ package Model;
  * @author Игорь
  */
 public interface IModelServer {
-    
+     
 }
