@@ -9,6 +9,6 @@ package View;
  *
  * @author Игорь
  */
-public class IViewServer {
+public interface IViewServer {
     
 }

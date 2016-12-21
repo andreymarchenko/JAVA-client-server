@@ -9,6 +9,6 @@ package Model;
  *
  * @author Игорь
  */
-public class IModelServer {
+public interface IModelServer {
     
 }
