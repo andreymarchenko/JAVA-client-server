@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
-import server.Log;
+//import server.Log;
 
 public class Executor {
 
@@ -70,7 +70,7 @@ public class Executor {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(server.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Executor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

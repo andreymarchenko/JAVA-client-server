@@ -25,25 +25,17 @@ import javax.swing.JTextArea;
 public class RecvThread extends Thread {
 
     private IModelServer modelServer;
-    final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
-    final String MY_NAME = "RecvThread";
-    final int CHUNK_BYTE_SIZE = 1024;
+    private final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
+    private final String MY_NAME = "RecvThread";
+    private final int CHUNK_BYTE_SIZE = 1024;
         
-    String path_to_java_byte_file = "";
-    String path_to_result_file = "";
+    private Socket cs = null;
+    private InputStream sis = null;
 
-    Socket cs = null;
-    InputStream sis = null;
+    private String Login = null;
+    private String Password = null;
     
-    static Hashtable<Key, BlockInstance> HT;
-
-    String Login = null;
-    String Password = null;
-    ResultSet checkedlogin = null;
-    ResultSet checkedpair = null;
-    ResultSet alllogin = null;
-    
-    JTextArea Logs = null;
+   // JTextArea Logs = null;
     
     Object lock;
 
@@ -53,13 +45,11 @@ public class RecvThread extends Thread {
     
     public RecvThread(Socket _cs,
                       //JTextArea _Logs,
-                      Hashtable<Key, BlockInstance> _HT,
                       Object _lock) {
         
         lock = _lock;
         cs = _cs;
         //Logs = _Logs;
-        HT = _HT;
 
         if (cs != null) {
 
@@ -69,18 +59,6 @@ public class RecvThread extends Thread {
                 Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, "Error of getting intput stream", ex);
             }
 
-        }
-    }
-
-    public int ConvertStringPriorityToInt(String str) {
-        if (str.equalsIgnoreCase("Low")) {
-            return 0;
-        } else if (str.equalsIgnoreCase("Medium")) {
-            return 1;
-        } else if (str.equalsIgnoreCase("High")) {
-            return 2;
-        } else {
-            return -1;
         }
     }
 
@@ -98,73 +76,12 @@ public class RecvThread extends Thread {
     }
 
     public void Registration(String _Login, String _Password) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Connection c1 = null;
-        try {
-            c1 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
-            System.out.println("Opened database successfully");
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        PreparedStatement checkuser;
-        String str = "";
-
-        try {
-            checkuser = c1.prepareStatement("SELECT login FROM CLIENTS WHERE login = ?; ");
-            checkuser.setString(1, _Login);
-            checkedlogin = checkuser.executeQuery();
-
-            while (checkedlogin.next()) {
-                str = checkedlogin.getString(1);
-                break;
-            }
-
-            checkuser.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (!str.equalsIgnoreCase(_Login)) { // Если пользователя нет в БД
-            PreparedStatement adduser;
-            try {
-                adduser = c1.prepareStatement("INSERT INTO CLIENTS (login, password)"
-                        + " VALUES (?, ?); ");
-                adduser.setString(1, _Login);
-                adduser.setString(2, _Password);
-                adduser.executeUpdate();
-                adduser.close();
-                c1.close();
-
-                // Creating directories for each client
-                String directory_client = RELATIVE_PATH_FOR_ALL_DIRECTORIES + _Login;
-                File specially_directory_for_client = new File(directory_client);
-                specially_directory_for_client.mkdir();
-                String path_to_directory_client = directory_client + "/";
-
-                String directory_client_results = path_to_directory_client + "Results";
-                File directory_with_results_for_client = new File(directory_client_results);
-                directory_with_results_for_client.mkdir();
-
-                String directory_client_binaries = path_to_directory_client + "JavaByteFiles";
-                File directory_with_binaries_from_client = new File(directory_client_binaries);
-                directory_with_binaries_from_client.mkdir();
-
-            } catch (SQLException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if(modelServer.registrateUser(_Login, _Password)) {
             String reply = _Login + " was registrated!";
             SendReplyToClient("RO");
-          //  Log.AddToLog(reply, Logs, MY_NAME);
-
         } else {
             String reply = _Login + " was not registrated!";
             SendReplyToClient("RN"); // Пользователь с таким именем существует
-           // Log.AddToLog(reply, Logs, MY_NAME);
         }
 
         IsClientDisconnect = true;
@@ -177,61 +94,26 @@ public class RecvThread extends Thread {
     }
 
     public void Authorization(String _Login, String _Password) {
-        if (!IsAuthorized) {
-            try {
-                Class.forName("org.sqlite.JDBC");
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            Connection c = null;
-            try {
-                c = DriverManager.getConnection("jdbc:sqlite:BASE.db");
-                System.out.println("Opened database successfully");
-            } catch (SQLException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if (modelServer.authorizateUser(_Login, _Login)) {
+            Login = _Login;
+            Password = _Password;
 
-            PreparedStatement checkpair;
-            String str1 = "";
-            String str2 = "";
-
-            try {
-                checkpair = c.prepareStatement("SELECT login,password FROM CLIENTS WHERE login = ?; ");
-                checkpair.setString(1, _Login);
-                checkedpair = checkpair.executeQuery();
-
-                while (checkedpair.next()) {
-                    str1 = checkedpair.getString(1);
-                    str2 = checkedpair.getString(2);
-                    break;
-                }
-
-                checkpair.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (str1.equalsIgnoreCase(_Login) && str2.equalsIgnoreCase(_Password)) {
-
-                Login = _Login;
-                Password = _Password;
-                IsAuthorized = true;
-                SendReplyToClient("AO");
-                String reply = Login + " is authorized";
-              //  Log.AddToLog(reply, Logs, MY_NAME);
-
-            } else {
-                String reply = "Authorization failed for " + Login;
-               // Log.AddToLog(reply, Logs, MY_NAME);
-                SendReplyToClient("AN");
-                IsClientDisconnect = true;
-            }
+            IsAuthorized = true;
+            SendReplyToClient("AO");
+            String reply = Login + " is authorized";
+            //  Log.AddToLog(reply, Logs, MY_NAME);
         } else {
+            String reply = "Authorization failed for " + Login;
+            // Log.AddToLog(reply, Logs, MY_NAME);
             SendReplyToClient("AN");
+            IsClientDisconnect = true;
         }
     }
 
     public void Receive() {
+        String path_to_java_byte_file = "";
+        String path_to_result_file = "";
+
         if (IsAuthorized) {
             File file;
             long size_file = 0;
@@ -291,23 +173,13 @@ public class RecvThread extends Thread {
                 }
             }
 
-            Key key = new Key(Login, name);
             String name_of_result_file = name.replaceAll("jar", "txt");
             
             path_to_result_file = RELATIVE_PATH_FOR_ALL_DIRECTORIES +
                                   Login + "/" + "Results/" +
                                   name_of_result_file;
             
-            BlockInstance BI = new BlockInstance(cs,
-                                                 path_to_java_byte_files,
-                                                 path_to_result_file,
-                                                 ConvertStringPriorityToInt(priority_file),
-                                                 Logs);
-
-            synchronized (lock) {
-                HT.put(key, BI);
-                lock.notify();
-            }
+            modelServer.addElementToHashTable(Login, name, path_to_java_byte_files, path_to_result_file, ConvertStringPriorityToInt(priority_file), cs, lock);
 
            // Log.AddToLog("File has been successfully received!", Logs, MY_NAME);
         }
@@ -323,53 +195,6 @@ public class RecvThread extends Thread {
            // Log.AddToLog(reply, Logs, MY_NAME);
         } else {
             //Log.AddToLog(Login + " don't disconnect from server", Logs, MY_NAME);
-        }
-    }
-
-    public void GetLoginFromDataBase() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Connection c2 = null;
-        try {
-            c2 = DriverManager.getConnection("jdbc:sqlite:BASE.db");
-            System.out.println("Opened database successfully");
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        PreparedStatement allusers;
-        String str = "";
-
-        try {
-            allusers = c2.prepareStatement("SELECT login FROM CLIENTS; ");
-            alllogin = allusers.executeQuery();
-
-            int count=0;
-            while (alllogin.next()) {
-                if(count==0) {
-                    str = alllogin.getString(1);
-                    count++;
-                }
-                else {
-                    str += "\n" + alllogin.getString(1);
-                    count++;
-                }
-            }
-
-        try {
-            OutputStream os1 = cs.getOutputStream();
-            DataOutputStream dataoutputstream = new DataOutputStream(os1);
-            dataoutputstream.writeUTF(str);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
-            allusers.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -420,13 +245,31 @@ public class RecvThread extends Thread {
                 Receive();
             } else if (command_from_client.equalsIgnoreCase("D")) {
                 Disconnect();
-            } else if (command_from_client.equalsIgnoreCase("B")) {
-                GetLoginFromDataBase();
             } else {
                 WrongCommand();
             }
         } catch (IOException ex) {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public IModelServer getModelServer() {
+        return modelServer;
+    }
+
+    public void setModelServer(IModelServer modelServer) {
+        this.modelServer = modelServer;
+    }
+    
+    public int ConvertStringPriorityToInt(String str) {
+        if (str.equalsIgnoreCase("Low")) {
+            return 0;
+        } else if (str.equalsIgnoreCase("Medium")) {
+            return 1;
+        } else if (str.equalsIgnoreCase("High")) {
+            return 2;
+        } else {
+            return -1;
         }
     }
 

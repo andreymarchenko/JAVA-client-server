@@ -13,42 +13,35 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import server.BlockInstance;
-import server.ComparatorPriorityTask;
-import server.Log;
+import Model.BlockInstance;
+import Model.ComparatorPriorityTask;
+import Presenter.IPresenter;
+//import Model.Log;
 
 public class QueueHandlerThread extends Thread {
-
     static PriorityBlockingQueue<ComparatorPriorityTask> PBQ = new PriorityBlockingQueue<ComparatorPriorityTask>();
     static Hashtable<Key, BlockInstance> HT;
 
-    JTextArea Logs;
+    //JTextArea Logs;
 
     Object lockForRecvThread;
     Object lockForBI = new Object();
 
-    JTable Table;
-
     TaskAdderThread TAT;
     Object lockForTaskAdderThread = new Object();
+    
+    IPresenter presenter;
 
     
-    QueueHandlerThread(//JTextArea _Logs,
-            //JTable _Table,
-            //Hashtable<Key, BlockInstance> _HT,
-            Object _lockForRecvThread) {
+    QueueHandlerThread(Object _lockForRecvThread) {
 
         lockForRecvThread = _lockForRecvThread;
-        //Table = _Table;
-        //Logs = _Logs;
-        //HT = _HT;
-        
+
         TAT = new TaskAdderThread(PBQ,
                                   HT,
-                                  //Table,
                                   lockForRecvThread,
-                                  lockForTaskAdderThread,
-                                  Logs);
+                                  lockForTaskAdderThread);
+        TAT.setPresenter(presenter);
         
         TAT.start();
     }
@@ -70,7 +63,7 @@ public class QueueHandlerThread extends Thread {
                             public void run() {
                                 if (!(PBQ.peek() == null)) {
                                 {
-                                    PBQ.poll().BI.Implement(lockForBI, Table);
+                                    PBQ.poll().BI.Implement(lockForBI);
                                 }
                                 }
                             }
@@ -79,5 +72,9 @@ public class QueueHandlerThread extends Thread {
                 }
             }
         }
+    }
+
+    public void setPresenter(IPresenter presenter) {
+        this.presenter = presenter;
     }
 }

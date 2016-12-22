@@ -16,9 +16,7 @@ import java.io.OutputStream;
 import java.util.Hashtable;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import server.RecvThread;
-import server.BlockInstance;
-import server.Key;
+import Presenter.RecvThread;
 
 public class ServerThread extends Thread {
 
@@ -31,16 +29,16 @@ public class ServerThread extends Thread {
     private InetAddress ip = null;
     private boolean isStopped = true;
     private IModelServer modelServer;
+    private IPresenter presenter;
     //QueueHandlerThread QHT;
-
-    Hashtable<Key, BlockInstance> allClient
-            = new Hashtable<Key, BlockInstance>(); // Login of client <-> SocketClient
 
     private final Object lock = new Object(); // lock for using by RecvThread and TaskAdderThread
 
     // PriorityBlockingQueue
-    public ServerThread(/*JTextArea _Logs*/) {
-        //Logs = _Logs;               
+    public ServerThread(IModelServer modelServer) {
+        //Logs = _Logs;
+        this.modelServer = modelServer;
+        
         try {
             port = 4445;
             ip = InetAddress.getLocalHost();
@@ -49,12 +47,9 @@ public class ServerThread extends Thread {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in getLocalHost() function", ex);
         }
 
-        /*QHT = new QueueHandlerThread(Logs,
-                                     Table,
-                                     allClient,
-                                     lock);
+        this.modelServer.createQueueHandlerThread(lock);
+        this.modelServer.setPresenter(presenter);
         
-        QHT.start();*/
         // Log.AddToLog("Creating of server thread complete!", Logs, MY_NAME);
     }
 
@@ -83,7 +78,8 @@ public class ServerThread extends Thread {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
             }
 
-            RecvThread receiveThread = new RecvThread(clientSocket/*, Logs,*/, allClient, lock);
+            RecvThread receiveThread = new RecvThread(clientSocket/*, Logs,*/, lock);
+            receiveThread.setModelServer(modelServer);
             receiveThread.start();
         }
     }
@@ -96,11 +92,15 @@ public class ServerThread extends Thread {
 
         try {
             serverSocket.close();
-            QHT.stop();
+            modelServer.stopQueueHandlerThread();
 
         } catch (IOException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public void setPresenter(IPresenter presenter) {
+        this.presenter = presenter;
     }
 }

@@ -14,6 +14,7 @@ public class ServerForm extends javax.swing.JFrame {
     public ServerForm() {
         initComponents();
         viewServer = BViewServer.createViewServer();
+        viewServer.setJTable(jTable2);
     }
 
     @SuppressWarnings("unchecked")

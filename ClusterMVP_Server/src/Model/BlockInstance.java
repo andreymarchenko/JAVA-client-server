@@ -7,41 +7,33 @@ import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
-import server.Sender;
-import server.Executor;
-import static java.lang.Thread.sleep;
-import static java.lang.Thread.sleep;
+import Model.Executor;
+import Presenter.IPresenter;
 import static java.lang.Thread.sleep;
 
 public class BlockInstance {
 
-    String path_to_jar_file;
-    Socket cs;
-    String path_to_result;
-    int priority;
+    private String path_to_jar_file;
+    private Socket cs;
+    private String path_to_result;
+    private int priority;
+    
+    private int tablePosition = 0;
 
-    JTextArea Logs;
-
-    JTable Table; // для отображения статуса задачи
-    int pos_in_table = 0; // для отображения статуса задачи
-
-    Sender SR = null;
     Executor EX = null;
     
+    IPresenter presenter;
 
     BlockInstance(Socket _cs,
             String _path_to_jar_file,
             String _path_to_result,
-            int _priority,
-            JTextArea _Logs) {
+            int _priority) {
 
         path_to_jar_file = _path_to_jar_file;
         path_to_result = _path_to_result;
         priority = _priority;
         cs = _cs;
-        Logs = _Logs;
-
-        SR = new Sender(cs, Logs);
+        
         EX = new Executor(path_to_jar_file);
     }
 
@@ -55,26 +47,30 @@ public class BlockInstance {
         }
     }
 
-    synchronized public void SendResultToClient() {
-        if (SR != null) {
-            SR.SendResult(path_to_result);
-        }
-    }
-
     // lockForQHT mutex using by QueueHandlerThread
-    public void Implement(Object lockForQHT, JTable _Table) {
+    public void Implement(Object lockForQHT) {
         synchronized (lockForQHT) {
-            Table = _Table;
-            DefaultTableModel model = (DefaultTableModel) Table.getModel();
+            DefaultTableModel model = (DefaultTableModel) presenter.getViewServer().getJTable().getModel();
 
-            model.setValueAt("RUNNING", pos_in_table, 3);
+            presenter.getViewServer().update("RUNNING", tablePosition, 3, model);
             ExecuteTask();
 
-            model.setValueAt("SENDING", pos_in_table, 3);
-            SendResultToClient();
+            presenter.getViewServer().update("SENDING", tablePosition, 3, model);
+            presenter.sendResult(cs, path_to_result);
 
-            model.setValueAt("FINISHED", pos_in_table, 3);
+            presenter.getViewServer().update("FINISHED", tablePosition, 3, model);
         }
     }
 
+    public void setTablePosition(int tablePosition) {
+        this.tablePosition = tablePosition;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPresenter(IPresenter presenter) {
+        this.presenter = presenter;
+    }
 }

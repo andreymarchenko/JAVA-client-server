@@ -1,5 +1,6 @@
 package Model;
 
+import Presenter.IPresenter;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -10,7 +11,6 @@ import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
 public class TaskAdderThread extends Thread {
-
     final String MY_NAME = "TaskAdderThread";
     
     static PriorityBlockingQueue<ComparatorPriorityTask> PBQ;
@@ -24,17 +24,15 @@ public class TaskAdderThread extends Thread {
     Object lockForRecvThread;
     Object lockForQueueHandlerThread;
     
+    IPresenter presenter;
+    
     TaskAdderThread(PriorityBlockingQueue<ComparatorPriorityTask> _PBQ,
                     Hashtable<Key, BlockInstance> _HT,
-                    JTable _Table,
                     Object _lockForRecvThread,
-                    Object _lockForQueueHandlerThread,
-                    JTextArea _Logs) {
+                    Object _lockForQueueHandlerThread) {
         
         PBQ = _PBQ;
         HT = _HT;
-        Table = _Table;
-        Logs = _Logs;
         lockForRecvThread = _lockForRecvThread;
         lockForQueueHandlerThread = _lockForQueueHandlerThread;
     }
@@ -53,17 +51,19 @@ public class TaskAdderThread extends Thread {
     }
 
     public void AddTaskToQueue(BlockInstance BI, Key key) {
-        BI.pos_in_table = size_rows_in_table;
+        BI.setTablePosition(size_rows_in_table);
         ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
         PBQ.add(CPT);
 
         String namefile = key.name_file;
-        DefaultTableModel model = (DefaultTableModel) Table.getModel();
-        model.setValueAt(key.Login, size_rows_in_table, 0);
-        model.setValueAt(namefile, size_rows_in_table, 1);
-        model.setValueAt(ConvertPriorityToString(BI.priority), size_rows_in_table, 2);
-        model.setValueAt("WAITING", size_rows_in_table, 3);
-        Table.setModel(model);
+        DefaultTableModel model = (DefaultTableModel) presenter.getViewServer().getJTable().getModel();
+        
+        presenter.getViewServer().update(key.Login, size_rows_in_table, 0, model);
+        presenter.getViewServer().update(namefile, size_rows_in_table, 1, model);
+        presenter.getViewServer().update(ConvertPriorityToString(BI.getPriority()), size_rows_in_table, 2, model);
+        presenter.getViewServer().update("WAITING", size_rows_in_table, 3, model);
+
+        //presenter.getViewServer().getJTable().setModel(model);
 
         size_rows_in_table++;
     }
@@ -77,14 +77,14 @@ public class TaskAdderThread extends Thread {
                     BlockInstance BI = entrySet.getValue();
 
                     AddTaskToQueue(BI, key);
-                        
-                   synchronized (lockForQueueHandlerThread) {
+
+                    synchronized (lockForQueueHandlerThread) {
                         lockForQueueHandlerThread.notify();
-                   }
-                                    
+                    }
+
                     HT.remove(key);
                 }
-                
+
                 try {
                     lockForRecvThread.wait();
                 } catch (InterruptedException ex) {
@@ -93,5 +93,9 @@ public class TaskAdderThread extends Thread {
             }
 
         }
+    }
+
+    public void setPresenter(IPresenter presenter) {
+        this.presenter = presenter;
     }
 }

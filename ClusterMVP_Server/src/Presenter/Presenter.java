@@ -3,6 +3,7 @@ package Presenter;
 import Model.BModelServer;
 import Model.IModelServer;
 import View.IViewServer;
+import java.net.Socket;
 
 public class Presenter implements IPresenter {
     IViewServer viewServer;
@@ -20,7 +21,7 @@ public class Presenter implements IPresenter {
     public void StartServer() {
         if(serverThread == null)
         {
-            serverThread = new ServerThread();
+            serverThread = new ServerThread(modelServer);
             serverThread.start();
         }
     }
@@ -41,12 +42,22 @@ public class Presenter implements IPresenter {
     public void setModelServer(IModelServer modelServer) {
         this.modelServer = modelServer;
     }
-
-    public IViewServer getViewServer() {
-        return viewServer;
-    }
+    
+    
 
     public IModelServer getModelServer() {
         return modelServer;
+    }
+
+    @Override
+    public IViewServer getViewServer() {
+        return this.viewServer;
+    }
+
+    @Override
+    public void sendResult(Socket cs, String pathToRes) {
+        Sender SR = new Sender(cs);
+        
+        SR.SendResult(pathToRes);
     }
 }

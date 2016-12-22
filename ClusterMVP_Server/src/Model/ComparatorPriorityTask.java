@@ -6,12 +6,8 @@
 package Model;
 
 import java.util.Comparator;
-import server.BlockInstance;
+import Model.BlockInstance;
 
-/**
- *
- * @author Игорь
- */
 public class ComparatorPriorityTask implements Comparable<ComparatorPriorityTask> {
 
     public BlockInstance BI;
@@ -22,9 +18,9 @@ public class ComparatorPriorityTask implements Comparable<ComparatorPriorityTask
 
     @Override
     public int compareTo(ComparatorPriorityTask CPT) {
-        if (CPT.BI.priority > BI.priority) {
+        if (CPT.BI.getPriority() > BI.getPriority()) {
             return 1;
-        } else if (CPT.BI.priority < BI.priority) {
+        } else if (CPT.BI.getPriority() < BI.getPriority()) {
             return -1;
         } else {
             return 0;

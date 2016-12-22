@@ -18,25 +18,23 @@ public class Sender {
     final int CHUNK_BYTE_SIZE = 1024;
     final String MY_NAME = "Sender";
 
-    JTextArea Logs = null;
+    //JTextArea Logs = null;
     Socket cs = null;
     OutputStream sos = null;
     String path_to_file = null;
     InputStream sis = null;
 
-    public Sender(Socket _cs, JTextArea _Logs) {
+    public Sender(Socket _cs) {
 
         cs = _cs;
-        Logs = _Logs;
+        //Logs = _Logs;
 
         if (cs != null) {
-
             try {
                 sos = cs.getOutputStream(); // Get the output stream. Now we may send the result to client
             } catch (IOException ex) {
                 Logger.getLogger(Sender.class.getName()).log(Level.SEVERE, "Error of getting output stream", ex);
             }
-
         }
     }
 
