@@ -5,12 +5,17 @@
  */
 package View;
 
+import Presenter.BPresenter;
+import Presenter.IPresenter;
+
 /**
  *
  * @author Игорь
  */
-public class ViewServer implements IViewServer{
+public class ViewServer implements IViewServer {
+    private IPresenter presenter;
+    
     public ViewServer() {
-        
+        presenter = BPresenter.createPresenter(this);
     }
 }

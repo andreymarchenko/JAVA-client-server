@@ -5,10 +5,12 @@
  */
 package Model;
 
+import Presenter.IPresenter;
+
 /**
  *
  * @author Игорь
  */
 public interface IModelServer {
-    
+    public void setPresenter(IPresenter _presenter);
 }

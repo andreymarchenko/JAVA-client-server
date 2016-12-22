@@ -5,11 +5,23 @@
  */
 package Model;
 
+import Presenter.IPresenter;
+
 /**
  *
  * @author Игорь
  */
-public class ModelServer  implements IModelServer{
+public class ModelServer  implements IModelServer {
+    private IPresenter presenter;
+
+    public IPresenter getPresenter() {
+        return presenter;
+    }
+
+    public void setPresenter(IPresenter presenter) {
+        this.presenter = presenter;
+    }
+    
     public ModelServer() {
         
     }

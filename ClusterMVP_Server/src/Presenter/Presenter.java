@@ -5,6 +5,7 @@
  */
 package Presenter;
 
+import Model.BModelServer;
 import Model.IModelServer;
 import View.IViewServer;
 
@@ -13,7 +14,29 @@ import View.IViewServer;
  * @author Игорь
  */
 public class Presenter implements IPresenter {
-    public Presenter(IModelServer m, IViewServer v) {
+    IViewServer viewServer;
+    IModelServer modelServer;
+    
+    public Presenter(IViewServer _viewServer) {
+        modelServer = BModelServer.createModelServer();
+        viewServer = _viewServer;
         
+        modelServer.setPresenter(this);
+    }
+
+    public void setViewServer(IViewServer viewServer) {
+        this.viewServer = viewServer;
+    }
+
+    public void setModelServer(IModelServer modelServer) {
+        this.modelServer = modelServer;
+    }
+
+    public IViewServer getViewServer() {
+        return viewServer;
+    }
+
+    public IModelServer getModelServer() {
+        return modelServer;
     }
 }

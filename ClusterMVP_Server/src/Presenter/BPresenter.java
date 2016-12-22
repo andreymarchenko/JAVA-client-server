@@ -13,7 +13,7 @@ import View.IViewServer;
  * @author Игорь
  */
 public class BPresenter {
-    public static IPresenter createPresenter(IModelServer m, IViewServer v) {
-        return new Presenter(m, v);
+    public static IPresenter createPresenter(IViewServer v) {
+        return new Presenter(v);
     }
 }
