@@ -5,13 +5,15 @@
  */
 package Presenter;
 
+import Model.IModelServer;
+import View.IViewServer;
+
 /**
  *
  * @author Игорь
  */
 public class BPresenter {
-    static IPresenter p = new Presenter();
-    public static IPresenter createPresenter() {
-        return p;
+    public static IPresenter createPresenter(IModelServer m, IViewServer v) {
+        return new Presenter(m, v);
     }
 }

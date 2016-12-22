@@ -5,12 +5,15 @@
  */
 package Presenter;
 
+import Model.IModelServer;
+import View.IViewServer;
+
 /**
  *
  * @author Игорь
  */
 public class Presenter implements IPresenter {
-    public Presenter() {
+    public Presenter(IModelServer m, IViewServer v) {
         
     }
 }
