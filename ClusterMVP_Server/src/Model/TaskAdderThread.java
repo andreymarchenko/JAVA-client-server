@@ -54,10 +54,12 @@ public class TaskAdderThread extends Thread {
 
     public void AddTaskToQueue(BlockInstance BI, Key key) {
         BI.setTablePosition(size_rows_in_table);
+        BI.setPresenter(presenter);
         ComparatorPriorityTask CPT = new ComparatorPriorityTask(BI);
         PBQ.add(CPT);
 
         String namefile = key.name_file;
+        
         DefaultTableModel model = (DefaultTableModel) presenter.getViewServer().getJTable().getModel();
         
         presenter.getViewServer().update(key.Login, size_rows_in_table, 0, model);
@@ -78,6 +80,8 @@ public class TaskAdderThread extends Thread {
                     Key key = entrySet.getKey();
                     BlockInstance BI = entrySet.getValue();
 
+                    System.out.println("before add task queue OK!");
+                    
                     AddTaskToQueue(BI, key);
 
                     synchronized (lockForQueueHandlerThread) {
@@ -89,6 +93,7 @@ public class TaskAdderThread extends Thread {
 
                 try {
                     lockForRecvThread.wait();
+                    System.out.println("TaskAdderThread notified OK!");
                 } catch (InterruptedException ex) {
                     Logger.getLogger(TaskAdderThread.class.getName()).log(Level.SEVERE, null, ex);
                 }

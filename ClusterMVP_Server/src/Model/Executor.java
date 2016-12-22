@@ -36,13 +36,13 @@ public class Executor {
             new_path_to_jar_file_for_process_builder += "\\" + string_split[i];
         }
 
-        String absolute_path_to_directory = "C:\\JavaRep\\JAVA-client-server\\ClusterServer\\src";
+        String absolute_path_to_directory = "C:\\JavaRep\\JAVA-client-server\\ClusterMVP_Server\\src";
         for (int i = 1; i < string_split.length - 1; i++) {
             absolute_path_to_directory += "\\" + string_split[i];
         }
 
         File dir = new File(absolute_path_to_directory);
-        String str_path = "C:\\JavaRep\\JAVA-client-server\\ClusterServer\\" + new_path_to_jar_file_for_process_builder;
+        String str_path = "C:\\JavaRep\\JAVA-client-server\\ClusterMVP_Server\\" + new_path_to_jar_file_for_process_builder;
         System.out.println(str_path);
         ArrayList<String> command_for_builder = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public class Executor {
             PATH FOR ANDREY "C:\\Program Files\\Java\\jdk1.8.0_111\\bin\\java"
             PATH FOR IGOR   "C:\\Program Files\\Java\\jdk1.8.0_74\\bin\\java"
          */
-        command_for_builder.add("C:\\Program Files\\Java\\jdk1.8.0_111\\bin\\java");
+        command_for_builder.add("C:\\Program Files\\Java\\jdk1.8.0_74\\bin\\java");
         command_for_builder.add("-jar");
         command_for_builder.add(str_path);
 

@@ -44,6 +44,10 @@ public class ModelServer implements IModelServer {
         BI.setPresenter(presenter);
 
         allClient.put(key, BI);
+        
+        synchronized(lock) {
+            lock.notify();
+        }
     }
 
     public void createDirectories(String login) {
@@ -168,7 +172,7 @@ public class ModelServer implements IModelServer {
 
     @Override
     public void createQueueHandlerThread(Object lock) {
-        queueHandlerThread = new QueueHandlerThread(lock, allClient);      
+        queueHandlerThread = new QueueHandlerThread(lock, allClient, presenter);      
         queueHandlerThread.start();
     }
 

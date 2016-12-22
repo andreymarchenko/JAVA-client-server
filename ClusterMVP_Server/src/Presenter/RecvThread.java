@@ -234,17 +234,12 @@ public class RecvThread extends Thread {
         String login;
         String password;
         String command_from_client;
-        
-        System.out.println("HandlerOfClient start!");
 
         try {
             command_from_client = sdis.readUTF();
-            System.out.println("Command_from_client = " + command_from_client);
             if (command_from_client.equalsIgnoreCase("R")) {
                 login = sdis.readUTF();
-                System.out.println("login = " + login);
                 password = sdis.readUTF();
-                System.out.println("password = " + password);
                 Registration(login, password);
             } else if (command_from_client.equalsIgnoreCase("A")) {
                 login = sdis.readUTF();
@@ -261,7 +256,6 @@ public class RecvThread extends Thread {
             Logger.getLogger(RecvThread.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        System.out.println("HandlerOfClient end!");
     }
     
     public IModelServer getModelServer() {
@@ -286,7 +280,6 @@ public class RecvThread extends Thread {
 
     @Override
     public void run() {
-        System.out.println("run receive thread start!");
         while (true) {
             HandlerOfClient();
             if (IsClientDisconnect) {

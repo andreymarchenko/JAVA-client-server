@@ -50,6 +50,18 @@ public class BlockInstance {
     // lockForQHT mutex using by QueueHandlerThread
     public void Implement(Object lockForQHT) {
         synchronized (lockForQHT) {
+                    if(presenter == null) {
+            System.out.println("1");
+        }
+        
+        if(presenter.getViewServer() == null) {
+            System.out.println("2");
+        }
+        
+        if(presenter.getViewServer().getJTable() == null) {
+            System.out.println("3");
+        }
+        
             DefaultTableModel model = (DefaultTableModel) presenter.getViewServer().getJTable().getModel();
 
             presenter.getViewServer().update("RUNNING", tablePosition, 3, model);

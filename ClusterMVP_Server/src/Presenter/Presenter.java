@@ -13,11 +13,11 @@ public class Presenter implements IPresenter {
     
     public Presenter(IViewServer viewServer) {
         this.modelServer = BModelServer.createModelServer();
+        this.viewServer = viewServer;
         this.modelServer.setPresenter(this);
-        this.viewServer = viewServer;          
     }
 
-        @Override
+    @Override
     public void StartServer() {
         if(serverThread == null)
         {

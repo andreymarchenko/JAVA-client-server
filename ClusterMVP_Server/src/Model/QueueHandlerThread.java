@@ -33,7 +33,7 @@ public class QueueHandlerThread extends Thread {
     IPresenter presenter;
 
     
-    QueueHandlerThread(Object _lockForRecvThread, Hashtable<Key, BlockInstance> _HT) {
+    QueueHandlerThread(Object _lockForRecvThread, Hashtable<Key, BlockInstance> _HT, IPresenter presenter) {
 
         lockForRecvThread = _lockForRecvThread;
         
