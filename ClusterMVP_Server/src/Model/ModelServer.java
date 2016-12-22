@@ -9,6 +9,8 @@ package Model;
  *
  * @author Игорь
  */
-public class ModelServer {
-    
+public class ModelServer  implements IModelServer{
+    public ModelServer() {
+        
+    }
 }

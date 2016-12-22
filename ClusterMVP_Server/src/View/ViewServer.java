@@ -9,6 +9,8 @@ package View;
  *
  * @author Игорь
  */
-public class ViewServer {
-    
+public class ViewServer implements IViewServer{
+    public ViewServer() {
+        
+    }
 }

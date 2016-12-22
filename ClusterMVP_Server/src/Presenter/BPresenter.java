@@ -10,5 +10,8 @@ package Presenter;
  * @author Игорь
  */
 public class BPresenter {
-    
+    static IPresenter p = new Presenter();
+    public static IPresenter createPresenter() {
+        return p;
+    }
 }
