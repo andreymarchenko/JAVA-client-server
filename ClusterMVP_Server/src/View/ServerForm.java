@@ -1,10 +1,5 @@
 package View;
 
-/**
- *
- * @author Игорь
- */
-
 import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
@@ -12,12 +7,12 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 public class ServerForm extends javax.swing.JFrame {
+
     IViewServer viewServer;
     //final String MY_NAME = "ServerForm";
 
     public ServerForm() {
         initComponents();
-        
         viewServer = BViewServer.createViewServer();
     }
 
@@ -149,21 +144,11 @@ public class ServerForm extends javax.swing.JFrame {
 
 
     private void StartServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartServerActionPerformed
-       if (st == null) {
-            st = new ServerThread(jTextArea1, jTable2);
-            st.StartServer();
-        } else {
-           // Log.AddToLog("Server already started!", jTextArea1, MY_NAME);
-        }
+        viewServer.StartServer();
     }//GEN-LAST:event_StartServerActionPerformed
 
     private void StopServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopServerActionPerformed
-       if (st != null) {
-            st.StopServer();
-            st = null;
-        } else {
-            //Log.AddToLog("Server is not started yet!", jTextArea1, MY_NAME);
-        }
+        viewServer.StopServer();
     }//GEN-LAST:event_StopServerActionPerformed
 
     public static void main(String args[]) throws IOException {
@@ -173,7 +158,6 @@ public class ServerForm extends javax.swing.JFrame {
             }
         });
     }
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

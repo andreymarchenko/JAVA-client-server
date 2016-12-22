@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Presenter;
 
+import Model.IModelServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,91 +20,87 @@ import server.RecvThread;
 import server.BlockInstance;
 import server.Key;
 
-/**
- *
- * @author Игорь
- */
 public class ServerThread extends Thread {
+
     final String MY_NAME = "ServerThread";
-    
+
     //JTextArea Logs = null;
-    ServerSocket server_socket;  // for establishing connection with clients
-    Socket socket_client;
-    int port;
-    InetAddress ip = null;
-    boolean IsStopped = true;
+    private ServerSocket serverSocket;  // for establishing connection with clients
+    private Socket clientSocket;
+    private int port;
+    private InetAddress ip = null;
+    private boolean isStopped = true;
+    private IModelServer modelServer;
     //QueueHandlerThread QHT;
-    Hashtable<Key, BlockInstance> allClient =
-             new Hashtable<Key, BlockInstance>(); // Login of client <-> SocketClient
-    
+
+    Hashtable<Key, BlockInstance> allClient
+            = new Hashtable<Key, BlockInstance>(); // Login of client <-> SocketClient
+
     private final Object lock = new Object(); // lock for using by RecvThread and TaskAdderThread
-    
+
     // PriorityBlockingQueue
-    
-    public ServerThread(//JTextArea _Logs
-                       ) {
-        //Logs = _Logs;
-        port = 4445;
-        
+    public ServerThread(/*JTextArea _Logs*/) {
+        //Logs = _Logs;               
         try {
+            port = 4445;
             ip = InetAddress.getLocalHost();
-        }
-        catch(IOException ex) {
+            serverSocket = new ServerSocket(port, 0, ip);
+        } catch (IOException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in getLocalHost() function", ex);
         }
-        
-        try {
-            server_socket = new ServerSocket(port, 0, ip);
-        }
-        catch(IOException ex) {
-            Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Error in create server_socket", ex);
-        }
-        
+
         /*QHT = new QueueHandlerThread(Logs,
                                      Table,
                                      allClient,
                                      lock);
         
         QHT.start();*/
-       // Log.AddToLog("Creating of server thread complete!", Logs, MY_NAME);
+        // Log.AddToLog("Creating of server thread complete!", Logs, MY_NAME);
     }
-    
+
+    public IModelServer getModelServer() {
+        return modelServer;
+    }
+
+    public void setModelServer(IModelServer modelServer) {
+        this.modelServer = modelServer;
+    }
+
+    public void StartServer() {
+        isStopped = false;
+        //Log.AddToLog("Server was started!", Logs, MY_NAME);
+        start();
+    }
+
     @Override
     public void run() {
-        while(!IsStopped) {
+        while (!isStopped) {
             try {
-              //  Log.AddToLog("Waiting of client...", Logs, MY_NAME);
-                socket_client = server_socket.accept();
-               // Log.AddToLog("Connection with client complete!", Logs, MY_NAME);
-            }
-            catch(IOException ex) {
+                //  Log.AddToLog("Waiting of client...", Logs, MY_NAME);
+                clientSocket = serverSocket.accept();
+                // Log.AddToLog("Connection with client complete!", Logs, MY_NAME);
+            } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
             }
-            
-            RecvThread RT = new RecvThread(socket_client, Logs, allClient, lock);
-            RT.start();
+
+            RecvThread receiveThread = new RecvThread(clientSocket/*, Logs,*/, allClient, lock);
+            receiveThread.start();
         }
     }
 
-    synchronized void StopServer() {
+    public void StopServer() {
 
-        IsStopped = true;
-      //  Log.AddToLog("Server was stopped!", Logs, MY_NAME);
+        isStopped = true;
+        //  Log.AddToLog("Server was stopped!", Logs, MY_NAME);
         stop();
-        
+
         try {
-            server_socket.close();
+            serverSocket.close();
             QHT.stop();
-            
+
         } catch (IOException ex) {
             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
-
-    synchronized void StartServer() {
-        IsStopped = false;
-        //Log.AddToLog("Server was started!", Logs, MY_NAME);
-        start(); // Call the run method of client
     }
 }

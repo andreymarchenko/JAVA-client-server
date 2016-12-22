@@ -1,30 +1,39 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Presenter;
 
 import Model.BModelServer;
 import Model.IModelServer;
 import View.IViewServer;
 
-/**
- *
- * @author Игорь
- */
 public class Presenter implements IPresenter {
     IViewServer viewServer;
     IModelServer modelServer;
-    ServerThread st = null;
+    ServerThread serverThread = null;
+    Sender sender;
     
-    public Presenter(IViewServer _viewServer) {
-        modelServer = BModelServer.createModelServer();
-        viewServer = _viewServer;
-        
-        modelServer.setPresenter(this);
+    public Presenter(IViewServer viewServer) {
+        this.modelServer = BModelServer.createModelServer();
+        this.modelServer.setPresenter(this);
+        this.viewServer = viewServer;          
     }
 
+        @Override
+    public void StartServer() {
+        if(serverThread == null)
+        {
+            serverThread = new ServerThread();
+            serverThread.start();
+        }
+    }
+
+    @Override
+    public void StopServer() {
+        if(serverThread != null)
+        {
+            serverThread = null;
+            serverThread.StopServer();
+        }
+    }
+    
     public void setViewServer(IViewServer viewServer) {
         this.viewServer = viewServer;
     }
@@ -39,23 +48,5 @@ public class Presenter implements IPresenter {
 
     public IModelServer getModelServer() {
         return modelServer;
-    }
-
-    @Override
-    public void StartServer() {
-        if(st == null)
-        {
-            st = new ServerThread();
-            st.start();
-        }
-    }
-
-    @Override
-    public void StopServer() {
-        if(st != null)
-        {
-            st = null;
-            st.StopServer();
-        }
     }
 }

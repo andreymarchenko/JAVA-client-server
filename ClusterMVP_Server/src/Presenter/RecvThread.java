@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Presenter;
 
+import Model.IModelServer;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -25,15 +21,10 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
-import server.BlockInstance;
-import server.Key;
 
-/**
- *
- * @author Игорь
- */
 public class RecvThread extends Thread {
 
+    private IModelServer modelServer;
     final String RELATIVE_PATH_FOR_ALL_DIRECTORIES = "src/Files/";
     final String MY_NAME = "RecvThread";
     final int CHUNK_BYTE_SIZE = 1024;
@@ -61,13 +52,13 @@ public class RecvThread extends Thread {
 
     
     public RecvThread(Socket _cs,
-                      JTextArea _Logs,
+                      //JTextArea _Logs,
                       Hashtable<Key, BlockInstance> _HT,
                       Object _lock) {
         
         lock = _lock;
         cs = _cs;
-        Logs = _Logs;
+        //Logs = _Logs;
         HT = _HT;
 
         if (cs != null) {
