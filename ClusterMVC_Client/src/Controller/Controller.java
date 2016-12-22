@@ -24,7 +24,7 @@ public class Controller {
     private boolean isConnect = false;
     private String login = "";
     private String password = "";
-    private int priority;
+    private String priority;
     private String jarFilePath;
 
     public Controller() {
@@ -101,11 +101,11 @@ public class Controller {
         this.password = password;
     }
 
-    public int getPriority() {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }      
 
@@ -219,7 +219,7 @@ public class Controller {
             if (!jarFilePath.equalsIgnoreCase("")) {
                 sendThread = new SendThread(socket); //jTextArea3 добавить
                 
-                sendThread.SendJavaByteFile(jarFilePath, "1");
+                sendThread.SendJavaByteFile(jarFilePath, priority);
             } else {
                 //Log.AddToLog("Jar file is not choosen!", jTextArea3, MY_NAME);
             }

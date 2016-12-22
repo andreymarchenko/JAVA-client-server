@@ -318,7 +318,7 @@ public class MainForm extends javax.swing.JFrame {
 
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed
         String request = "S";
-        viewClient.getController().setPriority((int)jComboBox1.getSelectedItem());
+        viewClient.getController().setPriority(jComboBox1.getSelectedItem().toString());
         viewClient.getController().HandlerRequestOfClient(request);
     }//GEN-LAST:event_SendFileActionPerformed
 
