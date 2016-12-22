@@ -195,6 +195,7 @@ public class Controller {
                         isConnect = true;
 
                         receiveThread = new RecvThread(socket, login);
+                        receiveThread.setModelClient(modelClient);
                         /*jTextArea3 сюда*/
                         receiveThread.start();
 

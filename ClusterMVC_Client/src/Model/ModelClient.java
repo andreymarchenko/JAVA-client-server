@@ -44,6 +44,7 @@ public class ModelClient {
     }
 
     public void updateTableModel(String filePath, String fileName) {
+        tableModel = (DefaultTableModel) viewClient.getTable().getModel();
         tableModel.setValueAt(fileName, tableSize, 0);
         tableModel.setValueAt(filePath, tableSize, 1);
         viewClient.getTable().setModel(tableModel);

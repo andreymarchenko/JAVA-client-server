@@ -13,6 +13,8 @@ public class ViewClient {
 
     public ViewClient() {
         controller = BController.createController();
+        
+        controller.getModel().setViewClient(this);
     }
 
     public void HandlerRequestOfClient(String request) {

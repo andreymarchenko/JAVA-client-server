@@ -50,6 +50,10 @@ public class RecvThread extends Thread {
         }
     }
 
+    public void setModelClient(ModelClient modelClient) {
+        this.modelClient = modelClient;
+    }
+
     @Override
     public void run() {
         while (IsConnect) {
