@@ -16,6 +16,7 @@ import View.IViewServer;
 public class Presenter implements IPresenter {
     IViewServer viewServer;
     IModelServer modelServer;
+    ServerThread st = null;
     
     public Presenter(IViewServer _viewServer) {
         modelServer = BModelServer.createModelServer();
@@ -38,5 +39,23 @@ public class Presenter implements IPresenter {
 
     public IModelServer getModelServer() {
         return modelServer;
+    }
+
+    @Override
+    public void StartServer() {
+        if(st == null)
+        {
+            st = new ServerThread();
+            st.start();
+        }
+    }
+
+    @Override
+    public void StopServer() {
+        if(st != null)
+        {
+            st = null;
+            st.StopServer();
+        }
     }
 }

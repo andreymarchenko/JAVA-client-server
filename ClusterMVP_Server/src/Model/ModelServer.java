@@ -18,6 +18,7 @@ public class ModelServer  implements IModelServer {
         return presenter;
     }
 
+    @Override
     public void setPresenter(IPresenter presenter) {
         this.presenter = presenter;
     }
