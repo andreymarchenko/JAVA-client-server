@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Controller.Controller;
 
 /**
  *
@@ -27,10 +28,17 @@ import java.util.logging.Logger;
  */
 public class RegistrationForm extends javax.swing.JFrame {
     final String MY_NAME = "Registration";
-    Socket cs;
-    int port = 4445;
-    InetAddress ip = null;
-    final String PATH="C:/JavaRep/JAVA-client-server/ClusterClient/AllResults/";
+    
+    Controller controller;
+    ViewClient viewClient;
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public void setViewClient(ViewClient viewClient) {
+        this.viewClient = viewClient;
+    }
 
 
     public RegistrationForm() {
@@ -39,51 +47,10 @@ public class RegistrationForm extends javax.swing.JFrame {
     }
 
     private void Registration(String Login, String Password) {
-        try {
-            ip = InetAddress.getLocalHost();
-        } catch (IOException ex) {
-            Logger.getLogger(RegistrationForm.class.getName()).log(Level.SEVERE, "getLocalHost fail", ex);
-        }
-        try {
-            cs = new Socket(ip, port);
-        } catch (IOException ex) {
-            Logger.getLogger(RegistrationForm.class.getName()).log(Level.SEVERE, "Error in process of creating socket", ex);
-        }
-        if (cs != null) {
-            try {
-                OutputStream cos = cs.getOutputStream();
-                DataOutputStream dcos = new DataOutputStream(cos);
-
-                dcos.writeUTF("R");
-                dcos.writeUTF(Login);
-                dcos.writeUTF(Password);
-
-                InputStream cis = cs.getInputStream();
-                DataInputStream dcis = new DataInputStream(cis);
-                String reply = dcis.readUTF();
-
-                if (reply.equalsIgnoreCase("RO")) {
-                    //Log.AddToLog("Registration is OK!", jTextArea1, MY_NAME);
-                    String directory_client = PATH + Login;
-                    File specially_directory_for_client = new File(directory_client);
-                    specially_directory_for_client.mkdir();
-                    String path_to_directory_client = directory_client + "/";
-
-                    String directory_client_results = path_to_directory_client + "Results";
-                    File directory_with_results_for_client = new File(directory_client_results);
-                    directory_with_results_for_client.mkdir();
-
-                    String directory_client_binaries = path_to_directory_client + "JavaByteFiles";
-                    File directory_with_binaries_from_client = new File(directory_client_binaries);
-                    directory_with_binaries_from_client.mkdir();
-                } else {
-                    //Log.AddToLog("Registration is not OK!", jTextArea1, MY_NAME);
-                    cs = null;
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(RegistrationForm.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        controller.setLogin(Login);
+        controller.setPassword(Password);
+        
+        viewClient.HandlerRequestOfClient("R");
     }
 
     /**

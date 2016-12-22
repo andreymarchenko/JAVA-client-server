@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 public class MainForm extends javax.swing.JFrame {
 
     private ViewClient viewClient;
-    private RegistrationForm registationForm;
+    private RegistrationForm registrationForm;
     private final String MY_NAME = "ClientThread";
 
     public MainForm() {
@@ -290,13 +290,30 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void AuthorizationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AuthorizationActionPerformed
-        String request = "A";
-        viewClient.getController().HandlerRequestOfClient(request);
+        if (!jTextField1.getText().equalsIgnoreCase("") && !jPasswordField1.getText().equalsIgnoreCase("")) {
+            String request = "A";
+            
+            viewClient.getController().setLogin(jTextField1.getText());
+            viewClient.getController().setPassword(jPasswordField1.getText());
+            viewClient.getController().HandlerRequestOfClient(request);
+        }
     }//GEN-LAST:event_AuthorizationActionPerformed
 
     private void RegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrationActionPerformed
         String request = "R";
-        viewClient.getController().HandlerRequestOfClient(request);
+        if (!viewClient.getController().getIsConnect()) {
+            registrationForm = new RegistrationForm();
+            
+            registrationForm.setController(viewClient.getController());
+            registrationForm.setViewClient(viewClient);
+            
+            registrationForm.setVisible(true);
+            
+            viewClient.getController().HandlerRequestOfClient(request);
+        }
+        else {
+            //Log.AddToLog("You have already authorized, if you want to registratation, you will need to click Disconnect!", jTextArea3, MY_NAME);
+        }
     }//GEN-LAST:event_RegistrationActionPerformed
 
     private void SendFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendFileActionPerformed

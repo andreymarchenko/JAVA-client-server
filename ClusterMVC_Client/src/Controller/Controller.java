@@ -29,6 +29,8 @@ public class Controller {
 
     public Controller() {
         modelClient = BModelClient.createModelClient();
+        
+        port = 4445;
     }
 
     public ModelClient getModel() {
@@ -183,6 +185,10 @@ public class Controller {
 
                     reply = dcis.readUTF();
 
+                    System.out.println(login);
+                    System.out.println(password);
+                    System.out.println(reply);
+                    
                     if (reply.equalsIgnoreCase("AO")) {
                         //Log.AddToLog("Authorization succesful!", jTextArea3, MY_NAME);
 
