@@ -52,13 +52,14 @@ public class Executor {
 
         File dir = new File(absolute_path_to_directory);
         String str_path = "C:\\JavaRep\\JAVA-client-server\\ClusterServer\\" + new_path_to_jar_file_for_process_builder;
+        System.out.println(str_path);
         ArrayList<String> command_for_builder = new ArrayList<>();
 
         /*
             PATH FOR ANDREY "C:\\Program Files\\Java\\jdk1.8.0_111\\bin\\java"
             PATH FOR IGOR   "C:\\Program Files\\Java\\jdk1.8.0_74\\bin\\java"
          */
-        command_for_builder.add("C:\\Program Files\\Java\\jdk1.8.0_111\\bin\\java");
+        command_for_builder.add("C:\\Program Files\\Java\\jdk1.8.0_74\\bin\\java");
         command_for_builder.add("-jar");
         command_for_builder.add(str_path);
 
