@@ -33,10 +33,11 @@ public class QueueHandlerThread extends Thread {
     IPresenter presenter;
 
     
-    QueueHandlerThread(Object _lockForRecvThread) {
+    QueueHandlerThread(Object _lockForRecvThread, Hashtable<Key, BlockInstance> _HT) {
 
         lockForRecvThread = _lockForRecvThread;
-
+        
+        HT = _HT;
         TAT = new TaskAdderThread(PBQ,
                                   HT,
                                   lockForRecvThread,

@@ -168,7 +168,7 @@ public class ModelServer implements IModelServer {
 
     @Override
     public void createQueueHandlerThread(Object lock) {
-        queueHandlerThread = new QueueHandlerThread(lock);      
+        queueHandlerThread = new QueueHandlerThread(lock, allClient);      
         queueHandlerThread.start();
     }
 

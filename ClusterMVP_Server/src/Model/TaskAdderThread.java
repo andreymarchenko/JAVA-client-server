@@ -35,6 +35,8 @@ public class TaskAdderThread extends Thread {
         HT = _HT;
         lockForRecvThread = _lockForRecvThread;
         lockForQueueHandlerThread = _lockForQueueHandlerThread;
+        
+        System.out.println("TaskAdderThread created OK!");
     }
 
     public String ConvertPriorityToString(int priority) {
@@ -63,7 +65,7 @@ public class TaskAdderThread extends Thread {
         presenter.getViewServer().update(ConvertPriorityToString(BI.getPriority()), size_rows_in_table, 2, model);
         presenter.getViewServer().update("WAITING", size_rows_in_table, 3, model);
 
-        //presenter.getViewServer().getJTable().setModel(model);
+        presenter.getViewServer().getJTable().setModel(model);
 
         size_rows_in_table++;
     }

@@ -22,7 +22,7 @@ public class Presenter implements IPresenter {
         if(serverThread == null)
         {
             serverThread = new ServerThread(modelServer);
-            serverThread.start();
+            serverThread.StartServer();
         }
     }
 
@@ -30,8 +30,9 @@ public class Presenter implements IPresenter {
     public void StopServer() {
         if(serverThread != null)
         {
-            serverThread = null;
             serverThread.StopServer();
+            serverThread = null;
+            System.out.println("Stop server OK!");
         }
     }
     

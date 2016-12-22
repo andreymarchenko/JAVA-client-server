@@ -69,6 +69,7 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
+        System.out.println("Start server OK!");
         while (!isStopped) {
             try {
                 //  Log.AddToLog("Waiting of client...", Logs, MY_NAME);
@@ -77,15 +78,17 @@ public class ServerThread extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, "ServerThread: Can't accept", ex);
             }
-
+            
+            
             RecvThread receiveThread = new RecvThread(clientSocket/*, Logs,*/, lock);
             receiveThread.setModelServer(modelServer);
             receiveThread.start();
         }
+        System.out.println("Start server end!");
     }
 
     public void StopServer() {
-
+        System.out.println("Stop!");
         isStopped = true;
         //  Log.AddToLog("Server was stopped!", Logs, MY_NAME);
         stop();
